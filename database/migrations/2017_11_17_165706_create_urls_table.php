@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateUrlsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('urls', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('article_url', 250);
+            $table->integer('article_id')->nullable();
+            $table->datetime('last_crawled')->nullable();
+            $table->timestamps();
+            $table->integer('times_scanned')->default(0);
+            $table->boolean('curr_scan')->default(False);
+            $table->boolean('extracted_keywords')->default(0);
+            $table->integer('num_fail_scans')->default(0);
+            $table->string('article_hash', 50);
+            $table->integer('recrawl_interval')->nullable();
+
+            $table->unique('article_hash');
+            $table->index('article_url');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('urls');
+    }
+}
