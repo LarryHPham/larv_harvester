@@ -32,7 +32,6 @@ class CrawlUrl extends Command
         if ($url === NULL) {
             $url = new Url([
                 'article_url' => $url_string,
-                'article_hash' => md5($url_string),
             ]);
             $url->save();
         }
