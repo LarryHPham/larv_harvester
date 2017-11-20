@@ -9,11 +9,32 @@ use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class CrawlUrl extends Job
 {
+    /**
+     * The results of running `parse_url` on the URL model's URL. This is saved
+     * here to avoid running the function repeatedly
+     * @var Object
+     */
     private $url_parts;
+
+    /**
+     * The URL model that was passed into the job
+     * @var Url
+     */
     private $url_model;
-    private $a_tag_regex = '/<a[^>]+href=["\']([^"\']+)[\'"]/';
+
+    /**
+     * The flag for parsing content as passed into the job
+     * @var Boolean
+     */
     private $parse_content;
 
+    /**
+     * The job's constructor function. This function saves the parameters passed
+     * into the job as class properties
+     * @param Url     $url          The URL model to crawl
+     * @param Boolean $parseContent Whether the content should be parsed for
+     *                              meta-data
+     */
     public function __construct(Url $url, Boolean $parseContent = NULL)
     {
         // Save the model and parts
@@ -24,6 +45,11 @@ class CrawlUrl extends Job
         $this->parse_content = $parseContent;
     }
 
+    /**
+     * This function executes the main portion of the job. It will grab the URL,
+     * parse it for URLs, create jobs for those URLs, and kick off the DOM
+     * meta-data parser
+     */
     public function handle()
     {
         // Check for it already being scraped
@@ -93,6 +119,11 @@ class CrawlUrl extends Job
         $this->url_model->save();
     }
 
+    /**
+     * This function parses a string DOM for URLs using the Symphony DOM Crawler
+     * @param  String $body The DOM to parse for URLs
+     * @return Array        The URLs that were found in the DOM
+     */
     private function getLinkedUrls(String $body)
     {
         // Create a dom object to use
@@ -135,6 +166,14 @@ class CrawlUrl extends Job
         return $page_links;
     }
 
+    /**
+     * This function parses a URL and makes sure it is valid. It will also add
+     * domains to URLs that begin with a slash and protocol to URLs that begin
+     * with //
+     * @param  String         $href The URL to parse
+     * @return String/Boolean       The parsed href or False if the href is not
+     *                              valid
+     */
     private function parseFoundUrl(String $href)
     {
         // Filter out anything that doesn't start with a slash, http, or https
@@ -175,10 +214,15 @@ class CrawlUrl extends Job
         return $href;
     }
 
+    /**
+     * This function runs if the job fails and sets curr_scan to False and
+     * increments the number of failed scans.
+     * @param  Exception $exception The exeception that occured
+     */
     public function failed(Exception $exception)
     {
         // Mark the model as not being crawled
-        $this->url_model->curr_scan = 0;
+        $this->url_model->curr_scan = False;
         $this->url_model->num_fail_scans++;
         $this->url_model->save();
     }
