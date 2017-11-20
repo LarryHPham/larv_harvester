@@ -27,7 +27,7 @@ class CreateUrlsTable extends Migration
             $table->integer('recrawl_interval')->nullable();
 
             $table->unique('article_hash');
-            $table->index('article_url');
+            $table->unique('article_url');
         });
     }
 
