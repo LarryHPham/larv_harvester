@@ -12,12 +12,16 @@ class CrawlUrl extends Job
     private $url_parts;
     private $url_model;
     private $a_tag_regex = '/<a[^>]+href=["\']([^"\']+)[\'"]/';
+    private $parse_content;
 
-    public function __construct(Url $url)
+    public function __construct(Url $url, Boolean $parseContent = NULL)
     {
         // Save the model and parts
         $this->url_model = $url;
         $this->url_parts = parse_url($url->article_url);
+
+        // Save the parse flag
+        $this->parse_content = $parseContent;
     }
 
     public function handle()
@@ -41,6 +45,7 @@ class CrawlUrl extends Job
 
         // Increment the scanned count
         $this->url_model->times_scanned++;
+        $this->url_model->curr_scan = False;
 
         // Check the status code
         switch($response->getStatusCode()) {
@@ -48,7 +53,7 @@ class CrawlUrl extends Job
                 break;
             default:
                 var_dump($response->getStatusCode());
-                $this->url_model->article_fail_scans++;
+                $this->url_model->num_fail_scans++;
                 $this->url_model->save();
                 return False;
         }
@@ -64,50 +69,67 @@ class CrawlUrl extends Job
 
         // Determine if the URL already exists
         foreach ($found_urls as $found_url) {
-            // Skip if the URL already exists
-            if (Url::where('article_url', $found_url)->count() > 0) {
-                continue;
+            // Insert the URL if it was just found
+            $new_url = Url::findByHash($found_url);
+            if ($new_url === NULL) {
+                // Create the URL
+                $new_url = new Url([
+                    'article_url' => $found_url,
+                ]);
+                $new_url->save();
+
+                // Create the job
+                dispatch(new CrawlUrl($new_url));
             }
 
-            // Create the URL
-            $new_url = new Url([
-                'article_url' => $found_url,
-                'article_hash' => md5($found_url),
-
-            ]);
-            $new_url->save();
-
-            // Create the job
-            dispatch(new CrawlUrl($new_url));
+            // Create the relationship
+            $this
+                ->url_model
+                ->articleLinksTo()
+                ->save($new_url);
         }
 
         // Mark the URL as not being scraped
-        $this->url_model->curr_scan = False;
         $this->url_model->save();
     }
 
     private function getLinkedUrls(String $body)
     {
-        // Use a regex to get all of the anchor tags
-        if (preg_match_all($this->a_tag_regex, $body, $page_links) === 0) {
-            // If no URLs are found, return an empty array
-            return [];
-        }
+        // Create a dom object to use
+        $dom = new DomCrawler($body);
 
-        // Get only the matched groups
-        $page_links = $page_links[1];
+        // Initialize the page links variable to pass into the closure
+        $page_links = [];
 
-        // Remove the duplicates
-        $page_links = array_unique($page_links);
+        // Loop over the a tags
+        $dom
+            ->filter('a')
+            ->each(function ($node) use (&$page_links) {
+                // Get the href
+                $href = $node->attr('href');
 
-        // Parse all of the URLs
-        $page_links = array_map([$this, 'parseFoundUrl'], $page_links);
+                // Check for null
+                if ($href === NULL) {
+                    return False;
+                }
 
-        // Filter out falsey values
-        $page_links = array_filter($page_links);
+                // Parse the URL
+                $href = $this->parseFoundUrl($href);
+
+                // Check for a falsey value
+                if ($href === False) {
+                    return False;
+                }
+
+                // Add to the page_links array
+                $page_links[] = $href;
+            });
 
         // Sort the links
         arsort($page_links);
+
+        // Remove the duplicates
+        $page_links = array_unique($page_links);
 
         // Return the URLs
         return $page_links;
@@ -151,5 +173,13 @@ class CrawlUrl extends Job
         }
 
         return $href;
+    }
+
+    public function failed(Exception $exception)
+    {
+        // Mark the model as not being crawled
+        $this->url_model->curr_scan = 0;
+        $this->url_model->num_fail_scans++;
+        $this->url_model->save();
     }
 }
