@@ -21,7 +21,7 @@ class CreateUrlsTable extends Migration
             $table->timestamps();
             $table->integer('times_scanned')->default(0);
             $table->boolean('curr_scan')->default(False);
-            $table->boolean('extracted_keywords')->default(0);
+            $table->boolean('extracted_keywords')->default(False);
             $table->integer('num_fail_scans')->default(0);
             $table->string('article_hash', 50);
             $table->integer('recrawl_interval')->nullable();
