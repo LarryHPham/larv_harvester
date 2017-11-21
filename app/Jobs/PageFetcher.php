@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
-class CrawlUrl extends Job
+class PageFetcher extends Job
 {
     /**
      * The results of running `parse_url` on the URL model's URL. This is saved
@@ -105,7 +105,7 @@ class CrawlUrl extends Job
                 $new_url->save();
 
                 // Create the job
-                dispatch(new CrawlUrl($new_url));
+                dispatch(new PageFetcher($new_url));
             }
 
             // Create the relationship
@@ -207,7 +207,7 @@ class CrawlUrl extends Job
         }
 
         // Make sure the URL is on the same domain
-        if (strpos($href, $this->url_parts['host']) === False) {
+        if (url_parts($href)['host'] !== $this->url_parts['host']) {
             return False;
         }
 
