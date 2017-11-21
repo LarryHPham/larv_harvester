@@ -207,7 +207,7 @@ class PageFetcher extends Job
         }
 
         // Make sure the URL is on the same domain
-        if (url_parts($href)['host'] !== $this->url_parts['host']) {
+        if (parse_url($href)['host'] !== $this->url_parts['host']) {
             return False;
         }
 
