@@ -56,6 +56,10 @@ class Url extends Model
      */
     public static function createHash(String $url)
     {
+        // Remove the URLs protocol
+        $url = preg_replace('/^https?:\/\//', '', $url);
+
+        // MD5 and return
         return md5($url);
     }
 
