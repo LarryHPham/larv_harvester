@@ -70,9 +70,18 @@ class PageFetcher extends Job
         $client = new GuzzleClient();
 
         // Request the page
-        $response = $client->request('GET', $this->url_model->article_url, [
-            'exceptions' => FALSE,
-        ]);
+        try {
+            $response = $client->request('GET', $this->url_model->article_url, [
+                'exceptions' => FALSE,
+            ]);
+        } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
+            $this->url_model->times_scanned++;
+            $this->url_model->curr_scan = False;
+            $this->url_model->num_fail_scans++;
+            $this->url_model->failed_status_code = -1;
+            $this->url_model->save();
+            return False;
+        }
 
         // Increment the scanned count
         $this->url_model->times_scanned++;
@@ -105,6 +114,8 @@ class PageFetcher extends Job
                 'car-reviews-and-news/top-10',
             ]);
         }
+
+        // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
     }
 
     /**
