@@ -25,9 +25,13 @@ class CreateUrlsTable extends Migration
             $table->integer('num_fail_scans')->default(0);
             $table->string('article_hash', 50);
             $table->integer('recrawl_interval')->nullable();
+            $table->boolean('active_crawl')->nullable();
+            $table->integer('failed_status_code')->nullable();
 
             $table->unique('article_hash');
             $table->unique('article_url');
+            $table->index('active_crawl');
+            $table->index('last_crawled');
         });
     }
 
