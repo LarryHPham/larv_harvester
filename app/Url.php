@@ -30,6 +30,12 @@ class Url extends Model
         parent::boot();
 
         static::creating(function($model) {
+            // Check that the URL has a scheme
+            if (!isset(parse_url($model->article_url)['scheme'])) {
+                throw new \Exception('Protocol is Required for URL');
+            }
+
+            // Create the article hash
             $model->article_hash = $model->createHash($model->article_url);
         });
     }
