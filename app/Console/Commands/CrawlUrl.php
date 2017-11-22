@@ -25,8 +25,7 @@ class CrawlUrl extends Command
     {
         // Make sure the model exists
         $url_string = $this->argument('url');
-        $url = Url::where('article_url', $url_string)
-            ->first();
+        $url = Url::findByHash($url_string);
 
         // If no URL exists, create one
         if ($url === NULL) {
