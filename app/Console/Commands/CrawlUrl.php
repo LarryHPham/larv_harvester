@@ -7,7 +7,7 @@ use DB;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use App\Url;
-use App\Jobs\CrawlUrl as CrawlUrlJob;
+use App\Jobs\PageFetcher;
 use Illuminate\Contracts\Bus\Dispatcher;
 
 class CrawlUrl extends Command
@@ -37,6 +37,6 @@ class CrawlUrl extends Command
         }
 
         // Create the job
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new CrawlUrlJob($url));
+        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher($url));
     }
 }
