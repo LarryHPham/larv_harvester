@@ -17,7 +17,9 @@ class CreateArticlesLinkedTable extends Migration
             $table->increments('id');
             $table->integer('article_id');
             $table->integer('linked_article_id');
-            $table->timestamps();
+
+            $table->index('article_id');
+            $table->index('linked_article_id');
         });
     }
 
