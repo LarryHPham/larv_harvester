@@ -98,12 +98,12 @@ class DomUrlParser
                     // Create the URL
                     $new_url = new Url([
                         'article_url' => $found_link,
-                        'active_crawl' => $PatternMatch,
+                        'active_crawl' => $this->shouldCrawlUrl($found_link, $WhitelistPatterns),
                     ]);
                     $new_url->save();
 
                     // Dispatch the job if needed
-                    if ($this->shouldCrawlUrl($found_link, $WhitelistPatterns)) {
+                    if ($new_url->active_crawl) {
                         dispatch(new PageFetcher($new_url));
                     }
                 }
