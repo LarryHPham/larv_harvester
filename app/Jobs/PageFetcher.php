@@ -115,6 +115,10 @@ class PageFetcher extends Job
         // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
     }
 
+    /**
+     * Mark the URL crawl as failed
+     * @param  Integer $code The failure code
+     */
     private function markFailed($code)
     {
         $this->url_model->times_scanned++;
