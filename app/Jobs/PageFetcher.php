@@ -75,28 +75,25 @@ class PageFetcher extends Job
                 'exceptions' => FALSE,
             ]);
         } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
-            $this->url_model->times_scanned++;
-            $this->url_model->curr_scan = False;
-            $this->url_model->num_fail_scans++;
-            $this->url_model->failed_status_code = -1;
-            $this->url_model->save();
+            $this->markFailed(-1);
+            return False;
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+            $this->markFailed(-2);
             return False;
         }
-
-        // Increment the scanned count
-        $this->url_model->times_scanned++;
-        $this->url_model->curr_scan = False;
 
         // Check the status code
         switch($response->getStatusCode()) {
             case 200:
                 break;
             default:
-                $this->url_model->num_fail_scans++;
-                $this->url_model->failed_status_code = $response->getStatusCode();
-                $this->url_model->save();
+                $this->markFailed($response->getStatusCode());
                 return False;
         }
+
+        // Increment the scanned count
+        $this->url_model->times_scanned++;
+        $this->url_model->curr_scan = False;
 
         // Save the data for the URL
         $this->url_model->save();
@@ -116,6 +113,15 @@ class PageFetcher extends Job
         }
 
         // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
+    }
+
+    private function markFailed($code)
+    {
+        $this->url_model->times_scanned++;
+        $this->url_model->curr_scan = False;
+        $this->url_model->num_fail_scans++;
+        $this->url_model->failed_status_code = $code;
+        $this->url_model->save();
     }
 
     /**
