@@ -7,17 +7,8 @@ use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
-use App\Library\DomUrlParser;
-
 class PageFetcher extends Job
 {
-    /**
-     * The results of running `parse_url` on the URL model's URL. This is saved
-     * here to avoid running the function repeatedly
-     * @var Object
-     */
-    private $url_parts;
-
     /**
      * The URL model that was passed into the job
      * @var Url
@@ -47,7 +38,6 @@ class PageFetcher extends Job
     {
         // Save the model and parts
         $this->url_model = $url;
-        $this->url_parts = parse_url($url->article_url);
 
         // Save the parse flag
         $this->parse_content = $parseContent === True;
@@ -103,7 +93,16 @@ class PageFetcher extends Job
 
         // Get the URLs on the page (if needed)
         if ($this->parse_urls) {
-            $UrlParser = new DomUrlParser($this->url_model, $body);
+            // Determine which parser to use
+            switch (parse_url($this->url_model->article_url)['host']) {
+                case 'rss.kbb.com':
+                    $UrlParser = new \App\Library\XmlUrlParser($this->url_model, $body);
+                    break;
+                default:
+                    $UrlParser = new \App\Library\DomUrlParser($this->url_model, $body);
+                    break;
+            }
+
             $UrlParser->getLinkedUrls(True, [ // True - restrict to same domain
                 'expert_car_reviews',
                 'car-news/all-the-latest',
@@ -136,8 +135,6 @@ class PageFetcher extends Job
     public function failed(Exception $exception)
     {
         // Mark the model as not being crawled
-        $this->url_model->curr_scan = False;
-        $this->url_model->num_fail_scans++;
-        $this->url_model->save();
+        $this->markFailed(-5);
     }
 }
