@@ -6,7 +6,7 @@ use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Url;
 use App\Jobs\PageFetcher;
 
-class DomUrlParser extends BaseParser
+class XmlUrlParser extends BaseParser
 {
     /**
      * The constructor function saves the URL model and parses the DOM string
@@ -32,36 +32,36 @@ class DomUrlParser extends BaseParser
      */
     public function getLinkedUrls($RestrictToSameDomain = True, $WhitelistPatterns = [])
     {
-        // Initialize the variable for links
+        // Initialize the variables for links
         $page_links = [];
         $link_texts = [];
 
-        // Loop over the a tags
+        // Loop over the tags
         $this
             ->parsed_dom
-            ->filter('a')
+            ->filterXPath("//*[name()='feedburner:origLink']")
             ->each(function($node) use (&$page_links, &$link_texts, $RestrictToSameDomain) {
-                // Get the href attribute
-                $href = $node->attr('href');
+                // Get the url
+                $url = $node->text();
 
                 // Check for null
-                if ($href === NULL) {
+                if ($url === NULL) {
                     return False;
                 }
 
                 // Parse the URL
-                $href = $this->parseFoundUrl($href, $RestrictToSameDomain);
+                $url = $this->parseFoundUrl($url, False);
 
-                // Check for false (invalid href)
-                if ($href === False) {
+                // Check for false or non-kbb domain
+                if ($url === False || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
                     return False;
                 }
 
                 // Add to the text array
-                $link_texts[$href] = $node->text();
+                $link_texts[$url] = '{{XML Link}}';
 
-                // Add to the page_links array
-                $page_links[] = $href;
+                // Add to the page links
+                $page_links[] = $url;
             });
 
         // Insert and update the found links
