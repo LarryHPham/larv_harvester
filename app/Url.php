@@ -90,4 +90,14 @@ class Url extends Model
             ->belongsToMany('App\User', 'articles_linked', 'article_id', 'linked_article_id')
             ->withPivot('link_text');
     }
+
+    /**
+     * The link to the crawl_order table that dictates priority
+     * @return CrawlOrder
+     */
+    public function priority()
+    {
+        return $this
+            ->hasOne('App\CrawlOrder', 'article_id');
+    }
 }

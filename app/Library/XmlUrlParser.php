@@ -9,6 +9,24 @@ use App\Jobs\PageFetcher;
 class XmlUrlParser extends BaseParser
 {
     /**
+     * An array of the links on a page
+     * @var Array
+     */
+    private $page_links = [];
+
+    /**
+     * The text in each link
+     * @var Array
+     */
+    private $link_texts = [];
+
+    /**
+     * The weight to add to each link
+     * @var Array
+     */
+    protected $link_weights = [];
+
+    /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
      * @param String $DomString The string found when crawling the DOM
@@ -32,15 +50,91 @@ class XmlUrlParser extends BaseParser
      */
     public function getLinkedUrls($RestrictToSameDomain = True, $WhitelistPatterns = [])
     {
-        // Initialize the variables for links
-        $page_links = [];
-        $link_texts = [];
+        // Check a variety of tags
+        $Complete = $this->parseFeedburnerTags($RestrictToSameDomain) || $this->parseSitemapTags($RestrictToSameDomain) || $this->parseUrlTags($RestrictToSameDomain);
 
-        // Loop over the tags
-        $this
+        // Insert and update the found links
+        $this->insertOrUpdateLinks($this->page_links, $this->link_texts, $WhitelistPatterns);
+
+        // Return a success boolean
+        return True;
+    }
+
+    /**
+     * Parse the DOM for tags using the feedburner class name (RSS feeds)
+     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return Boolean                       Were tags found?
+     */
+    private function parseFeedburnerTags($RestrictToSameDomain)
+    {
+        // Get the tags
+        $tags = $this
             ->parsed_dom
-            ->filterXPath("//*[name()='feedburner:origLink']")
-            ->each(function($node) use (&$page_links, &$link_texts, $RestrictToSameDomain) {
+            ->filterXPath("//*[name()='feedburner:origLink']");
+
+        // Check the size
+        if (sizeof($tags) === 0) {
+            return False;
+        }
+
+        // Parse the values
+        $this->parseNodes($tags, $RestrictToSameDomain);
+        return True;
+    }
+
+    /**
+     * Parse the DOM for tags using the sitemap class name (List of sitemaps)
+     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return Boolean                       Were tags found?
+     */
+    private function parseSitemapTags($RestrictToSameDomain)
+    {
+        // Get the tags
+        $tags = $this
+            ->parsed_dom
+            ->filter('sitemap > loc');
+
+        // Check the size
+        if (sizeof($tags) === 0) {
+            return False;
+        }
+
+        // Parse the values
+        $this->parseNodes($tags, $RestrictToSameDomain);
+        return True;
+    }
+
+    /**
+     * Parse the DOM for tags using the url class name (List of sitemaps)
+     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return Boolean                       Were tags found?
+     */
+    private function parseUrlTags($RestrictToSameDomain)
+    {
+        // Get the tags
+        $tags = $this
+            ->parsed_dom
+            ->filter('url > loc');
+
+        // Check the size
+        if (sizeof($tags) === 0) {
+            return False;
+        }
+
+        // Parse the values
+        $this->parseNodes($tags, $RestrictToSameDomain);
+        return True;
+    }
+
+    /**
+     * Process nodes to get the URLs to crawl
+     * @param  Array   $nodeList             The nodes to parse
+     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     */
+    private function parseNodes($nodeList, $RestrictToSameDomain)
+    {
+        $nodeList
+            ->each(function($node) use ($RestrictToSameDomain) {
                 // Get the url
                 $url = $node->text();
 
@@ -52,22 +146,17 @@ class XmlUrlParser extends BaseParser
                 // Parse the URL
                 $url = $this->parseFoundUrl($url, False);
 
-                // Check for false or non-kbb domain
+                // Check for false or non-kbb domains
                 if ($url === False || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
                     return False;
                 }
 
                 // Add to the text array
-                $link_texts[$url] = '{{XML Link}}';
+                $this->link_texts[$url] = '{{XML Link}}';
+                $this->link_weights[$url] = 10;
 
                 // Add to the page links
-                $page_links[] = $url;
+                $this->page_links[] = $url;
             });
-
-        // Insert and update the found links
-        $this->insertOrUpdateLinks($page_links, $link_texts, $WhitelistPatterns);
-
-        // Return a success boolean
-        return True;
     }
 }

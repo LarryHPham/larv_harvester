@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Url;
+use App\CrawlOrder;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
@@ -28,21 +29,10 @@ class PageFetcher extends Job
     private $parse_urls;
 
     /**
-     * The job's constructor function. This function saves the parameters passed
-     * into the job as class properties
-     * @param Url     $url          The URL model to crawl
-     * @param Boolean $parseContent Whether the content should be parsed for
-     *                              meta-data
+     * The CrawlOrder model to parse next
+     * @var CrawlOrder
      */
-    public function __construct(Url $url, $parseContent = True, $parseUrls = True)
-    {
-        // Save the model and parts
-        $this->url_model = $url;
-
-        // Save the parse flag
-        $this->parse_content = $parseContent === True;
-        $this->parse_urls = $parseUrls === True;
-    }
+    private $next_crawl_order;
 
     /**
      * This function executes the main portion of the job. It will grab the URL,
@@ -51,6 +41,16 @@ class PageFetcher extends Job
      */
     public function handle()
     {
+        // Get the next URL to crawl
+        $this->next_crawl_order = CrawlOrder::getNextUrl();
+        $this->next_crawl_order->claimed_at = \Carbon\Carbon::now();
+        $this->next_crawl_order->save();
+
+        // Get the URL model
+        $this->url_model = $this->next_crawl_order->urlModel;
+        $this->parse_content = $this->next_crawl_order->get_content;
+        $this->parse_urls = $this->next_crawl_order->get_urls;
+
         // Mark the URL as being scraped
         $this->url_model->curr_scan = True;
         $this->url_model->last_crawled = (new Carbon())::now();
@@ -94,13 +94,10 @@ class PageFetcher extends Job
         // Get the URLs on the page (if needed)
         if ($this->parse_urls) {
             // Determine which parser to use
-            switch (parse_url($this->url_model->article_url)['host']) {
-                case 'rss.kbb.com':
-                    $UrlParser = new \App\Library\XmlUrlParser($this->url_model, $body);
-                    break;
-                default:
-                    $UrlParser = new \App\Library\DomUrlParser($this->url_model, $body);
-                    break;
+            if (parse_url($this->url_model->article_url)['host'] === 'rss.kbb.com' || preg_match('/\.xml$/', $this->url_model->article_url) === 1) {
+                $UrlParser = new \App\Library\XmlUrlParser($this->url_model, $body);
+            } else {
+                $UrlParser = new \App\Library\DomUrlParser($this->url_model, $body);
             }
 
             $UrlParser->getLinkedUrls(True, [ // True - restrict to same domain
@@ -112,6 +109,9 @@ class PageFetcher extends Job
         }
 
         // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
+
+        // Delete from the table
+        $this->next_crawl_order->delete();
     }
 
     /**
@@ -125,6 +125,17 @@ class PageFetcher extends Job
         $this->url_model->num_fail_scans++;
         $this->url_model->failed_status_code = $code;
         $this->url_model->save();
+
+        // Re-crawl or not (only curl errors and only try 5 times)
+        if ($code > 0 || $this->url_model->num_fail_scans > 5) {
+            $this->next_crawl_order->delete();
+        } else {
+            // Decrease the priority
+            $this->next_crawl_order->weight = round($this->next_crawl_order->weight / 2);
+            $this->next_crawl_order->claimed_at = NULL;
+            $this->next_crawl_order->save();
+            dispatch(new PageFetcher());
+        }
     }
 
     /**

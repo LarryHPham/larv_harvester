@@ -35,7 +35,15 @@ class CrawlUrl extends Command
             $url->save();
         }
 
+        // Make the crawl_order
+        $url
+            ->priority
+            ->save([
+                'scheduled' => True,
+                'weight' => 20,
+            ]);
+
         // Create the job
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher($url));
+        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher());
     }
 }

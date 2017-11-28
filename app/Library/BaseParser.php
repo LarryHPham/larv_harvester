@@ -136,14 +136,30 @@ class BaseParser
                     ]);
                     $new_url->save();
 
+                    $new_url
+                        ->priority()
+                        ->create([]);
+
                     // Dispatch the job if needed
-                    dispatch(new PageFetcher($new_url));
+                    dispatch(new PageFetcher());
                 }
             } catch (\Illuminate\Database\QueryException $e) {
                 $new_url = Url::findByHash($found_link);
                 if ($new_url === NULL) {
                     continue;
                 }
+            }
+
+            // Increment the weight
+            if ($new_url->priority !== NULL) {
+                $new_url->priority->weight++;
+
+                // Check for additional weighting
+                if (isset($this->link_weights)) {
+                    $new_url->priority->weight += $this->link_weights[$found_link];
+                }
+
+                $new_url->priority->save();
             }
 
             // Create the relationship
