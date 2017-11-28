@@ -156,7 +156,7 @@ class BaseParser
 
                 // Check for additional weighting
                 if (isset($this->link_weights)) {
-                    $new_url->priority->weight += $this->link_weights[$found_link];
+                    $new_url->priority->weight += $this->link_weights;
                 }
 
                 $new_url->priority->save();

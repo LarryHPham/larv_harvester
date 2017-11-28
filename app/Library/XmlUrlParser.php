@@ -24,7 +24,7 @@ class XmlUrlParser extends BaseParser
      * The weight to add to each link
      * @var Array
      */
-    protected $link_weights = [];
+    protected $link_weights = 1;
 
     /**
      * The constructor function saves the URL model and parses the DOM string
@@ -99,6 +99,9 @@ class XmlUrlParser extends BaseParser
             return False;
         }
 
+        // Increase the weight added to sitemaps
+        $this->link_weights = 19;
+
         // Parse the values
         $this->parseNodes($tags, $RestrictToSameDomain);
         return True;
@@ -153,7 +156,6 @@ class XmlUrlParser extends BaseParser
 
                 // Add to the text array
                 $this->link_texts[$url] = '{{XML Link}}';
-                $this->link_weights[$url] = 10;
 
                 // Add to the page links
                 $this->page_links[] = $url;
