@@ -29,10 +29,16 @@ class CrawlUrl extends Command
 
         // If no URL exists, create one
         if ($url === NULL) {
+            // Make the URL
             $url = new Url([
                 'article_url' => $url_string,
             ]);
             $url->save();
+
+            // Create a priority entry
+            $url
+                ->priority
+                ->create([]);
         }
 
         // Make the crawl_order
