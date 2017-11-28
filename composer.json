@@ -10,7 +10,8 @@
         "vlucas/phpdotenv": "~2.2",
         "guzzlehttp/guzzle": "^6.3",
         "symfony/dom-crawler": "^3.3",
-        "symfony/css-selector": "^3.3"
+        "symfony/css-selector": "^3.3",
+        "pda/pheanstalk": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
