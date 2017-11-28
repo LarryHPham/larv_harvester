@@ -153,7 +153,7 @@ class PageFetcher extends Job
      * increments the number of failed scans.
      * @param  Exception $exception The exeception that occured
      */
-    public function failed(Exception $exception)
+    public function failed(\Exception $exception)
     {
         // Mark the model as not being crawled
         $this->markFailed(-5);
