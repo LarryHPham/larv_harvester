@@ -141,7 +141,7 @@ class BaseParser
                         ->create([]);
 
                     // Dispatch the job if needed
-                    // dispatch(new PageFetcher());
+                    dispatch(new PageFetcher());
                 }
             } catch (\Illuminate\Database\QueryException $e) {
                 $new_url = Url::findByHash($found_link);

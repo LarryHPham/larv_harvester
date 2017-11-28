@@ -41,14 +41,14 @@ class PageFetcher extends Job
      */
     public function handle()
     {
-        // Start another job
-        dispatch(new PageFetcher());
-
         // Get the next URL to crawl
         $this->next_crawl_order = CrawlOrder::getNextUrl();
 
         // Check for a next crawl
         if ($this->next_crawl_order === NULL) {
+            // Start another job
+            dispatch(new PageFetcher());
+
             return True;
         }
 
