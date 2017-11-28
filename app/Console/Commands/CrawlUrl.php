@@ -37,7 +37,7 @@ class CrawlUrl extends Command
 
             // Create a priority entry
             $url
-                ->priority
+                ->priority()
                 ->create([]);
         }
 
