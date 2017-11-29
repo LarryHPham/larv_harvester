@@ -32,7 +32,7 @@ class CrawlOrder extends Model
     public static function getNextUrl()
     {
         // Create a random date
-        $random_time = \Carbon\Carbon::createFromTimeStampUTC(rand(0, strtotime('2015-12-31 00:00:00')));
+        $random_time = \Carbon\Carbon::createFromTimeStampUTC(rand(0, strtotime('2017-01-01 00:00:00')));
 
         // Select the URLs order descending
         $count = CrawlOrder::whereNull('claimed_at')
