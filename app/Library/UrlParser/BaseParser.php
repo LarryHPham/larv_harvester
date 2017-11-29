@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library;
+namespace App\Library\UrlParser;
 
 use App\Url;
 use App\Jobs\PageFetcher;

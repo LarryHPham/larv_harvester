@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library;
+namespace App\Library\UrlParser;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Url;

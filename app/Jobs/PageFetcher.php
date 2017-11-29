@@ -105,9 +105,9 @@ class PageFetcher extends Job
         if ($this->parse_urls) {
             // Determine which parser to use
             if (parse_url($this->url_model->article_url)['host'] === 'rss.kbb.com' || preg_match('/\.xml$/', $this->url_model->article_url) === 1) {
-                $UrlParser = new \App\Library\XmlUrlParser($this->url_model, $body);
+                $UrlParser = new \App\Library\UrlParser\XmlUrlParser($this->url_model, $body);
             } else {
-                $UrlParser = new \App\Library\DomUrlParser($this->url_model, $body);
+                $UrlParser = new \App\Library\UrlParser\DomUrlParser($this->url_model, $body);
             }
 
             $UrlParser->getLinkedUrls(True, [ // True - restrict to same domain
