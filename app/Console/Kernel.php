@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
+use App\CrawlOrder;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,6 +26,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        // Reset the old crawls that have been abandoned due to deadlock
+        $schedule
+            ->call(function() {
+                CrawlOrder::deleteAbandonedCrawls();
+            })
+            ->everyTenMinutes();
     }
 }

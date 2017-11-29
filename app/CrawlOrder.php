@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class CrawlOrder extends Model
 {
@@ -32,7 +33,7 @@ class CrawlOrder extends Model
     public static function getNextUrl()
     {
         // Create a random date
-        $random_time = \Carbon\Carbon::createFromTimeStampUTC(rand(0, strtotime('2017-01-01 00:00:00')));
+        $random_time = Carbon::createFromTimeStampUTC(rand(0, strtotime('2017-01-01 00:00:00')));
 
         // Select the URLs order descending
         $count = CrawlOrder::whereNull('claimed_at')
@@ -51,6 +52,22 @@ class CrawlOrder extends Model
         // Return the row
         return CrawlOrder::where('claimed_at', $random_time)
             ->first();
+    }
+
+    /**
+     * This function resets abandoned crawls (crawls that have a claimed time
+     * older than 10 minutes old)
+     */
+    public static function deleteAbandonedCrawls()
+    {
+        // Reset anything between 2017-06-01 and 10 minutes ago
+        CrawlOrder::whereBetween('claimed_at', [
+            new Carbon('2017-02-01 00:00:00'),
+            Carbon::now()->subMinutes(10),
+        ])
+            ->save([
+                'claimed_at' => NULL,
+            ]);
     }
 
     /**
