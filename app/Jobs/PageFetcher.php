@@ -75,7 +75,7 @@ class PageFetcher extends Job
                 'exceptions' => FALSE,
             ]);
         } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
-            $this->markFailed(-1);
+            $this->markFailed(1);
             return False;
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             $this->markFailed(-2);
