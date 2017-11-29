@@ -23,7 +23,7 @@ class UrlTableSeeder extends Seeder
     {
         $urls = [
             ['https://www.kbb.com/sitemap.xml', NULL],
-            ['https://www.kbb.com', 3600],
+            ['https://www.kbb.com', NULL],
             ['http://rss.kbb.com/kbb-car-reviews?format=xml', 3600],
             ['http://rss.kbb.com/kbb-car-news?format=xml', 3600],
             ['http://rss.kbb.com/kbb-car-videos?format=xml', 3600],
