@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Url;
-use App\Jobs\PageFetcher;
 
 class CrawlUrl extends Command
 {
