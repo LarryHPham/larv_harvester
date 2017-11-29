@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Jobs\PageFetcher;
 
 class StartJobs extends Command
 {
