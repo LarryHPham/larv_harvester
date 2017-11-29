@@ -45,8 +45,5 @@ class CrawlUrl extends Command
                 'scheduled' => True,
                 'weight' => 20,
             ]);
-
-        // Create the job
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher());
     }
 }
