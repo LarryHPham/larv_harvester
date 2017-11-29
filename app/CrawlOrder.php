@@ -65,7 +65,7 @@ class CrawlOrder extends Model
             new Carbon('2017-02-01 00:00:00'),
             Carbon::now()->subMinutes(10),
         ])
-            ->save([
+            ->update([
                 'claimed_at' => NULL,
             ]);
     }
