@@ -15,10 +15,10 @@ class StartJobs extends Command
         parent::__construct();
     }
 
-    public function handle($count)
+    public function handle()
     {
         // Dispatch jobs
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $this->argument('count'); $i++) {
             app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher());
         }
     }
