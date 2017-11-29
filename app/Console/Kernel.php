@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 use App\CrawlOrder;
+use App\Url;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,5 +34,26 @@ class Kernel extends ConsoleKernel
                 CrawlOrder::deleteAbandonedCrawls();
             })
             ->everyTenMinutes();
+
+        // Add pages that have scheduled re-crawls to the order
+        $schedule
+            ->call(function() {
+                Url::whereNotNull('recrawl_interval')
+                    ->where(\DB::raw('FROM_UNIXTIME(UNIX_TIMESTAMP(last_crawled) + recrawl_interval)'), '<=', \Carbon\Carbon::now())
+                    ->each(function($url) {
+                        // Check to see if the URL has a priority already
+                        if ($url->priority !== NULL) {
+                            return;
+                        }
+
+                        // Make the priority
+                        $url
+                            ->priority()
+                            ->create([
+                                'scheduled' => True,
+                            ]);
+                    });
+            })
+            ->everyHour();
     }
 }
