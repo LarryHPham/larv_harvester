@@ -3,12 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
-use Carbon\Carbon;
-use GuzzleHttp\Client as GuzzleClient;
 use App\Url;
 use App\Jobs\PageFetcher;
-use Illuminate\Contracts\Bus\Dispatcher;
 
 class CrawlUrl extends Command
 {
