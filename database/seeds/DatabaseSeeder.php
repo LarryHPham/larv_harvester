@@ -22,17 +22,18 @@ class UrlTableSeeder extends Seeder
     public function run()
     {
         $urls = [
-            'https://www.kbb.com/sitemap.xml',
-            'https://www.kbb.com',
-            'http://rss.kbb.com/kbb-car-reviews?format=xml',
-            'http://rss.kbb.com/kbb-car-news?format=xml',
-            'http://rss.kbb.com/kbb-car-videos?format=xml',
+            ['https://www.kbb.com/sitemap.xml', NULL],
+            ['https://www.kbb.com', 3600],
+            ['http://rss.kbb.com/kbb-car-reviews?format=xml', 3600],
+            ['http://rss.kbb.com/kbb-car-news?format=xml', 3600],
+            ['http://rss.kbb.com/kbb-car-videos?format=xml', 3600],
         ];
 
         foreach ($urls as $url) {
             // Make the model
             $model = Url::firstOrCreate([
-                'article_url' => $url,
+                'article_url' => $url[0],
+                'recrawl_interval' => $url[1],
             ]);
 
             // Add to the job queue
