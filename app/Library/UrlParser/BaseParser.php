@@ -26,6 +26,8 @@ class BaseParser
      */
     protected $parsed_dom;
 
+    protected $link_recrawl = [];
+
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
@@ -157,6 +159,12 @@ class BaseParser
                 }
 
                 $new_url->priority->save();
+            }
+
+            // Set up the re-crawl interval (if needed)
+            if (isset($this->link_recrawl[$found_link])) {
+                $new_url->recrawl_interval = $this->link_recrawl[$found_link];
+                $new_url->save();
             }
 
             // Create the relationship
