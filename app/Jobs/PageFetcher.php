@@ -49,7 +49,7 @@ class PageFetcher extends Job
 
         // Check for a next crawl
         if ($this->next_crawl_order === NULL) {
-            return True;
+            return true;
         }
 
         // Save the claim
@@ -62,7 +62,7 @@ class PageFetcher extends Job
         $this->parse_urls = $this->next_crawl_order->get_urls;
 
         // Mark the URL as being scraped
-        $this->url_model->curr_scan = True;
+        $this->url_model->curr_scan = true;
         $this->url_model->last_crawled = (new Carbon())::now();
         $this->url_model->save();
 
@@ -72,14 +72,14 @@ class PageFetcher extends Job
         // Request the page
         try {
             $response = $client->request('GET', $this->url_model->article_url, [
-                'exceptions' => FALSE,
+                'exceptions' => false,
             ]);
         } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
             $this->markFailed(1);
-            return False;
+            return false;
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             $this->markFailed(-2);
-            return False;
+            return false;
         }
 
         // Check the status code
@@ -88,12 +88,12 @@ class PageFetcher extends Job
                 break;
             default:
                 $this->markFailed($response->getStatusCode());
-                return False;
+                return false;
         }
 
         // Increment the scanned count
         $this->url_model->times_scanned++;
-        $this->url_model->curr_scan = False;
+        $this->url_model->curr_scan = false;
 
         // Save the data for the URL
         $this->url_model->save();
@@ -110,7 +110,7 @@ class PageFetcher extends Job
                 $UrlParser = new \App\Library\UrlParser\DomUrlParser($this->url_model, $body);
             }
 
-            $UrlParser->getLinkedUrls(True, [ // True - restrict to same domain
+            $UrlParser->getLinkedUrls(true, [ // true - restrict to same domain
                 'expert_car_reviews',
                 'car-news/all-the-latest',
                 'car-videos',
@@ -131,7 +131,7 @@ class PageFetcher extends Job
     private function markFailed($code)
     {
         $this->url_model->times_scanned++;
-        $this->url_model->curr_scan = False;
+        $this->url_model->curr_scan = false;
         $this->url_model->num_fail_scans++;
         $this->url_model->failed_status_code = $code;
         $this->url_model->save();
@@ -148,7 +148,7 @@ class PageFetcher extends Job
     }
 
     /**
-     * This function runs if the job fails and sets curr_scan to False and
+     * This function runs if the job fails and sets curr_scan to false and
      * increments the number of failed scans.
      * @param  Exception $exception The exeception that occured
      */

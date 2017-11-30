@@ -41,7 +41,7 @@ class CrawlUrl extends Command
         $url
             ->priority
             ->save([
-                'scheduled' => True,
+                'scheduled' => true,
                 'weight' => 20,
             ]);
     }

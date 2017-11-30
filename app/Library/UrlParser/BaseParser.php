@@ -52,7 +52,7 @@ class BaseParser
      * @param  String  $href        The URL to parse
      * @param  Boolean $CheckDomain Whether to check against the crawled URLs
      *                              domain
-     * @return Boolean              False if the URL should not be stored, the
+     * @return Boolean              false if the URL should not be stored, the
      *                              url otherwise
      */
     protected function parseFoundUrl(String $href, $CheckDomain)
@@ -63,7 +63,7 @@ class BaseParser
             substr($href, 0, 4) !== 'http' &&
             substr($href, 0, 5) !== 'https'
         ) {
-            return False;
+            return false;
         }
 
         // Modify the / URLs with the domains
@@ -84,12 +84,12 @@ class BaseParser
 
         // Determine if the URL matches the current URL
         if ($href === $this->url_model->article_url) {
-            return False;
+            return false;
         }
 
         // Make sure the URL is on the same domain
         if ($CheckDomain && parse_url($href)['host'] !== $this->url_parts['host']) {
-            return False;
+            return false;
         }
 
         return $href;
@@ -103,8 +103,8 @@ class BaseParser
      * @param  Array  $WhitelistPatterns An array of strings that, if the url
      *                                   contains any of them, should mark the
      *                                   url as "should crawl"
-     * @return Boolean                   True if the URL should be crawled, else
-     *                                   False
+     * @return Boolean                   true if the URL should be crawled, else
+     *                                   false
      */
     protected function shouldCrawlUrl(String $url, $WhitelistPatterns = [])
     {
@@ -113,10 +113,10 @@ class BaseParser
             sizeof($WhitelistPatterns) === 0 || // If there are no patterns then crawl the URL
             str_contains($url, $WhitelistPatterns) // If it matches a pattern crawl it
         ) {
-            return True;
+            return true;
         }
 
-        return False;
+        return false;
     }
 
     /**

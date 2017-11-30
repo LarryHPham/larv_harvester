@@ -17,9 +17,9 @@ class CreateCrawlOrderTable extends Migration
             $table->increments('id');
             $table->integer('article_id');
             $table->integer('weight')->default(0); // Default to 0 to allow easy incrementing
-            $table->boolean('scheduled')->default(False);
-            $table->boolean('get_urls')->default(True);
-            $table->boolean('get_content')->default(True);
+            $table->boolean('scheduled')->default(false);
+            $table->boolean('get_urls')->default(true);
+            $table->boolean('get_content')->default(true);
             $table->datetime('claimed_at')->nullable();
             $table->timestamps();
 

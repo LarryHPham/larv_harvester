@@ -40,7 +40,7 @@ class UrlTableSeeder extends Seeder
             $model
                 ->priority()
                 ->create([
-                    'scheduled' => True,
+                    'scheduled' => true,
                     'claimed_at' => NULL,
                 ]);
 

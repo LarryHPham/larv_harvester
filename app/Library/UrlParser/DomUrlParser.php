@@ -30,7 +30,7 @@ class DomUrlParser extends BaseParser
      *                                       url
      * @return Boolean                       Success indicator
      */
-    public function getLinkedUrls($RestrictToSameDomain = True, $WhitelistPatterns = [])
+    public function getLinkedUrls($RestrictToSameDomain = true, $WhitelistPatterns = [])
     {
         // Initialize the variable for links
         $page_links = [];
@@ -46,15 +46,15 @@ class DomUrlParser extends BaseParser
 
                 // Check for null
                 if ($href === NULL) {
-                    return False;
+                    return false;
                 }
 
                 // Parse the URL
                 $href = $this->parseFoundUrl($href, $RestrictToSameDomain);
 
                 // Check for false (invalid href)
-                if ($href === False) {
-                    return False;
+                if ($href === false) {
+                    return false;
                 }
 
                 // Add to the text array
@@ -68,6 +68,6 @@ class DomUrlParser extends BaseParser
         $this->insertOrUpdateLinks($page_links, $link_texts, $WhitelistPatterns);
 
         // Return a success boolean
-        return True;
+        return true;
     }
 }

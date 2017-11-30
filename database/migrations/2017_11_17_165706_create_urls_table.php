@@ -20,8 +20,8 @@ class CreateUrlsTable extends Migration
             $table->datetime('last_crawled')->nullable();
             $table->timestamps();
             $table->integer('times_scanned')->default(0);
-            $table->boolean('curr_scan')->default(False);
-            $table->boolean('extracted_keywords')->default(False);
+            $table->boolean('curr_scan')->default(false);
+            $table->boolean('extracted_keywords')->default(false);
             $table->integer('num_fail_scans')->default(0);
             $table->string('article_hash', 50);
             $table->integer('recrawl_interval')->nullable();

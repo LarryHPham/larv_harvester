@@ -48,7 +48,7 @@ class XmlUrlParser extends BaseParser
      *                                       url
      * @return Boolean                       Success indicator
      */
-    public function getLinkedUrls($RestrictToSameDomain = True, $WhitelistPatterns = [])
+    public function getLinkedUrls($RestrictToSameDomain = true, $WhitelistPatterns = [])
     {
         // Check a variety of tags
         $Complete = $this->parseFeedburnerTags($RestrictToSameDomain) || $this->parseSitemapTags($RestrictToSameDomain) || $this->parseUrlTags($RestrictToSameDomain);
@@ -57,7 +57,7 @@ class XmlUrlParser extends BaseParser
         $this->insertOrUpdateLinks($this->page_links, $this->link_texts, $WhitelistPatterns);
 
         // Return a success boolean
-        return True;
+        return true;
     }
 
     /**
@@ -74,12 +74,12 @@ class XmlUrlParser extends BaseParser
 
         // Check the size
         if (sizeof($tags) === 0) {
-            return False;
+            return false;
         }
 
         // Parse the values
         $this->parseNodes($tags, $RestrictToSameDomain);
-        return True;
+        return true;
     }
 
     /**
@@ -96,7 +96,7 @@ class XmlUrlParser extends BaseParser
 
         // Check the size
         if (sizeof($tags) === 0) {
-            return False;
+            return false;
         }
 
         // Increase the weight added to sitemaps
@@ -104,7 +104,7 @@ class XmlUrlParser extends BaseParser
 
         // Parse the values
         $this->parseNodes($tags, $RestrictToSameDomain, 86400); // Re-crawl all links daily
-        return True;
+        return true;
     }
 
     /**
@@ -121,7 +121,7 @@ class XmlUrlParser extends BaseParser
 
         // Check the size
         if (sizeof($tags) === 0) {
-            return False;
+            return false;
         }
 
         // Parse the values
@@ -129,7 +129,7 @@ class XmlUrlParser extends BaseParser
             ->each(function($node) use ($RestrictToSameDomain) {
                 // Check for a URL
                 if ($node->filter('loc')->count() < 1) {
-                    return False;
+                    return false;
                 }
 
                 // Get the url
@@ -139,11 +139,11 @@ class XmlUrlParser extends BaseParser
                     ->text();
 
                 // Parse the URL
-                $url = $this->parseFoundUrl($url, False);
+                $url = $this->parseFoundUrl($url, false);
 
                 // Check for false or non-kbb domains
-                if ($url === False || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
-                    return False;
+                if ($url === false || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
+                    return false;
                 }
 
                 // Get the re-crawl interval
@@ -185,7 +185,7 @@ class XmlUrlParser extends BaseParser
                 // Add to the page links
                 $this->page_links[] = $url;
             });
-        return True;
+        return true;
     }
 
     /**
@@ -202,15 +202,15 @@ class XmlUrlParser extends BaseParser
 
                 // Check for null
                 if ($url === NULL) {
-                    return False;
+                    return false;
                 }
 
                 // Parse the URL
-                $url = $this->parseFoundUrl($url, False);
+                $url = $this->parseFoundUrl($url, false);
 
                 // Check for false or non-kbb domains
-                if ($url === False || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
-                    return False;
+                if ($url === false || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
+                    return false;
                 }
 
                 // Add to the text array

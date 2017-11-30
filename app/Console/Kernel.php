@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
                         $url
                             ->priority()
                             ->create([
-                                'scheduled' => True,
+                                'scheduled' => true,
                             ]);
                     });
             })
