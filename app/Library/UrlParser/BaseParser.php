@@ -26,6 +26,11 @@ class BaseParser
      */
     protected $parsed_dom;
 
+    /**
+     * This array dictates how often URLs should be re-crawled. If a URL is not
+     * mentioned, it is assumed to be not recrawled
+     * @var Array
+     */
     protected $link_recrawl = [];
 
     /**
