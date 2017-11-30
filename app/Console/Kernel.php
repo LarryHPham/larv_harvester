@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
         // Reset the old crawls that have been abandoned due to deadlock
         $schedule
             ->call(function() {
-                CrawlOrder::deleteAbandonedCrawls();
+                CrawlOrder::resetAbandonedCrawls();
             })
             ->everyTenMinutes();
 

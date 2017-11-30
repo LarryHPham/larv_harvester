@@ -58,7 +58,7 @@ class CrawlOrder extends Model
      * This function resets abandoned crawls (crawls that have a claimed time
      * older than 10 minutes old)
      */
-    public static function deleteAbandonedCrawls()
+    public static function resetAbandonedCrawls()
     {
         // Reset anything between 2017-06-01 and 10 minutes ago
         CrawlOrder::whereBetween('claimed_at', [
