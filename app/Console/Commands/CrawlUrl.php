@@ -21,13 +21,18 @@ class CrawlUrl extends Command
         // Make sure the model exists
         $url_string = $this->argument('url');
         $url = Url::findByHash($url_string);
-
         // If no URL exists, create one
-        if ($url === NULL) {
+        if ($url === null) {
+            // Make the URL
             $url = new Url([
                 'article_url' => $url_string,
             ]);
             $url->save();
+
+            // Create a priority entry
+            $url
+                ->priority()
+                ->create([]);
         }
 
         // If no priority exists, create one

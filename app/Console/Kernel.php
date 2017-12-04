@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         //
         Commands\CrawlUrl::class,
         Commands\StartJobs::class,
+        Commands\ParseUrl::class,
     ];
 
     /**
