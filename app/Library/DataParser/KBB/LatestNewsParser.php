@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Library\Parser\KBB;
+namespace App\Library\DataParser\KBB;
 
-use App\Library\Parser\ArticleParser;
+use App\Library\DataParser\ArticleParser;
 
 class LatestNewsParser extends ArticleParser
 {
@@ -11,7 +11,7 @@ class LatestNewsParser extends ArticleParser
             "//span[contains(@class, 'paragraph-two')]",
             "//div[contains(@class, 'storyCopy')]/p",
             "//div[contains(@class, 'storyCopy')]/div",
-            "//div[contains(@class, 'rich-text')]/p"
+            "//div[contains(@class, 'rich-text')]"
         ];
 
     protected $byline_xpath       = "//div[contains(@class, 'grayTime')]";

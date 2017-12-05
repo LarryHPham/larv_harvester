@@ -6,10 +6,10 @@ use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 // internal imports
 use App\Url;
-use App\Library\Parser\KBB\ExpertReviewParser;
-use App\Library\Parser\KBB\CarVideosParser;
-use App\Library\Parser\KBB\LatestNewsParser;
-use App\Library\Parser\KBB\Top10ListParser;
+use App\Library\DataParser\KBB\ExpertReviewParser;
+use App\Library\DataParser\KBB\CarVideosParser;
+use App\Library\DataParser\KBB\LatestNewsParser;
+use App\Library\DataParser\KBB\Top10ListParser;
 
 class DomDataParser
 {

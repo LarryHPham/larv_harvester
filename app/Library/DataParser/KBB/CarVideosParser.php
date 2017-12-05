@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Library\Parser\KBB;
+namespace App\Library\DataParser\KBB;
 
-use App\Library\Parser\ArticleParser;
+use App\Library\DataParser\ArticleParser;
 
 class CarVideosParser extends ArticleParser
 {

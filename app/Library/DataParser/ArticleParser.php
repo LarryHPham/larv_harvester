@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library\Parser;
+namespace App\Library\DataParser;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use Carbon\Carbon;
@@ -137,43 +137,46 @@ class ArticleParser
 
     protected function getHtmlBody()
     {
-        $paragraphs = [];
+        $outer_html = '';
 
         if (!is_array($this->body_xpath)) {
             $this->body_xpath = [$this->body_xpath];
         }
 
         foreach ($this->body_xpath as $path) {
-            if (empty($paragraphs)) {
-                print("PARSE PATH:".$path."\n");
+            print("PARSE PATH:".$path."\n");
+            if (empty($outer_html)) {
                 $content_crawler = $this->crawl_contents->filterXPath($path);
-                // var_dump($content_crawler);
-                foreach ($content_crawler as $dom_element) {
-                    if (!empty($dom_element->nodeValue)) {
-                        $paragraphs[] = $dom_element->nodeValue;
-                    }
+                if (!empty($content_crawler)) {
+                    // $outer_html = $content_crawler->text();
                 }
+                var_dump(empty($outer_html));
+                // foreach ($content_crawler as $dom_element) {
+                //     if (!empty($dom_element->nodeValue)) {
+                //         $outer_html = $dom_element->outerText;
+                //     }
+                // }
             }
         }
 
         // These conditions are all designed to kill 'bad' paragraphs.
-        foreach ($paragraphs as $index => $paragraph) {
-            if ($paragraph === 'Next Page'
-                || $paragraph === ""
-                || str_contains($paragraph, "By ")
-                || str_contains($paragraph, "<!--")
-                || str_contains($paragraph, "//")
-                || (strlen($paragraph) <= 50)) {
-                unset($paragraphs[$index]);
-            } else {
-                $p = $this->cleanParagraph($paragraph);
-                $paragraphs[$index] = $p;
-            }
-        }
+        // foreach ($paragraphs as $index => $paragraph) {
+        //     if ($paragraph === 'Next Page'
+        //         || $paragraph === ""
+        //         || str_contains($paragraph, "By ")
+        //         || str_contains($paragraph, "<!--")
+        //         || str_contains($paragraph, "//")
+        //         || (strlen($paragraph) <= 50)) {
+        //         unset($paragraphs[$index]);
+        //     } else {
+        //         $p = $this->cleanParagraph($paragraph);
+        //         $paragraphs[$index] = $p;
+        //     }
+        // }
+        //
+        // $paragraphs = array_values($paragraphs);
 
-        $paragraphs = array_values($paragraphs);
-
-        return $paragraphs;
+        // return $paragraphs;
     }
 
 
