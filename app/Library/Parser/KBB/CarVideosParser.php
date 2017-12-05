@@ -10,7 +10,6 @@ class CarVideosParser extends ArticleParser
     protected $byline_xpath    = "//p[contains(@id, 'Expert-overview-byline')]";
     protected $image_xpath     = "//div[contains(@class, 'bc-video-player')]";
     protected $image_attribute = 'data-video-id';
-    protected $sub_category    = 'car-videos';
 
     // This function is unique in that its grabs KBB's article id to construct the image-url.
     // This is necessary because the video's image thumbnail doesn't appear in the html until

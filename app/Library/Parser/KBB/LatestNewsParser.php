@@ -19,5 +19,4 @@ class LatestNewsParser extends ArticleParser
     protected $image_attribute    = 'src';
     protected $stock_img_allowed = true;
 //    protected $htmlBodyFallback  = "//div[contains(@class, 'storyCopy')]/p";
-    protected $sub_category       = "latest-news";
 }

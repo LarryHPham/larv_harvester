@@ -4,38 +4,22 @@ namespace App\Library\Schema;
 
 class ArticleSchema
 {
+    protected $article_id;
+    protected $ready_to_publish;
     protected $title;
-    protected $author;
-    protected $source;
-    protected $publisher;
-    protected $published_date;
-    protected $content;
-    protected $image_url;
-    protected $origin_url;
-    protected $is_stock_photo;
     protected $category;
-    protected $sub_category;
+    protected $attribution;
+    protected $publisher;
+    protected $article_url;
+    protected $published_date;
+    protected $json_last_updated;
+    protected $raw_article_content;
+    protected $image_url;
 
     public function toJson()
     {
         // TODO implement JSON schema validation
         return json_encode(get_object_vars($this));
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsStockPhoto()
-    {
-        return $this->is_stock_photo;
-    }
-
-    /**
-     * @param mixed $is_stock_photo
-     */
-    public function setIsStockPhoto($is_stock_photo)
-    {
-        $this->is_stock_photo = $is_stock_photo;
     }
 
     /**
@@ -89,33 +73,33 @@ class ArticleSchema
     /**
      * @return mixed
      */
-    public function getOriginUrl()
+    public function getArticleUrl()
     {
-        return $this->origin_url;
+        return $this->article_url;
     }
 
     /**
-     * @param mixed $origin_url
+     * @param mixed $article_url
      */
-    public function setOriginUrl($origin_url)
+    public function setArticleUrl($article_url)
     {
-        $this->origin_url = $origin_url;
+        $this->article_url = $article_url;
     }
 
     /**
      * @return mixed
      */
-    public function getAuthor()
+    public function getAttribution()
     {
-        return $this->author;
+        return $this->attribution;
     }
 
     /**
-     * @param mixed $author
+     * @param mixed $attribution
      */
-    public function setAuthor($author)
+    public function setAttribution($attribution)
     {
-        $this->author = $author;
+        $this->attribution = $attribution;
     }
 
     /**
@@ -171,15 +155,15 @@ class ArticleSchema
      */
     public function getContent()
     {
-        return $this->content;
+        return $this->raw_article_content;
     }
 
     /**
-     * @param mixed $content
+     * @param mixed $raw_article_content
      */
-    public function setContent($content)
+    public function setContent($raw_article_content)
     {
-        $this->content = $content;
+        $this->raw_article_content = $raw_article_content;
     }
 
     /**
@@ -227,6 +211,7 @@ class ArticleSchema
      */
     protected function getKeywords()
     {
+        // NOTE: Keywords come from meta tags
         $keywords = array("KBB", $this->getCategory(), $this->getSubCategory());
         return $keywords;
     }

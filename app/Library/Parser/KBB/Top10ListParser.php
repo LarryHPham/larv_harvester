@@ -1,4 +1,4 @@
-<?php
+x<?php
 
 namespace App\Library\Parser\KBB;
 
@@ -14,5 +14,4 @@ class Top10ListParser extends ArticleParser
     protected $byline_xpath    = "//p[contains(@id, 'Expert-overview-byline')]";
     protected $image_xpath     = "//meta[contains(@property, 'og:image')]";
     protected $image_attribute = "content";
-    protected $sub_category    = "top-10-lists";
 }

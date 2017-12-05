@@ -31,21 +31,25 @@ class DomDataParser
 
     public function getCorrectParserForUrlPattern($url, $content)
     {
-        if (str_contains($url, 'expert_car_reviews')) {
-            print("Expert Review Parser: ".$url."\n");
-            $parser = new ExpertReviewParser($url, $content);
-        } elseif (str_contains($url, 'car-news/all-the-latest')) {
-            print("Latest News Parser: ".$url."\n");
-            $parser = new LatestNewsParser($url, $content);
-        } elseif (str_contains($url, 'car-videos')) {
-            print("Car Videos Parser: ".$url."\n");
-            $parser = new CarVideosParser($url, $content);
-        } elseif (str_contains($url, 'car-reviews-and-news/top-10')) {
-            // TODO need to be able to restrict this to the 'landing page' for each list
-            print("Top 10 Parser: ".$url."\n");
-            $parser = new Top10ListParser($url, $content);
-        } else {
-            throw new \Exception("No acceptable url patterns found in url: $url");
+        switch (true) {
+          case str_contains($url, 'expert_car_reviews'):
+              print("Expert Review Parser: ".$url."\n");
+              $parser = new ExpertReviewParser($url, $content);
+          break;
+          case str_contains($url, 'car-news/all-the-latest'):
+              print("Latest News Parser: ".$url."\n");
+              $parser = new LatestNewsParser($url, $content);
+          break;
+          case str_contains($url, 'car-videos'):
+              print("Car Videos Parser: ".$url."\n");
+              $parser = new CarVideosParser($url, $content);
+          break;
+          case str_contains($url, 'car-reviews-and-news/top-10'):
+              print("Top 10 Parser: ".$url."\n");
+              $parser = new Top10ListParser($url, $content);
+          break;
+          default:
+              throw new \Exception("No acceptable url patterns found in url: $url");
         }
 
         return $parser;

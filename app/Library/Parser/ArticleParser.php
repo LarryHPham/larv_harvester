@@ -23,10 +23,7 @@ class ArticleParser
     protected $byline_xpath;
 
     protected $category = 'automotive';
-    protected $sub_category = null;
-    protected $is_stock_img = false;
 
-    protected $stock_img_allowed = false;
     protected $verify_img_host = false;
     protected $html_body_fallback = false;
 
@@ -43,7 +40,7 @@ class ArticleParser
     {
         $title = $this->getTitle();
         $byline = $this->getByline();
-        $date = (!is_null($byline['date'])) ? $byline['date'] : $this->getYear($this->article_url, $title);
+        $date = (!empty($byline['date'])) ? $byline['date'] : $this->getYear($this->article_url, $title);
         if (is_null($date)) {
             $date = $this->getDateByXPath();
         }
@@ -53,7 +50,7 @@ class ArticleParser
         // Generate new schema to set data points in
         $article_data = new ArticleSchema();
         $article_data->setTitle($title);
-        $article_data->setAuthor($byline['author']);
+        $article_data->setAttribution($byline['attribution']);
         $article_data->setPublisher('Kelley Blue Book');
         $article_data->setPublishedDate($this->normalizeDateFormat($date));
         $article_data->setContent($paragraphs);
@@ -83,8 +80,8 @@ class ArticleParser
 
     protected function getByline()
     {
-        $byline['author'] = "By KBB.com Editors";
-        $byline['date'] = null;
+        $byline['attribution'] = "KBB.com Editors";
+        $byline['date'] = '';
 
         if (!is_null($this->byline_xpath)) {
             $byline_crawler = $this->crawl_contents->filterXPath($this->byline_xpath);
@@ -100,7 +97,7 @@ class ArticleParser
                     $date_markerLength = strlen($date_marker);
                     if (strpos($byline_text, $date_marker)) {
                         $endpoint         = strpos($byline_text, $date_marker);
-                        $byline['author'] = $this->cleanFormatting(substr($byline_text, 0, $endpoint));
+                        $byline['attribution'] = $this->cleanFormatting(substr($byline_text, 0, $endpoint));
                         $byline['date']   = $this->cleanFormatting(substr($byline_text, $endpoint + $date_markerLength));
                     }
                 }
@@ -183,7 +180,7 @@ class ArticleParser
     protected function getImage()
     {
         $image_url = null;
-        
+
         if (!is_null($this->image_xpath)) {
             $image_crawler = $this->crawl_contents->filterXPath($this->image_xpath);
             foreach ($image_crawler as $img) {
@@ -202,15 +199,6 @@ class ArticleParser
         } else {
             $class = get_class($this);
             throw new \Exception("Class attribute `image_xpath` must be set in must be set in $class");
-        }
-
-        if (is_null($image_url)) {
-            if ($this->stock_img_allowed) {
-                $image_url = $this->getStockImage();
-                $this->is_stock_img = true;
-            } else {
-                throw new \Exception('No image found.');
-            }
         }
 
         return $image_url;

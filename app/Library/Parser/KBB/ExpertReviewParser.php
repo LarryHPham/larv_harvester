@@ -10,6 +10,5 @@ class ExpertReviewParser extends ArticleParser
     protected $byline_xpath     = "//p[contains(@id, 'Expert-overview-byline')]";
     protected $image_xpath      = "//img[boolean(@alt)]";
     protected $image_attribute  = 'src';
-    protected $sub_category     = 'expert-reviews';
     protected $verify_img_host = 'file.kbb.com';
 }
