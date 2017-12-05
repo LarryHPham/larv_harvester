@@ -68,7 +68,7 @@ class ArticleParser
         // $article_data->setIsStockPhoto($this->is_stock_img);
         // $article_data->setCategory($this->category);
 
-        return $article_data;
+        return $article_data->toJson();
     }
 
 

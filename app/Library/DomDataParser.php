@@ -22,7 +22,7 @@ class DomDataParser
         print("UrlParser Constructing: ".$url."\n");
         $parser = $this->getCorrectParserForUrlPattern($url, $content);
         $this->article_data = $parser->getContentForUrl();
-        var_dump($this->article_data);
+        print("JSON OUTPUT => ".$this->article_data."\n");
     }
 
     public function handle()
