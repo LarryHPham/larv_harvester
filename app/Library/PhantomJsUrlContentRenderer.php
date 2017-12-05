@@ -30,6 +30,8 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
     public function __construct()
     {
         $this->numRedirects    = 0;
+
+        // max redirects by default is 5
         $this->maxNumRedirects = config('cas.content_render.max_redirects');
     }
 
@@ -63,6 +65,7 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
             $return_data = [];
 
             $client = Client::getInstance();
+            // phantomjs_path is usually in the '/usr/bin/phantomjs'
             $client->getEngine()->setPath(config('cas.content_render.phantomjs_path'));
             $client->getEngine()->addOption('--load-images=false');
             $client->getEngine()->addOption('--ignore-ssl-errors=true');
@@ -70,6 +73,7 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
             $client->getProcedureCompiler()->disableCache();
             $client->isLazy(); // Tells the client to wait for all resources before rendering
 
+            // cas.http_user_agent "SNTMedia-Crawler/1.0 default"
             $request = $client->getMessageFactory()->createRequest($url, 'GET');
             $request->addHeader('User-Agent', config('cas.http_user_agent'));
             $request->setTimeout($timeout); // Will render page if this timeout is reached and resources haven't finished loading
