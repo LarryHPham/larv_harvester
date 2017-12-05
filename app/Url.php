@@ -44,7 +44,7 @@ class Url extends Model
      * This function finds models by the hash of the URL while being passed a
      * URL to make this functionality easier
      * @param  String $url The URL to search for
-     * @return Url         The URL model of the matching URL (or NULL if none is
+     * @return Url         The URL model of the matching URL (or null if none is
      *                     found)
      */
     public static function findByHash(String $url)
@@ -89,5 +89,15 @@ class Url extends Model
         return $this
             ->belongsToMany('App\User', 'articles_linked', 'article_id', 'linked_article_id')
             ->withPivot('link_text');
+    }
+
+    /**
+     * The link to the crawl_order table that dictates priority
+     * @return CrawlOrder
+     */
+    public function priority()
+    {
+        return $this
+            ->hasOne('App\CrawlOrder', 'article_id');
     }
 }

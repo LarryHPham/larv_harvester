@@ -3,12 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
-use Carbon\Carbon;
-use GuzzleHttp\Client as GuzzleClient;
 use App\Url;
-use App\Jobs\PageFetcher;
-use Illuminate\Contracts\Bus\Dispatcher;
 
 class CrawlUrl extends Command
 {
@@ -26,16 +21,33 @@ class CrawlUrl extends Command
         // Make sure the model exists
         $url_string = $this->argument('url');
         $url = Url::findByHash($url_string);
-
         // If no URL exists, create one
-        if ($url === NULL) {
+        if ($url === null) {
+            // Make the URL
             $url = new Url([
                 'article_url' => $url_string,
             ]);
             $url->save();
+
+            // Create a priority entry
+            $url
+                ->priority()
+                ->create([]);
         }
 
-        // Create the job
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageFetcher($url));
+        // If no priority exists, create one
+        if ($url->priority === null) {
+            $url
+                ->priority()
+                ->create([]);
+        }
+
+        // Make the crawl_order
+        $url
+            ->priority
+            ->save([
+                'scheduled' => true,
+                'weight' => 20,
+            ]);
     }
 }

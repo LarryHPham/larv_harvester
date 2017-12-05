@@ -2,22 +2,18 @@
 
 namespace App\Jobs;
 
-use App\Url;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
-use App\Library\DomUrlParser;
+use App\Url;
+use App\CrawlOrder;
+use App\Library\DomCache;
+use App\Library\DomDataParser;
+use App\CrawlOrder;
 
 class PageFetcher extends Job
 {
-    /**
-     * The results of running `parse_url` on the URL model's URL. This is saved
-     * here to avoid running the function repeatedly
-     * @var Object
-     */
-    private $url_parts;
-
     /**
      * The URL model that was passed into the job
      * @var Url
@@ -37,22 +33,10 @@ class PageFetcher extends Job
     private $parse_urls;
 
     /**
-     * The job's constructor function. This function saves the parameters passed
-     * into the job as class properties
-     * @param Url     $url          The URL model to crawl
-     * @param Boolean $parseContent Whether the content should be parsed for
-     *                              meta-data
+     * The CrawlOrder model to parse next
+     * @var CrawlOrder
      */
-    public function __construct(Url $url, $parseContent = True, $parseUrls = True)
-    {
-        // Save the model and parts
-        $this->url_model = $url;
-        $this->url_parts = parse_url($url->article_url);
-
-        // Save the parse flag
-        $this->parse_content = $parseContent === True;
-        $this->parse_urls = $parseUrls === True;
-    }
+    private $next_crawl_order;
 
     /**
      * This function executes the main portion of the job. It will grab the URL,
@@ -61,8 +45,28 @@ class PageFetcher extends Job
      */
     public function handle()
     {
+        // Always dispatch another job
+        dispatch(new PageFetcher());
+
+        // Get the next URL to crawl
+        $this->next_crawl_order = CrawlOrder::getNextUrl();
+
+        // Check for a next crawl
+        if ($this->next_crawl_order === null) {
+            return true;
+        }
+
+        // Save the claim
+        $this->next_crawl_order->claimed_at = \Carbon\Carbon::now();
+        $this->next_crawl_order->save();
+
+        // Get the URL model
+        $this->url_model = $this->next_crawl_order->urlModel;
+        $this->parse_content = $this->next_crawl_order->get_content;
+        $this->parse_urls = $this->next_crawl_order->get_urls;
+
         // Mark the URL as being scraped
-        $this->url_model->curr_scan = True;
+        $this->url_model->curr_scan = true;
         $this->url_model->last_crawled = (new Carbon())::now();
         $this->url_model->save();
 
@@ -72,14 +76,14 @@ class PageFetcher extends Job
         // Request the page
         try {
             $response = $client->request('GET', $this->url_model->article_url, [
-                'exceptions' => FALSE,
+                'exceptions' => false,
             ]);
         } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
-            $this->markFailed(-1);
-            return False;
+            $this->markFailed(1);
+            return false;
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             $this->markFailed(-2);
-            return False;
+            return false;
         }
 
         // Check the status code
@@ -88,12 +92,12 @@ class PageFetcher extends Job
                 break;
             default:
                 $this->markFailed($response->getStatusCode());
-                return False;
+                return false;
         }
 
         // Increment the scanned count
         $this->url_model->times_scanned++;
-        $this->url_model->curr_scan = False;
+        $this->url_model->curr_scan = false;
 
         // Save the data for the URL
         $this->url_model->save();
@@ -101,10 +105,28 @@ class PageFetcher extends Job
         // Get the dom
         $body = (string) $response->getBody();
 
+		$article_url = $this->url_model->article_url;
+
+        // Cache String Dom by sending in url as hash md5
+        $hash_entry_url = Url::createHash($article_url);
+        print("ENTRY URL HASH: $hash_entry_url \n");
+
+        $cache_storage = new DomCache();
+        $cache_storage->cacheContent($hash_entry_url, $body);
+
+        // set variable to be used as cached data
+        $body = $cache_storage->getCacheData($hash_entry_url);
+        
         // Get the URLs on the page (if needed)
         if ($this->parse_urls) {
-            $UrlParser = new DomUrlParser($this->url_model, $body);
-            $UrlParser->getLinkedUrls(True, [ // True - restrict to same domain
+            // Determine which parser to use
+            if (parse_url($this->url_model->article_url)['host'] === 'rss.kbb.com' || preg_match('/\.xml$/', $this->url_model->article_url) === 1) {
+                $UrlParser = new \App\Library\UrlParser\XmlUrlParser($this->url_model, $body);
+            } else {
+                $UrlParser = new \App\Library\UrlParser\DomUrlParser($this->url_model, $body);
+            }
+
+            $UrlParser->getLinkedUrls(true, [ // true - restrict to same domain
                 'expert_car_reviews',
                 'car-news/all-the-latest',
                 'car-videos',
@@ -113,6 +135,16 @@ class PageFetcher extends Job
         }
 
         // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
+        // dispatch new job to parse out the cached data and the hash
+        if ($this->parse_content) {
+            dispatch(new DomDataParser($article_url, $body));
+        }
+
+        // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
+        $cache_storage->removeCachedData($hash_entry_url);
+
+        // Delete from the table
+        $this->next_crawl_order->delete();
     }
 
     /**
@@ -122,22 +154,30 @@ class PageFetcher extends Job
     private function markFailed($code)
     {
         $this->url_model->times_scanned++;
-        $this->url_model->curr_scan = False;
+        $this->url_model->curr_scan = false;
         $this->url_model->num_fail_scans++;
         $this->url_model->failed_status_code = $code;
         $this->url_model->save();
+
+        // Re-crawl or not (only curl errors and only try 5 times)
+        if ($code > 0 || $this->url_model->num_fail_scans > 5) {
+            $this->next_crawl_order->delete();
+        } else {
+            // Decrease the priority
+            $this->next_crawl_order->weight = round($this->next_crawl_order->weight / 2);
+            $this->next_crawl_order->claimed_at = null;
+            $this->next_crawl_order->save();
+        }
     }
 
     /**
-     * This function runs if the job fails and sets curr_scan to False and
+     * This function runs if the job fails and sets curr_scan to false and
      * increments the number of failed scans.
      * @param  Exception $exception The exeception that occured
      */
-    public function failed(Exception $exception)
+    public function failed(\Exception $exception)
     {
         // Mark the model as not being crawled
-        $this->url_model->curr_scan = False;
-        $this->url_model->num_fail_scans++;
-        $this->url_model->save();
+        $this->markFailed(-5);
     }
 }

@@ -48,6 +48,11 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+// WEBHARVESTER will need to point to the filesystem configuration and load the proper component to be used
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
