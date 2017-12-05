@@ -135,7 +135,7 @@ class BaseParser
             // Insert the URL if it doesn't already exist
             try {
                 $new_url = Url::findByHash($found_link);
-                if ($new_url === NULL) {
+                if ($new_url === null) {
                     // Create the URL
                     $new_url = new Url([
                         'article_url' => $found_link,
@@ -149,13 +149,13 @@ class BaseParser
                 }
             } catch (\Illuminate\Database\QueryException $e) {
                 $new_url = Url::findByHash($found_link);
-                if ($new_url === NULL) {
+                if ($new_url === null) {
                     continue;
                 }
             }
 
             // Increment the weight
-            if ($new_url->priority !== NULL) {
+            if ($new_url->priority !== null) {
                 $new_url->priority->weight++;
 
                 // Check for additional weighting

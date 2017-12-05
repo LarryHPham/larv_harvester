@@ -44,7 +44,7 @@ class Url extends Model
      * This function finds models by the hash of the URL while being passed a
      * URL to make this functionality easier
      * @param  String $url The URL to search for
-     * @return Url         The URL model of the matching URL (or NULL if none is
+     * @return Url         The URL model of the matching URL (or null if none is
      *                     found)
      */
     public static function findByHash(String $url)

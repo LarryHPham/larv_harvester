@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
                     ->where(\DB::raw('FROM_UNIXTIME(UNIX_TIMESTAMP(last_crawled) + recrawl_interval)'), '<=', \Carbon\Carbon::now())
                     ->each(function($url) {
                         // Check to see if the URL has a priority already
-                        if ($url->priority !== NULL) {
+                        if ($url->priority !== null) {
                             return;
                         }
 

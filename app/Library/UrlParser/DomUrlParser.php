@@ -45,7 +45,7 @@ class DomUrlParser extends BaseParser
                 $href = $node->attr('href');
 
                 // Check for null
-                if ($href === NULL) {
+                if ($href === null) {
                     return false;
                 }
 

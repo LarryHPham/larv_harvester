@@ -46,7 +46,7 @@ class CrawlOrder extends Model
 
         // Check to make sure a row was created
         if ($count < 1) {
-            return NULL;
+            return null;
         }
 
         // Return the row
@@ -66,7 +66,7 @@ class CrawlOrder extends Model
             Carbon::now()->subMinutes(10),
         ])
             ->update([
-                'claimed_at' => NULL,
+                'claimed_at' => null,
             ]);
     }
 

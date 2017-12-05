@@ -52,7 +52,7 @@ class PageFetcher extends Job
         $this->next_crawl_order = CrawlOrder::getNextUrl();
 
         // Check for a next crawl
-        if ($this->next_crawl_order === NULL) {
+        if ($this->next_crawl_order === null) {
             return true;
         }
 
@@ -165,7 +165,7 @@ class PageFetcher extends Job
         } else {
             // Decrease the priority
             $this->next_crawl_order->weight = round($this->next_crawl_order->weight / 2);
-            $this->next_crawl_order->claimed_at = NULL;
+            $this->next_crawl_order->claimed_at = null;
             $this->next_crawl_order->save();
         }
     }

@@ -36,7 +36,7 @@ class CrawlUrl extends Command
         }
 
         // If no priority exists, create one
-        if ($url->priority === NULL) {
+        if ($url->priority === null) {
             $url
                 ->priority()
                 ->create([]);

@@ -170,8 +170,8 @@ class XmlUrlParser extends BaseParser
                             break;
                         case 'never':
                         default:
-                            // Never re-crawl means interval of NULL
-                            $recrawl_seconds = NULL;
+                            // Never re-crawl means interval of null
+                            $recrawl_seconds = null;
                             break;
                     }
 
@@ -193,7 +193,7 @@ class XmlUrlParser extends BaseParser
      * @param  Array   $nodeList             The nodes to parse
      * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
      */
-    private function parseNodes($nodeList, $RestrictToSameDomain, $RecrawlInterval = NULL)
+    private function parseNodes($nodeList, $RestrictToSameDomain, $RecrawlInterval = null)
     {
         $nodeList
             ->each(function($node) use ($RestrictToSameDomain, $RecrawlInterval) {
@@ -201,7 +201,7 @@ class XmlUrlParser extends BaseParser
                 $url = $node->text();
 
                 // Check for null
-                if ($url === NULL) {
+                if ($url === null) {
                     return false;
                 }
 
@@ -217,7 +217,7 @@ class XmlUrlParser extends BaseParser
                 $this->link_texts[$url] = '{{XML Link}}';
 
                 // Check for a recrawl interval
-                if ($RecrawlInterval !== NULL) {
+                if ($RecrawlInterval !== null) {
                     $this->link_recrawl[$url] = $RecrawlInterval;
                 }
 

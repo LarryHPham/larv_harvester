@@ -18,7 +18,7 @@ class DomDataParser
     public function __construct($url, $content)
     {
         // TODO Set Base Interface that is the requirements for a basic article
-        $url = str_replace("NULL", "", $url);// TODO temp
+        $url = str_replace("null", "", $url);// TODO temp
         print("UrlParser Constructing: ".$url."\n");
         $parser = $this->getCorrectParserForUrlPattern($url, $content);
         $this->article_data = $parser->getContentForUrl();
