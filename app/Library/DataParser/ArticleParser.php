@@ -49,8 +49,15 @@ class ArticleParser
 
         // Generate new schema to set data points in
         $article_data = new ArticleSchema();
+
+        // Put in known variables
+        $article_data->setArticleUrl($this->article_url);
+
+        // Run functions to set Data
         $article_data->setTitle($title);
-        $article_data->setAttribution($byline['attribution']);
+        if (!isset($this->attribution) || !empty($byline['attribution'])) {
+            $article_data->setAttribution($byline['attribution']);
+        }
         $article_data->setPublisher('Kelley Blue Book');
         $article_data->setPublishedDate($this->normalizeDateFormat($date));
         $article_data->setContent($paragraphs);
@@ -60,7 +67,6 @@ class ArticleParser
         // $article_data->setOriginUrl($this->url);
         // $article_data->setIsStockPhoto($this->is_stock_img);
         // $article_data->setCategory($this->category);
-        // $article_data->setSubCategory($this->sub_category);
 
         return $article_data;
     }
@@ -80,7 +86,7 @@ class ArticleParser
 
     protected function getByline()
     {
-        $byline['attribution'] = "KBB.com Editors";
+        $byline['attribution'] = '';
         $byline['date'] = '';
 
         if (!is_null($this->byline_xpath)) {
@@ -147,15 +153,9 @@ class ArticleParser
             print("PARSE PATH:".$path."\n");
             if (empty($outer_html)) {
                 $content_crawler = $this->crawl_contents->filterXPath($path);
-                if (!empty($content_crawler)) {
-                    // $outer_html = $content_crawler->text();
+                if ($content_crawler->count() > 0) {
+                    $outer_html = $content_crawler->html();
                 }
-                var_dump(empty($outer_html));
-                // foreach ($content_crawler as $dom_element) {
-                //     if (!empty($dom_element->nodeValue)) {
-                //         $outer_html = $dom_element->outerText;
-                //     }
-                // }
             }
         }
 
@@ -176,7 +176,7 @@ class ArticleParser
         //
         // $paragraphs = array_values($paragraphs);
 
-        // return $paragraphs;
+        return $outer_html;
     }
 
 
@@ -228,23 +228,23 @@ class ArticleParser
     }
 
 
-    protected function cleanParagraph($paragraph)
-    {
-        $paragraph = str_replace("\n", ' ', $paragraph);
-        $paragraph = str_replace(">", '', $paragraph);
-        $paragraph = str_replace('  ', ' ', $paragraph);
-        $paragraph = explode(' ', $paragraph);
-
-        foreach ($paragraph as $index => $t) {
-            if (ctype_alpha($t) && ($t === strtoupper($t)) && (strlen($t) > 1)) {
-                unset($paragraph[$index]);
-            }
-        }
-
-        $paragraph = implode(' ', $paragraph);
-        $paragraph = trim(str_replace('Read more', '', $paragraph));
-        return $paragraph;
-    }
+    // protected function cleanParagraph($paragraph)
+    // {
+    //     $paragraph = str_replace("\n", ' ', $paragraph);
+    //     $paragraph = str_replace(">", '', $paragraph);
+    //     $paragraph = str_replace('  ', ' ', $paragraph);
+    //     $paragraph = explode(' ', $paragraph);
+    //
+    //     foreach ($paragraph as $index => $t) {
+    //         if (ctype_alpha($t) && ($t === strtoupper($t)) && (strlen($t) > 1)) {
+    //             unset($paragraph[$index]);
+    //         }
+    //     }
+    //
+    //     $paragraph = implode(' ', $paragraph);
+    //     $paragraph = trim(str_replace('Read more', '', $paragraph));
+    //     return $paragraph;
+    // }
 
 
     protected function getStockImage()

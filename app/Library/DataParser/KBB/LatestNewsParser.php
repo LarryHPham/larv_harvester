@@ -17,6 +17,6 @@ class LatestNewsParser extends ArticleParser
     protected $byline_xpath       = "//div[contains(@class, 'grayTime')]";
     protected $image_xpath        = "//img[contains(@class, 'cq-dd-image')]";
     protected $image_attribute    = 'src';
-    protected $stock_img_allowed = true;
+    protected $attribution        = "KBB.com Editors";
 //    protected $htmlBodyFallback  = "//div[contains(@class, 'storyCopy')]/p";
 }

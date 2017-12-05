@@ -14,7 +14,7 @@ class ArticleSchema
     protected $published_date;
     protected $json_last_updated;
     protected $raw_article_content;
-    protected $image_url;
+    protected $primary_image;
 
     public function toJson()
     {
@@ -171,15 +171,15 @@ class ArticleSchema
      */
     public function getImageUrl()
     {
-        return $this->image_url;
+        return $this->primary_image;
     }
 
     /**
-     * @param mixed $image_url
+     * @param mixed $primary_image
      */
-    public function setImageUrl($image_url)
+    public function setImageUrl($primary_image)
     {
-        $this->image_url = $image_url;
+        $this->primary_image = $primary_image;
     }
 
 
@@ -196,13 +196,13 @@ class ArticleSchema
      * Given image url, format image URL to the required format
      * @return mixed
      */
-    protected function getFormattedImageURL($image_url)
+    protected function getFormattedImageURL($primary_image)
     {
-        $parsed_url = parse_url($image_url);
+        $parsed_url = parse_url($primary_image);
         if (isset($parsed_url['scheme'])) {
-            return $image_url;
+            return $primary_image;
         } else {
-            return "http://".$image_url;
+            return "http://".$primary_image;
         }
     }
     /**
