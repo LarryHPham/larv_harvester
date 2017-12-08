@@ -15,12 +15,6 @@ class XmlUrlParser extends BaseParser
     private $page_links = [];
 
     /**
-     * The text in each link
-     * @var Array
-     */
-    private $link_texts = [];
-
-    /**
      * The weight to add to each link
      * @var Array
      */
@@ -54,7 +48,7 @@ class XmlUrlParser extends BaseParser
         $Complete = $this->parseFeedburnerTags($RestrictToSameDomain) || $this->parseSitemapTags($RestrictToSameDomain) || $this->parseUrlTags($RestrictToSameDomain);
 
         // Insert and update the found links
-        $this->insertOrUpdateLinks($this->page_links, $this->link_texts, $WhitelistPatterns);
+        $this->insertOrUpdateLinks($this->page_links, $WhitelistPatterns);
 
         // Return a success boolean
         return true;
@@ -179,9 +173,6 @@ class XmlUrlParser extends BaseParser
                     $this->link_recrawl[$url] = $recrawl_seconds;
                 }
 
-                // Add to the text array
-                $this->link_texts[$url] = '{{XML Link}}';
-
                 // Add to the page links
                 $this->page_links[] = $url;
             });
@@ -212,9 +203,6 @@ class XmlUrlParser extends BaseParser
                 if ($url === false || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
                     return false;
                 }
-
-                // Add to the text array
-                $this->link_texts[$url] = '{{XML Link}}';
 
                 // Check for a recrawl interval
                 if ($RecrawlInterval !== null) {

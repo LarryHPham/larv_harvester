@@ -124,7 +124,7 @@ class BaseParser
      * pages for old links
      * @param  Array $page_links The links found on the page
      */
-    protected function insertOrUpdateLinks($page_links, $link_texts, $WhitelistPatterns)
+    protected function insertOrUpdateLinks($page_links, $WhitelistPatterns)
     {
         // Sort the links and remove duplicates
         arsort($page_links);
@@ -140,6 +140,7 @@ class BaseParser
                     $new_url = new Url([
                         'article_url' => $found_link,
                         'active_crawl' => $this->shouldCrawlUrl($found_link, $WhitelistPatterns),
+                        'created_at' => $this->url_model->last_crawled,
                     ]);
                     $new_url->save();
 
@@ -176,9 +177,7 @@ class BaseParser
             $this
                 ->url_model
                 ->articleLinksTo()
-                ->save($new_url, [
-                    'link_text' => trim($link_texts[$found_link]),
-                ]);
+                ->save($new_url);
         }
     }
 }

@@ -17,7 +17,6 @@ class CreateArticlesLinkedTable extends Migration
             $table->increments('id');
             $table->integer('article_id');
             $table->integer('linked_article_id');
-            $table->mediumtext('link_text')->nullable();
 
             $table->index('article_id');
             $table->index('linked_article_id');
