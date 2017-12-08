@@ -4,7 +4,6 @@ namespace App\Library\UrlParser;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Url;
-use App\Jobs\PageFetcher;
 
 class DomUrlParser extends BaseParser
 {

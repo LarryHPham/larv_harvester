@@ -3,7 +3,6 @@
 namespace App\Library\UrlParser;
 
 use App\Url;
-use App\Jobs\PageFetcher;
 
 class BaseParser
 {
