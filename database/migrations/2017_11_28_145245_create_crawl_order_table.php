@@ -16,7 +16,7 @@ class CreateCrawlOrderTable extends Migration
         Schema::create('crawl_order', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('article_id');
-            $table->integer('weight')->default(0); // Default to 0 to allow easy incrementing
+            $table->smallInteger('weight')->default(0); // Default to 0 to allow easy incrementing
             $table->boolean('scheduled')->default(false);
             $table->boolean('get_urls')->default(true);
             $table->boolean('get_content')->default(true);
