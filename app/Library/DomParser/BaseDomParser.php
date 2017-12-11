@@ -77,7 +77,7 @@ class BaseDomParser
         // Get the base information
         $article_data = [
             'article_id' => $this->url->id,
-            'ready_to_publish' => true,
+            'ready_to_publish' => false,
             'title' => $this->getTitle(),
             'category' => null, // @TODO fill out this field
             'article_type' => null, // @TODO fill out this field
