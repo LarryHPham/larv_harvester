@@ -125,6 +125,7 @@ class PageFetcher extends Job
 
             // Save the parser used
             $this->url_model->parsed_by = $parser->parserUsed;
+            $this->url_model->save();
         }
 
         // Delete from the table
