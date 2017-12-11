@@ -97,6 +97,7 @@ class BaseParser
 
         // Add the components (if available)
         if (isset($url_parts['path'])) {
+            // Remove the trailing slash from a path if exists
             $href .= preg_replace('/\/+$/', '', $url_parts['path']);
         }
         if (isset($url_parts['query'])) {
