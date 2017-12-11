@@ -10,7 +10,7 @@ use App\Library\DomParser\BaseDomParser;
  * Example pages:
  * http://www.kbb.com/acura/ilx/2013-acura-ilx
  */
-class CarArticle extends BaseDomParser
+class CarArticleFormat1 extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\PhotoSizeChanger,

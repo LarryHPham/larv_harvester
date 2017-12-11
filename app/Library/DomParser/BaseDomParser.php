@@ -77,10 +77,10 @@ class BaseDomParser
         // Get the base information
         $article_data = [
             'article_id' => $this->url->id,
-            'ready_to_publish' => true,
+            'ready_to_publish' => false,
             'title' => $this->getTitle(),
-            'category' => null,
-            'article_type' => null,
+            'category' => null, // @TODO fill out this field
+            'article_type' => null, // @TODO fill out this field
             'meta_title' => $this->getMetaTitle(),
             'meta_keywords' => $this->getMetaKeywords(),
             'meta_description' => $this->getMetaDescription(),
@@ -100,6 +100,8 @@ class BaseDomParser
             $article_data['primary_image'] = array_shift($article_data['image_array']);
         }
 
+        // @TODO pass the images into the image storage service
+
         return $article_data;
     }
 
@@ -117,7 +119,7 @@ class BaseDomParser
             ->content
             ->filterXPath($xpath)
             ->each(function ($node) use (&$result) {
-                $result .= ' ' . $node->text();
+                $result .= ' ' . $node->html();
             });
 
         return $this->cleanStringFormatting($result);

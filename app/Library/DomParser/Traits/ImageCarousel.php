@@ -27,7 +27,9 @@ trait ImageCarousel
                 'image_source_url' => $image['path'],
                 'image_width' => null,
                 'image_height' => null,
-                'image_title' => $image['title'],
+                'image_title' => isset($image['title'])
+                    ? $image['title']
+                    : '',
             ];
         }
         unset($image);
