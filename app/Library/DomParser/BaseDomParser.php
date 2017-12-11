@@ -119,7 +119,7 @@ class BaseDomParser
             ->content
             ->filterXPath($xpath)
             ->each(function ($node) use (&$result) {
-                $result .= ' ' . $node->text();
+                $result .= ' ' . $node->html();
             });
 
         return $this->cleanStringFormatting($result);
