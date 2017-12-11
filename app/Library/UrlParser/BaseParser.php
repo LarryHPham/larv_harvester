@@ -87,7 +87,7 @@ class BaseParser
         $url_parts = parse_url($href);
 
         // Make sure the URL is on the same domain
-        if ($CheckDomain && parse_url($href, PHP_URL_HOST) !== $this->url_parts['host']) {
+        if ($CheckDomain && $url_parts['host'] !== $this->url_parts['host']) {
             return false;
         }
 
