@@ -73,7 +73,7 @@ class BaseDomParser
     public function getValues()
     {
         // @TODO add a switch for rendering via PhantomJS
-        
+
         // Get the base information
         $article_data = [
             'article_id' => $this->url->id,
@@ -99,8 +99,6 @@ class BaseDomParser
             // Pull the first element and remove from image_array
             $article_data['primary_image'] = array_shift($article_data['image_array']);
         }
-
-        print json_encode($article_data, JSON_PRETTY_PRINT) . "\n";
 
         return $article_data;
     }
