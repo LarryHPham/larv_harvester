@@ -119,7 +119,7 @@ class XmlUrlParser extends BaseParser
 
         // Parse the values
         $tags
-            ->each(function($node) use ($RestrictToSameDomain) {
+            ->each(function ($node) use ($RestrictToSameDomain) {
                 // Check for a URL
                 if ($node->filter('loc')->count() < 1) {
                     return false;
@@ -135,7 +135,7 @@ class XmlUrlParser extends BaseParser
                 $url = $this->parseFoundUrl($url, false);
 
                 // Check for false or non-kbb domains
-                if ($url === false || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
+                if ($url === false || ($RestrictToSameDomain && parse_url($url, PHP_URL_HOST) !== 'www.kbb.com')) {
                     return false;
                 }
 
@@ -143,19 +143,23 @@ class XmlUrlParser extends BaseParser
                 if ($node->filter('changefreq')->count() > 0) {
                     // Determine how many seconds
                     $recrawl_seconds = 1;
-                    switch($node->filter('changefreq')->first()->text()) {
+                    switch ($node->filter('changefreq')->first()->text()) {
                         case 'yearly':
                             // Times 12 months in a year
                             $recrawl_seconds *= 12;
+                            // no break
                         case 'monthly':
                             // Times 4 weeks in a month
                             $recrawl_seconds *= 4;
+                            // no break
                         case 'weekly':
                             // Times 7 days in a week
                             $recrawl_seconds *= 7;
+                            // no break
                         case 'daily':
                             // Times 24 hours in a day
                             $recrawl_seconds *= 24;
+                            // no break
                         case 'hourly':
                         case 'always':
                             // Times 3600 seconds in an hour
@@ -186,7 +190,7 @@ class XmlUrlParser extends BaseParser
     private function parseNodes($nodeList, $RestrictToSameDomain, $RecrawlInterval = null)
     {
         $nodeList
-            ->each(function($node) use ($RestrictToSameDomain, $RecrawlInterval) {
+            ->each(function ($node) use ($RestrictToSameDomain, $RecrawlInterval) {
                 // Get the url
                 $url = $node->text();
 
@@ -199,7 +203,7 @@ class XmlUrlParser extends BaseParser
                 $url = $this->parseFoundUrl($url, false);
 
                 // Check for false or non-kbb domains
-                if ($url === false || ($RestrictToSameDomain && parse_url($url)['host'] !== 'www.kbb.com')) {
+                if ($url === false || ($RestrictToSameDomain && parse_url($url, PHP_URL_HOST) !== 'www.kbb.com')) {
                     return false;
                 }
 
