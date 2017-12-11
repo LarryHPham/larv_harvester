@@ -100,6 +100,8 @@ class BaseDomParser
             $article_data['primary_image'] = array_shift($article_data['image_array']);
         }
 
+        // @TODO pass the images into the image storage service
+
         return $article_data;
     }
 
