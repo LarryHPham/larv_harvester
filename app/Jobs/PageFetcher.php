@@ -84,7 +84,7 @@ class PageFetcher extends Job
         }
 
         // Check the status code
-        switch($response->getStatusCode()) {
+        switch ($response->getStatusCode()) {
             case 200:
                 break;
             default:
@@ -101,8 +101,6 @@ class PageFetcher extends Job
 
         // Get the dom
         $body = (string) $response->getBody();
-
-		$article_url = $this->url_model->article_url;
 
         // Get the URLs on the page (if needed)
         if ($this->parse_urls) {
@@ -123,7 +121,10 @@ class PageFetcher extends Job
 
         // Call to the DomParser
         if ($this->parse_content) {
-            new ParseDom($this->url_model, $body);
+            $parser = new ParseDom($this->url_model, $body);
+
+            // Save the parser used
+            $this->url_model->parsed_by = $parser->parserUsed;
         }
 
         // Delete from the table
