@@ -10,7 +10,7 @@ use App\Library\DomParser\BaseDomParser;
  * Example page:
  * https://www.kbb.com/lexus/ct/2017/ct-200h-expert_car_reviews/
  */
-class ExpertCarReview extends BaseDomParser
+class ExpertCarReviewFormat1 extends BaseDomParser
 {
     use \App\Library\DomParser\Traits\NoPublicationDate;
 
