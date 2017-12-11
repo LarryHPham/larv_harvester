@@ -79,8 +79,8 @@ class BaseDomParser
             'article_id' => $this->url->id,
             'ready_to_publish' => true,
             'title' => $this->getTitle(),
-            'category' => null,
-            'article_type' => null,
+            'category' => null, // @TODO fill out this field
+            'article_type' => null, // @TODO fill out this field
             'meta_title' => $this->getMetaTitle(),
             'meta_keywords' => $this->getMetaKeywords(),
             'meta_description' => $this->getMetaDescription(),
