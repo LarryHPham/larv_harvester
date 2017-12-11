@@ -67,7 +67,6 @@ class BaseParser
      */
     protected function parseFoundUrl(String $href, $CheckDomain)
     {
-        $orig_href = $href;
         // Filter out anything that doesn't start with a slash, http, or https
         if (
             substr($href, 0, 1) !== '/' &&
@@ -124,7 +123,6 @@ class BaseParser
             return false;
         }
 
-        print $orig_href . "\n" . $href . "\n\n";
         return $href;
     }
 
