@@ -23,6 +23,12 @@ class ParseDom
     ];
 
     /**
+     * This variable holds the object that will be written into the article JSON
+     * @var Object
+     */
+    public $json = false;
+
+    /**
      * This class loops over the registered parsers and determines which (if
      * any) should be used to parse the URL
      * @param Url    $url     The model of the URL to crawl
@@ -52,6 +58,7 @@ class ParseDom
             return;
         }
 
-        $parser->getValues();
+        // Get the JSON object
+        $this->json = $parser->getValues();
     }
 }
