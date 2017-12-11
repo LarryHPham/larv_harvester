@@ -38,7 +38,7 @@ class DomUrlParser extends BaseParser
         $this
             ->parsed_dom
             ->filter('a')
-            ->each(function($node) use (&$page_links, $RestrictToSameDomain) {
+            ->each(function ($node) use (&$page_links, $RestrictToSameDomain) {
                 // Get the href attribute
                 $href = $node->attr('href');
 
