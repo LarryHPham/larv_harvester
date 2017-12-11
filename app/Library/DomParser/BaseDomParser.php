@@ -116,7 +116,7 @@ class BaseDomParser
         $nodes = $this
             ->content
             ->filterXPath($xpath)
-            ->each(function($node) use (&$result) {
+            ->each(function ($node) use (&$result) {
                 $result .= ' ' . $node->text();
             });
 
@@ -214,7 +214,7 @@ class BaseDomParser
         $this
             ->content
             ->filterXPath($this->imageXPath)
-            ->each(function($image) use (&$images) {
+            ->each(function ($image) use (&$images) {
                 // Get the image
                 $image_data = [
                     'image_title' => $image->attr('alt'),

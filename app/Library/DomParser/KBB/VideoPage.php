@@ -40,7 +40,7 @@ class VideoPage extends BaseDomParser
      * @param App\Url $url     The URL being crawled
      * @param Crawler $content The crawled content
      */
-    function __construct($url, $content)
+    public function __construct($url, $content)
     {
         // Determine if this parser is valid
         parent::__construct($url, $content);
@@ -69,23 +69,23 @@ class VideoPage extends BaseDomParser
      * These fields can be obtained from the API response: Title, Publication
      * Date, Article Content, and Images
      */
-     
-    function getTitle()
+
+    protected function getTitle()
     {
         return $this->videoInformation['name'];
     }
 
-    function getPublicationDate()
+    protected function getPublicationDate()
     {
         return (new \Carbon\Carbon($this->videoInformation['updated_at']))->timestamp;
     }
 
-    function getRawArticleContent()
+    protected function getRawArticleContent()
     {
         return $this->videoInformation['long_description'];
     }
 
-    function getImages()
+    protected function getImages()
     {
         return [
             [

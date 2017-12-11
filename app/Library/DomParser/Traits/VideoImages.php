@@ -17,7 +17,7 @@ trait VideoImages
         $this
             ->content
             ->filterXPath($this->imageXPath)
-            ->each(function($node) use (&$images) {
+            ->each(function ($node) use (&$images) {
                 // If already found the image, don't parse this tag
                 if ($images !== null) {
                     return;
