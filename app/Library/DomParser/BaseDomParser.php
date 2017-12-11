@@ -72,6 +72,8 @@ class BaseDomParser
      */
     public function getValues()
     {
+        // @TODO add a switch for rendering via PhantomJS
+        
         // Get the base information
         $article_data = [
             'article_id' => $this->url->id,

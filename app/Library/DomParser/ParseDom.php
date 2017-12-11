@@ -64,5 +64,7 @@ class ParseDom
 
         // Get the JSON object
         $this->json = $parser->getValues();
+
+        // @TODO Save the values into elasti-search
     }
 }
