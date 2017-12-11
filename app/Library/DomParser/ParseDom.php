@@ -29,6 +29,12 @@ class ParseDom
     public $json = false;
 
     /**
+     * The parser that was used to get the object
+     * @var String
+     */
+    public $parserUsed = null;
+
+    /**
      * This class loops over the registered parsers and determines which (if
      * any) should be used to parse the URL
      * @param Url    $url     The model of the URL to crawl
@@ -40,20 +46,18 @@ class ParseDom
         $parsed_dom = new DomCrawler($content);
 
         // Determine which (if any) parser to use
-        $found_parser = false;
         foreach ($this->RegisteredParsers as $test_parser) {
             $parser = new $test_parser($url, $parsed_dom);
 
             // Determine if the given parser is valid
             if ($parser->valid) {
-                $found_parser = true;
-                print $test_parser . "\n";
+                $this->parserUsed = $test_parser;
                 break;
             }
         }
 
         // If there was no parser fonud, exit
-        if (!$found_parser) {
+        if ($this->parserUsed === null) {
             print "No Parser\n";
             return;
         }
