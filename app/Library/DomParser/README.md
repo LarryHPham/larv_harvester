@@ -200,6 +200,32 @@ class Parser extends BaseDomParser
 }
 ```
 
+#### Other (Lesser Used) Options
+
+##### changePhotoSize
+
+If an attribute (or parser) defines a `changePhotoSize` function, every image object will be passed to that function and the result will be used as the image object. This can be seen in action here:
+```php
+<?php
+
+namespace App\Library\DomParser\Traits;
+
+/**
+ * This trait handles pages where the image needs to be resized
+ */
+trait PhotoSizeChanger
+{
+    protected function changePhotoSize($image)
+    {
+        $image['image_source_url'] = preg_replace(['/\/\d{2,3}x\d{2,3}\//', '/\?[^\/]*$/'], ['/480x360/'], $image['image_source_url']);
+        $image['image_width'] = 480;
+        $image['image_height'] = 360;
+
+        return $image;
+    }
+}
+```
+
 ### Registering in ParseDom
 
 To register your parser in `ParseDom`, add it to the array `RegisteredParsers`.
