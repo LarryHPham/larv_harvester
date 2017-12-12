@@ -33,6 +33,17 @@ class BaseParser
     protected $link_recrawl = [];
 
     /**
+     * The query parameters that can be safely removed from the URL
+     * @var Array
+     */
+    protected $ignorable_parameters = [
+        'vehicleclass',
+        'intent',
+        'LNX', // Used for instant cash offer
+        'Lp', // Used for instant cash offer
+    ];
+
+    /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
      * @param String $DomString The string found when crawling the DOM
@@ -68,26 +79,47 @@ class BaseParser
         // Modify the / URLs with the domains
         if (substr($href, 0, 2) === '//') {
             $href = $this->url_parts['scheme'] . ':' . $href;
-        } else if (substr($href, 0, 1) === '/' && substr($href, 0, 2) !== '//') {
+        } elseif (substr($href, 0, 1) === '/' && substr($href, 0, 2) !== '//') {
             $href = $this->url_parts['scheme'] . '://' . $this->url_parts['host'] . $href;
         }
 
-        // Get rid of the hash
-        $href = preg_replace('/#[^\/]*$/', '', $href);
+        // Get the parts of the URL
+        $url_parts = parse_url($href);
 
-        // Get rid of the query string
-        $href = preg_replace('/\?[^\/]*$/', '', $href);
-
-        // Get rid of the trailing slash
-        $href = preg_replace('/\/+$/', '', $href);
-
-        // Determine if the URL matches the current URL
-        if ($href === $this->url_model->article_url) {
+        // Make sure the URL is on the same domain
+        if ($CheckDomain && $url_parts['host'] !== $this->url_parts['host']) {
             return false;
         }
 
-        // Make sure the URL is on the same domain
-        if ($CheckDomain && parse_url($href)['host'] !== $this->url_parts['host']) {
+        // Build the base URL
+        $href = $url_parts['scheme'] . '://' . $url_parts['host'];
+
+        // Add the components (if available)
+        if (isset($url_parts['path'])) {
+            // Remove the trailing slash from a path if exists
+            $href .= preg_replace('/\/+$/', '', $url_parts['path']);
+        }
+        if (isset($url_parts['query'])) {
+            // Parse the components
+            parse_str($url_parts['query'], $parameters);
+
+            // Unset the unused parameters
+            foreach ($this->ignorable_parameters as $param) {
+                unset($parameters[$param]);
+            }
+
+            // Determine if there are enough parts left for a string
+            if (sizeof($parameters) > 0) {
+                // Sort the parameters
+                ksort($parameters);
+
+                // Add to the URL
+                $href .= '?' . http_build_query($parameters);
+            }
+        }
+
+        // Determine if the URL matches the current URL
+        if ($href === $this->url_model->article_url) {
             return false;
         }
 
