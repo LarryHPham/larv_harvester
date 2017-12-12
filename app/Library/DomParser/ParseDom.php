@@ -16,6 +16,7 @@ class ParseDom
         '\App\Library\DomParser\KBB\CarArticleFormat1',
         '\App\Library\DomParser\KBB\CarArticleFormat2',
         '\App\Library\DomParser\KBB\CarArticleFormat3',
+        '\App\Library\DomParser\KBB\CarArticleFormat4',
         '\App\Library\DomParser\KBB\ExpertCarReviewFormat1',
         '\App\Library\DomParser\KBB\ExpertCarReviewFormat2',
         '\App\Library\DomParser\KBB\RichTextCarousel',
