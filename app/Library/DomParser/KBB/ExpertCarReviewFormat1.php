@@ -12,10 +12,12 @@ use App\Library\DomParser\BaseDomParser;
  */
 class ExpertCarReviewFormat1 extends BaseDomParser
 {
-    use \App\Library\DomParser\Traits\NoPublicationDate;
+    use
+        \App\Library\DomParser\Traits\NoPublicationDate;
 
     protected $titleXPath = '//div[@id="Main-hero-title"]/h1';
     protected $attributionXPath = '//p[@id="Expert-overview-byline"]';
     protected $rawArticleContentXPath = '//div[contains(@class,"mod-primary")]/div[contains(@class,"mod-primary")]';
     protected $imageXPath = '//a[contains(@class,"photos-modal")]/img';
+    protected $category = 'automotive';
 }

@@ -21,4 +21,5 @@ class ListPage extends BaseDomParser
     protected $titleXPath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
     protected $rawArticleContentXPath = '//div[contains(@class,"article-content ")]/p';
     protected $imageXPath = '//div[contains(@class,"vehicle-image-container")]/img';
+    protected $category = 'automotive';
 }

@@ -11,7 +11,7 @@ trait Posted
 
     protected function getPublicationDate()
     {
-        $value = $this->getUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publicationDateXPath);
 
         if ($value === '' || $value === null) {
             return null;

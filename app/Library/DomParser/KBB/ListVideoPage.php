@@ -9,15 +9,18 @@ use GuzzleHttp\Client as GuzzleClient;
  * List entry pages
  *
  * Sample pages:
- * https://www.kbb.com/car-videos/2015-jeep-renegade-suv-videos/
+ * https://www.kbb.com/car-reviews-and-news/top-10/best-luxury-cars-under-35000/2100001730/
+ * https://www.kbb.com/car-reviews-and-news/top-10/best-back-to-school-cars-2017/2100004482
+ * https://www.kbb.com/car-reviews-and-news/top-10/most-fuel-efficient-suvs/2100004366-6/
  */
-class VideoPage extends BaseDomParser
+class ListVideoPage extends BaseDomParser
 {
     use
+        \App\Library\DomParser\Traits\Posted,
         \App\Library\DomParser\Traits\NoAttribution;
 
-    protected $titleXPath = '//h1[@id="title"]';
-    protected $rawArticleContentXPath = '//div[contains(@class,"videoSummary")]';
+    protected $titleXPath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
+    protected $rawArticleContentXPath = '//div[contains(@class,"article-content ")]/p';
     protected $imageXPath = '//div[@id="bcplayer"]';
     protected $category = 'automotive';
 

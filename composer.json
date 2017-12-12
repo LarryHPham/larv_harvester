@@ -12,7 +12,8 @@
         "symfony/dom-crawler": "^3.3",
         "symfony/css-selector": "^3.3",
         "pda/pheanstalk": "^3.1",
-        "league/flysystem-aws-s3-v3": "~1.0"
+        "league/flysystem-aws-s3-v3": "~1.0",
+        "jonnyw/php-phantomjs": "^4.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

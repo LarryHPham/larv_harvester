@@ -23,8 +23,15 @@ class ParseDom
         '\App\Library\DomParser\KBB\RichTextOneImage',
         '\App\Library\DomParser\KBB\RichTextVideo',
         '\App\Library\DomParser\KBB\ListPage',
+        '\App\Library\DomParser\KBB\ListVideoPage',
         '\App\Library\DomParser\KBB\VideoPage',
     ];
+
+    /**
+     * The path is relative path in which the json file will be saved in
+     * @var Object
+     */
+    public $json_path;
 
     /**
      * This variable holds the object that will be written into the article JSON
@@ -46,6 +53,9 @@ class ParseDom
      */
     public function __construct(Url $url, $content)
     {
+        // TODO set path to an ENV file that pushes to location on database
+        $this->json_path = storage_path('app/json')."/";
+
         // Parse the DOM
         $parsed_dom = new DomCrawler($content);
 
@@ -55,6 +65,7 @@ class ParseDom
 
             // Determine if the given parser is valid
             if ($parser->valid) {
+                print("FOUND PARSER Constructing: $test_parser \n");
                 $this->parserUsed = $test_parser;
                 break;
             }
@@ -69,6 +80,12 @@ class ParseDom
         // Get the JSON object
         $this->json = $parser->getValues();
 
-        // @TODO Save the values into elasti-search
+        // create JSON file
+        $parser->createJsonFile(
+          $this->json_path.$url->article_hash.'.json',
+          $this->json
+        );
+
+        // @TODO Save the values into elastic-search
     }
 }

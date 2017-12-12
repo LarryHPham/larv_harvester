@@ -13,7 +13,7 @@ trait ByLine
 
     protected function getAttribution()
     {
-        $value = $this->getUsingXPath($this->attributionXPath);
+        $value = $this->getTextUsingXPath($this->attributionXPath);
 
         if ($value === '' || $value === null) {
             return null;
@@ -24,7 +24,7 @@ trait ByLine
 
     protected function getPublicationDate()
     {
-        $value = $this->getUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publicationDateXPath);
 
         if ($value === '' || $value === null) {
             return null;
