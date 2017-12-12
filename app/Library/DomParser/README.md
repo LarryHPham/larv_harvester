@@ -12,6 +12,8 @@ This library holds the files that are used to parse a DOM into an article JSON.
 			- [DRY Coding using Traits](#dry-coding-using-traits)
 			- [Creating Traits](#creating-traits)
 			- [No Attribution or No Publication Date](#no-attribution-or-no-publication-date)
+			- [Other (Lesser Used) Options](#other-lesser-used-options)
+				- [changePhotoSize](#changephotosize)
 		- [Registering in ParseDom](#registering-in-parsedom)
 
 <!-- /TOC -->
