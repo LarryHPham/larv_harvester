@@ -4,13 +4,10 @@ namespace App\Jobs;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
-use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 use App\Url;
 use App\CrawlOrder;
-use App\Library\DomCache;
-use App\Library\DomDataParser;
-use App\CrawlOrder;
+use App\Library\DomParser\ParseDom;
 
 class PageFetcher extends Job
 {
@@ -87,7 +84,7 @@ class PageFetcher extends Job
         }
 
         // Check the status code
-        switch($response->getStatusCode()) {
+        switch ($response->getStatusCode()) {
             case 200:
                 break;
             default:
@@ -105,18 +102,6 @@ class PageFetcher extends Job
         // Get the dom
         $body = (string) $response->getBody();
 
-		$article_url = $this->url_model->article_url;
-
-        // Cache String Dom by sending in url as hash md5
-        $hash_entry_url = Url::createHash($article_url);
-        print("ENTRY URL HASH: $hash_entry_url \n");
-
-        $cache_storage = new DomCache();
-        $cache_storage->cacheContent($hash_entry_url, $body);
-
-        // set variable to be used as cached data
-        $body = $cache_storage->getCacheData($hash_entry_url);
-        
         // Get the URLs on the page (if needed)
         if ($this->parse_urls) {
             // Determine which parser to use
@@ -134,14 +119,14 @@ class PageFetcher extends Job
             ]);
         }
 
-        // TODO: Add an if statement for $this->parse_content to pass to a DOM cacher
-        // dispatch new job to parse out the cached data and the hash
+        // Call to the DomParser
         if ($this->parse_content) {
-            dispatch(new DomDataParser($article_url, $body));
-        }
+            $parser = new ParseDom($this->url_model, $body);
 
-        // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
-        $cache_storage->removeCachedData($hash_entry_url);
+            // Save the parser used
+            $this->url_model->parsed_by = $parser->parserUsed;
+            $this->url_model->save();
+        }
 
         // Delete from the table
         $this->next_crawl_order->delete();

@@ -4,7 +4,6 @@ namespace App\Library\UrlParser;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Url;
-use App\Jobs\PageFetcher;
 
 class DomUrlParser extends BaseParser
 {
@@ -34,13 +33,12 @@ class DomUrlParser extends BaseParser
     {
         // Initialize the variable for links
         $page_links = [];
-        $link_texts = [];
 
         // Loop over the a tags
         $this
             ->parsed_dom
             ->filter('a')
-            ->each(function($node) use (&$page_links, &$link_texts, $RestrictToSameDomain) {
+            ->each(function ($node) use (&$page_links, $RestrictToSameDomain) {
                 // Get the href attribute
                 $href = $node->attr('href');
 
@@ -57,15 +55,12 @@ class DomUrlParser extends BaseParser
                     return false;
                 }
 
-                // Add to the text array
-                $link_texts[$href] = $node->text();
-
                 // Add to the page_links array
                 $page_links[] = $href;
             });
 
         // Insert and update the found links
-        $this->insertOrUpdateLinks($page_links, $link_texts, $WhitelistPatterns);
+        $this->insertOrUpdateLinks($page_links, $WhitelistPatterns);
 
         // Return a success boolean
         return true;
