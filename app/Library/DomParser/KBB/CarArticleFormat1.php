@@ -16,9 +16,9 @@ class CarArticleFormat1 extends BaseDomParser
         \App\Library\DomParser\Traits\PhotoSizeChanger,
         \App\Library\DomParser\Traits\NoPublicationDate;
 
-    protected $titleXPath = '//span[@id="Expert-overview-title"]';
-    protected $attributionXPath = '//p[@id="Expert-overview-byline"]/span';
-    protected $rawArticleContentXPath = '//*[contains(@class,"mod-primary")]/*[contains(@class,"review-item")]';
-    protected $imageXPath = '//a[contains(@class,"photos-modal")]/img';
+    protected $title_xpath = '//span[@id="Expert-overview-title"]';
+    protected $attribution_xpath = '//p[@id="Expert-overview-byline"]/span';
+    protected $raw_article_content_xpath = '//*[contains(@class,"mod-primary")]/*[contains(@class,"review-item")]';
+    protected $image_xpath = '//a[contains(@class,"photos-modal")]/img';
     protected $category = 'automotive';
 }

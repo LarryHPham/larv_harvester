@@ -12,7 +12,7 @@ class ParseDom
      * parse the content given
      * @var Array
      */
-    private $RegisteredParsers = [
+    private $registered_parsers = [
         '\App\Library\DomParser\KBB\CarArticleFormat1',
         '\App\Library\DomParser\KBB\CarArticleFormat2',
         '\App\Library\DomParser\KBB\CarArticleFormat3',
@@ -43,7 +43,7 @@ class ParseDom
      * The parser that was used to get the object
      * @var String
      */
-    public $parserUsed = null;
+    public $parser_used = null;
 
     /**
      * This class loops over the registered parsers and determines which (if
@@ -60,19 +60,19 @@ class ParseDom
         $parsed_dom = new DomCrawler($content);
 
         // Determine which (if any) parser to use
-        foreach ($this->RegisteredParsers as $test_parser) {
+        foreach ($this->registered_parsers as $test_parser) {
             $parser = new $test_parser($url, $parsed_dom);
 
             // Determine if the given parser is valid
             if ($parser->valid) {
                 print("FOUND PARSER Constructing: $test_parser \n");
-                $this->parserUsed = $test_parser;
+                $this->parser_used = $test_parser;
                 break;
             }
         }
 
         // If there was no parser fonud, exit
-        if ($this->parserUsed === null) {
+        if ($this->parser_used === null) {
             print "No Parser\n";
             return;
         }

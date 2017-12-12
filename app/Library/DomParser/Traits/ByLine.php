@@ -8,12 +8,12 @@ namespace App\Library\DomParser\Traits;
  */
 trait ByLine
 {
-    protected $attributionXPath = '//div[contains(@class,"by-line")]';
-    protected $publicationDateXPath = '//div[contains(@class,"by-line")]';
+    protected $attribution_xpath = '//div[contains(@class,"by-line")]';
+    protected $publication_date_xpath = '//div[contains(@class,"by-line")]';
 
     protected function getAttribution()
     {
-        $value = $this->getTextUsingXPath($this->attributionXPath);
+        $value = $this->getTextUsingXPath($this->attribution_xpath);
 
         if ($value === '' || $value === null) {
             return null;
@@ -24,7 +24,7 @@ trait ByLine
 
     protected function getPublicationDate()
     {
-        $value = $this->getTextUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publication_date_xpath);
 
         if ($value === '' || $value === null) {
             return null;

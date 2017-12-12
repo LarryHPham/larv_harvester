@@ -19,9 +19,9 @@ class ListVideoPage extends BaseDomParser
         \App\Library\DomParser\Traits\Posted,
         \App\Library\DomParser\Traits\NoAttribution;
 
-    protected $titleXPath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
-    protected $rawArticleContentXPath = '//div[contains(@class,"article-content ")]/p';
-    protected $imageXPath = '//div[@id="bcplayer"]';
+    protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
+    protected $raw_article_content_xpath = '//div[contains(@class,"article-content ")]/p';
+    protected $image_xpath = '//div[@id="bcplayer"]';
     protected $category = 'automotive';
 
     /**
@@ -55,7 +55,7 @@ class ListVideoPage extends BaseDomParser
         // Get the video ID
         $VideoId = $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->first()
             ->attr('data-video-id');
 

@@ -8,6 +8,6 @@ namespace App\Library\DomParser\Traits;
  */
 trait RichText
 {
-    protected $titleXPath = '//div[contains(@class,"title-one")]//h1';
-    protected $rawArticleContentXPath = '//div[contains(@class,"rich-text")]';
+    protected $title_xpath = '//div[contains(@class,"title-one")]//h1';
+    protected $raw_article_content_xpath = '//div[contains(@class,"rich-text")]';
 }

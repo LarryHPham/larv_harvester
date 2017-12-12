@@ -10,16 +10,16 @@ class BaseDomParser
     /**
      * All of the possible XPaths
      */
-    protected $publisherXPath = '//meta[@property="og:site_name"]';
-    protected $metaTitleXPath = '//title';
-    protected $metaKeywordsXPath = '//meta[@name="keywords"]';
-    protected $metaDescriptionXPath = '//meta[@name="description"]';
+    protected $publisher_xpath = '//meta[@property="og:site_name"]';
+    protected $meta_title_xpath = '//title';
+    protected $meta_keywords_xpath = '//meta[@name="keywords"]';
+    protected $meta_description_xpath = '//meta[@name="description"]';
 
     /**
      * The XPaths that will be used to test this DOM
      * @var Array
      */
-    protected $requiredXPaths = [];
+    protected $required_xpaths = [];
 
     /**
      * Saved versions of the parameters passed into the constructor
@@ -51,13 +51,13 @@ class BaseDomParser
         $this->article_data = new ArticleSchema();
 
         // Add the base items to the array
-        $this->requiredXPaths[] = $this->titleXPath;
-        $this->requiredXPaths[] = $this->attributionXPath;
-        $this->requiredXPaths[] = $this->rawArticleContentXPath;
-        $this->requiredXPaths[] = $this->imageXPath;
+        $this->required_xpaths[] = $this->title_xpath;
+        $this->required_xpaths[] = $this->attribution_xpath;
+        $this->required_xpaths[] = $this->raw_article_content_xpath;
+        $this->required_xpaths[] = $this->image_xpath;
 
         // The XPaths that need to return results
-        foreach ($this->requiredXPaths as $xpath) {
+        foreach ($this->required_xpaths as $xpath) {
             if (sizeof($content->filterXPath($xpath)) === 0) {
                 return false;
             }
@@ -210,24 +210,24 @@ class BaseDomParser
     protected function getTitle()
     {
         // Get the items
-        return $this->getTextUsingXPath($this->titleXPath);
+        return $this->getTextUsingXPath($this->title_xpath);
     }
 
-    protected function getPublicationDateXPath()
+    protected function getpublication_date_xpath()
     {
         // Get the items
-        return $this->getTextUsingXPath($this->publicationDateXPath);
+        return $this->getTextUsingXPath($this->publication_date_xpath);
     }
 
     protected function getAttribution()
     {
         // Get the items
-        return $this->getTextUsingXPath($this->attributionXPath);
+        return $this->getTextUsingXPath($this->attribution_xpath);
     }
 
     protected function getPublisher()
     {
-        $value = $this->getMetaUsingXPath($this->publisherXPath);
+        $value = $this->getMetaUsingXPath($this->publisher_xpath);
         return $value === '' || $value === null
             ? 'KBB'
             : $value;
@@ -235,7 +235,7 @@ class BaseDomParser
 
     protected function getPublicationDate()
     {
-        $value = $this->getTextUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publication_date_xpath);
 
         if ($value === '' || $value === null) {
             return null;
@@ -246,7 +246,7 @@ class BaseDomParser
 
     protected function getRawArticleContent()
     {
-        return $this->getHtmlUsingXPath($this->rawArticleContentXPath);
+        return $this->getHtmlUsingXPath($this->raw_article_content_xpath);
     }
 
     protected function getImages()
@@ -255,7 +255,7 @@ class BaseDomParser
 
         $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->each(function ($image) use (&$images) {
                 // Get the image
                 $image_data = [
@@ -286,17 +286,17 @@ class BaseDomParser
 
     protected function getMetaTitle()
     {
-        return $this->getTextUsingXPath($this->metaTitleXPath);
+        return $this->getTextUsingXPath($this->meta_title_xpath);
     }
 
     protected function getMetaKeywords()
     {
-        return $this->getMetaUsingXPath($this->metaKeywordsXPath);
+        return $this->getMetaUsingXPath($this->meta_keywords_xpath);
     }
 
     protected function getMetaDescription()
     {
-        return $this->getMetaUsingXPath($this->metaDescriptionXPath);
+        return $this->getMetaUsingXPath($this->meta_description_xpath);
     }
 
     /**

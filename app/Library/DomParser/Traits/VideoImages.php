@@ -8,7 +8,7 @@ namespace App\Library\DomParser\Traits;
  */
 trait VideoImages
 {
-    protected $imageXPath = '//script[@type="application/ld+json"]';
+    protected $image_xpath = '//script[@type="application/ld+json"]';
 
     protected function getImages()
     {
@@ -16,7 +16,7 @@ trait VideoImages
         $images = null;
         $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->each(function ($node) use (&$images) {
                 // If already found the image, don't parse this tag
                 if ($images !== null) {

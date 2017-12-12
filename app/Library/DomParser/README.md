@@ -58,11 +58,11 @@ The parser should extend `App\Library\DomParser\BaseDomParser` and add XPaths or
 
 
 The parser MUST have the following protected attributes (or obtain them from a trait):
-- titleXPath
-- attributionXPath
-- publicationDateXPath
-- rawArticleContentXPath
-- imageXPath
+- title_xpath
+- attribution_xpath
+- publication_date_xpath
+- raw_article_content_xpath
+- image_xpath
 
 A very basic parser would look like this:
 ```php
@@ -80,11 +80,11 @@ use App\Library\DomParser\BaseDomParser;
  */
 class Parser extends BaseDomParser
 {
-    protected $titleXPath = '{XPath to the Title elements}';
-    protected $attributionXPath = '{XPath to the attribution}';
-    protected $publicationDateXPath = '{XPath to the publication date}';
-    protected $rawArticleContentXPath = '{XPath to the raw article content}';
-    protected $imageXPath = '{XPath to the images}';
+    protected $title_xpath = '{XPath to the Title elements}';
+    protected $attribution_xpath = '{XPath to the attribution}';
+    protected $publication_date_xpath = '{XPath to the publication date}';
+    protected $raw_article_content_xpath = '{XPath to the raw article content}';
+    protected $image_xpath = '{XPath to the images}';
 }
 ```
 
@@ -96,7 +96,7 @@ In order to prevent repeating XPaths across multiple files, traits are used to m
 
 #### Creating Traits
 
-Traits are not able to overwrite the `metaTitleXPath`, `metaKeywordsXPath`, `metaDescriptionXPath`, or `publisherXPath` properties but they can overwrite any function in `BaseDomParser`.
+Traits are not able to overwrite the `metaTitleXPath`, `metaKeywordsXPath`, `metaDescriptionXPath`, or `publisher_xpath` properties but they can overwrite any function in `BaseDomParser`.
 
 In general, any XPath that is repeated across multiple page types should be abstracted into a trait.
 
@@ -112,8 +112,8 @@ namespace App\Library\DomParser\Traits;
  */
 trait RichText
 {
-    protected $titleXPath = '//div[contains(@class,"title-one")]//h1';
-    protected $rawArticleContentXPath = '//div[contains(@class,"rich-text")]';
+    protected $title_xpath = '//div[contains(@class,"title-one")]//h1';
+    protected $raw_article_content_xpath = '//div[contains(@class,"rich-text")]';
 }
 ```
 
@@ -129,7 +129,7 @@ namespace App\Library\DomParser\Traits;
  */
 trait VideoImages
 {
-    protected $imageXPath = '//script[@type="application/ld+json"]';
+    protected $image_xpath = '//script[@type="application/ld+json"]';
 
     protected function getImages()
     {
@@ -137,7 +137,7 @@ trait VideoImages
         $images = null;
         $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->each(function ($node) use (&$images) {
                 // If already found the image, don't parse this tag
                 if ($images !== null) {
@@ -174,7 +174,7 @@ trait VideoImages
 
 #### No Attribution or No Publication Date
 
-Because there are many pages that don't have attribution or publication date, there are traits that can replace the `attributionXPath` or `publicationDateXPath`.
+Because there are many pages that don't have attribution or publication date, there are traits that can replace the `attribution_xpath` or `publication_date_xpath`.
 ```php
 <?php
 
@@ -191,14 +191,14 @@ use App\Library\DomParser\BaseDomParser;
 class Parser extends BaseDomParser
 {
     use
-        // This replaces $attributionXPath
+        // This replaces $attribution_xpath
         \App\Library\DomParser\Traits\NoAttribution,
-        // This replaces $publicationDateXPath
+        // This replaces $publication_date_xpath
         \App\Library\DomParser\Traits\NoPublicationDate;
 
-    protected $titleXPath = '{XPath to the Title elements}';
-    protected $rawArticleContentXPath = '{XPath to the raw article content}';
-    protected $imageXPath = '{XPath to the images}';
+    protected $title_xpath = '{XPath to the Title elements}';
+    protected $raw_article_content_xpath = '{XPath to the raw article content}';
+    protected $image_xpath = '{XPath to the images}';
 }
 ```
 
@@ -230,6 +230,6 @@ trait PhotoSizeChanger
 
 ### Registering in ParseDom
 
-To register your parser in `ParseDom`, add it to the array `RegisteredParsers`.
+To register your parser in `ParseDom`, add it to the array `registered_parsers`.
 
 The array is ordered, so the first item on the list will be the first used to match against the DOM.

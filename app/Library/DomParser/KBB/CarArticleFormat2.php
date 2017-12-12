@@ -16,7 +16,7 @@ class CarArticleFormat2 extends BaseDomParser
         \App\Library\DomParser\Traits\ImageCarousel,
         \App\Library\DomParser\Traits\ByLine;
 
-    protected $titleXPath = '//div[contains(@class,"title-one")]//h1';
-    protected $rawArticleContentXPath = '//*[contains(@class,"article-content")]//p';
+    protected $title_xpath = '//div[contains(@class,"title-one")]//h1';
+    protected $raw_article_content_xpath = '//*[contains(@class,"article-content")]//p';
     protected $category = 'automotive';
 }

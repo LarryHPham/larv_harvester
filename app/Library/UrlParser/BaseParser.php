@@ -46,7 +46,7 @@ class BaseParser
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
-     * @param String $DomString The string found when crawling the DOM
+     * @param String $dom_string The string found when crawling the DOM
      */
     public function __construct(Url $url)
     {

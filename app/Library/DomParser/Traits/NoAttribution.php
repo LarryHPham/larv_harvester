@@ -7,7 +7,7 @@ namespace App\Library\DomParser\Traits;
  */
 trait NoAttribution
 {
-    protected $attributionXPath = '//div';
+    protected $attribution_xpath = '//div';
 
     protected function getAttribution()
     {
