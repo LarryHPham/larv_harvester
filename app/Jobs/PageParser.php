@@ -15,18 +15,24 @@ use App\Library\DomCache;
 
 class PageParser extends Job
 {
-    private $entry_url;
-
-    private $next_crawl_order;
-
-    private $url_model;
-
-    private $parse_content;
     /**
      * This function executes the main portion of the job. It will grab the URL,
      * parse it for URLs, create jobs for those URLs, and kick off the DOM
      * meta-data parser
      */
+    private $entry_url;
+
+    /**
+     * The URL model that was passed into the job
+     * @var Url
+     */
+    private $url_model;
+
+    /**
+     * The parse_content is a flag in the database to determine if content needs to be parsed
+     * @var INT
+     */
+    private $parse_content;
 
     public function __construct($url)
     {
@@ -35,9 +41,8 @@ class PageParser extends Job
 
     public function handle()
     {
-        // $this->next_crawl_order = CrawlOrder::urlModel();
         $this->url_model = URL::findByHash($this->entry_url);
-        $this->parse_content = 1;
+        $this->parse_content = 1; // TODO use flag in the database
 
         $client = new GuzzleClient();
         // Request the page
@@ -58,7 +63,7 @@ class PageParser extends Job
 
         // TODO Check if Cache String exists Dom by sending in url as hash md5 then decided whether to cache or not
         $hash_entry_url = Url::createHash($this->entry_url);
-        // phantom flag should be set to true when missing required datapoints
+        // TODO phantom flag should be set to true when missing required datapoints or flag is given
         // $phantom = false;
         //
         //$cache_storage = new DomCache();
