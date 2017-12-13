@@ -78,7 +78,7 @@ class ArticleSchema
         $this->publisher = $publisher;
     }
 
-    public function setPublishedDate($publication_date)
+    public function setPublicationDate($publication_date)
     {
         $this->publication_date = $publication_date;
     }
