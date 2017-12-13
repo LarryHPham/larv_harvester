@@ -241,11 +241,6 @@ class BaseDomParser
 
     protected function getRawArticleContent()
     {
-        return $this->getHtmlUsingXPath($this->raw_article_content_xpath);
-    }
-
-    protected function getTextArticleContent()
-    {
         return $this->getTextUsingXPath($this->raw_article_content_xpath);
     }
 
