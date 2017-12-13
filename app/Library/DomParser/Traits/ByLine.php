@@ -25,13 +25,11 @@ trait ByLine
     protected function getPublicationDate()
     {
         $value = $this->getTextUsingXPath($this->publication_date_xpath);
-
         if ($value === '' || $value === null) {
             return null;
         }
-
         $value = explode('|', $value)[1];
-
+        // echo $value;
         return (new \Carbon\Carbon($value))->timestamp;
     }
 }

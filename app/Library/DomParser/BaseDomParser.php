@@ -91,7 +91,7 @@ class BaseDomParser
         $meta_keywords = $this->getMetaKeywords();
         $attribution = $this->getAttribution();
         $publisher = $this->getPublisher();
-        // $publication_date = $this->getPublicationDate();
+        $publication_date = $this->getPublicationDate();
 
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
         $raw_article_content = $this->getTextArticleContent();
@@ -117,7 +117,7 @@ class BaseDomParser
         $this->article_data->setMetaKeywords($meta_description);
         $this->article_data->setAttribution($attribution);
         $this->article_data->setPublisher($publisher);
-        // $this->article_data->setPublicationDate($publication_date);
+        $this->article_data->setPublicationDate($publication_date);
         $this->article_data->setArticleUrl($this->url->article_url);
         $this->article_data->setArticleHash($this->url->article_hash);
         $this->article_data->setJsonLastUpdated($json_last_updated);
@@ -146,10 +146,6 @@ class BaseDomParser
             ->filterXPath($xpath)
             ->each(function ($node) use (&$result) {
                 $result .= ' ' . $node->text();
-
-                if (sizeof($node) > 0) {
-                    $result .= $node->text();
-                }
             });
         return $this->cleanStringFormatting($result);
     }
@@ -167,10 +163,6 @@ class BaseDomParser
             ->filterXPath($xpath)
             ->each(function ($node) use (&$result) {
                 $result .= ' ' . $node->html();
-
-                if (sizeof($node) > 0) {
-                    $result = $node->html();
-                }
             });
 
         return $this->cleanStringFormatting($result);

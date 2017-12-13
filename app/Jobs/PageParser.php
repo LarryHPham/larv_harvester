@@ -35,8 +35,6 @@ class PageParser extends Job
 
     public function handle()
     {
-        print("-----------------------STARTED-------------------------------\n");
-
         // $this->next_crawl_order = CrawlOrder::urlModel();
         $this->url_model = URL::findByHash($this->entry_url);
         $this->parse_content = 1;
@@ -111,6 +109,5 @@ class PageParser extends Job
 
         // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
         // $cache_storage->removeCachedData($hash_entry_url);
-        print("------------------------END------------------------------\n");
     }
 }
