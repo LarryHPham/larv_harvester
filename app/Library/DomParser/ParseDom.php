@@ -2,8 +2,10 @@
 
 namespace App\Library\DomParser;
 
-use App\Url;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+
+use App\Url;
+use App\Library\StorageCache;
 
 class ParseDom
 {
@@ -55,7 +57,7 @@ class ParseDom
     {
         // TODO set path to an ENV file that pushes to location on database
         $this->json_path = storage_path('app/json')."/";
-
+        print("JSON PATH: ".$this->json_path."\n");
         // Parse the DOM
         $parsed_dom = new DomCrawler($content);
 
@@ -65,6 +67,7 @@ class ParseDom
 
             // Determine if the given parser is valid
             if ($parser->valid) {
+                print("PARSER: $test_parser\n");
                 $this->parser_used = $test_parser;
                 break;
             }
@@ -78,12 +81,19 @@ class ParseDom
         // Get the JSON object
         $this->json = $parser->getValues();
 
-        // create JSON file
-        $parser->createJsonFile(
-          $this->json_path.$url->article_hash.'.json',
-          $this->json
-        );
+        // Create path of object
+        // NOTE: we are using publisher as the folder directory
+        $path_array = [];
+        $publisher = json_decode($this->json)->publisher;
+        array_push($path_array, $publisher, $url->article_hash.'.json');
+        // $json_file_path = json_decode($this->json)->publisher.'/'.$url->article_hash.'.json';
+        $json_file_path = implode($path_array, '/');
 
+        // create JSON file
+        // NOTE: JSON_CACHE is located in .env
+        $json_storage = new StorageCache(env('JSON_CACHE'));
+        $json_storage->cacheContent($json_file_path, $this->json);
+        // $json_storage->removeCachedData($json_file_path);
         // @TODO Save the values into elastic-search
     }
 }

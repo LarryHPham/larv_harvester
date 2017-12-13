@@ -4,20 +4,20 @@ namespace App\Library;
 
 use Illuminate\Support\Facades\Storage;
 
-class DomCache
+class StorageCache
 {
     protected $storage;
 
-    public function __construct()
+    public function __construct($disk_env)
     {
         // TODO throw error that cache Storage does not EXISTS () use Try Catch
         // NOTE: Storage Disk will default in config/filesystems.php
         try {
-            $this->storage = Storage::disk(env('STORAGE_CACHE'));
+            $this->storage = Storage::disk($disk_env);
             if (is_null($this->storage)) {
-                print("ERROR CACHE STORAGE NOT FOUND\n");
+                print("ERROR STORAGE NOT FOUND\n");
             } else {
-                print("Storage Found: ".env('STORAGE_CACHE')."\n");
+                print("Storage Found: ".$disk_env."\n");
             }
         } catch (\Exception $e) {
             throw new \Exception("Cache Storage ERROR: $e");
@@ -40,12 +40,8 @@ class DomCache
     public function cacheContent($file_name, $content)
     {
         // TODO if more fields exists (ex: time to live) then recache data point
-        if (!$this->storage->exists($file_name)) {
-            $this->storage->put($file_name, $content);
-            print("CACHE FILE => cacheContent => CREATED => $file_name\n");
-        } else {
-            print("CACHE FILE => cacheContent => ALREADY EXISTS => $file_name\n");
-        }
+        $this->storage->put($file_name, $content);
+        print("CACHE FILE => cacheContent => CREATED => $file_name\n");
     }
 
     public function getCacheData($file_name)
@@ -65,7 +61,10 @@ class DomCache
     {
         print("CACHE FILE => removeCachedData => DELETE => $file_name\n");
         if ($this->storage->exists($file_name)) {
-            Storage::delete($file_name);
+            if ($file_name === '/' || empty($file_name)) {
+                throw new \Exception("Cache Storage ERROR: DO NOT DELETE ROOT '/' OR file_name was empty");
+            }
+            $this->storage->delete($file_name);
         }
         print("CACHE FILE => DELETED => $file_name\n");
     }

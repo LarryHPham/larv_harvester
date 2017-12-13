@@ -293,16 +293,4 @@ class BaseDomParser
     {
         return $this->getMetaUsingXPath($this->meta_description_xpath);
     }
-
-    /**
-     * Saves the Data of jsonFile into
-     * @param  String $xpath The XPath to use to get the nodes
-     * @return String        The text of all of the matching nodes
-     */
-    public function createJsonFile($file_path, $json_data)
-    {
-        $fp = fopen($file_path, 'w');
-        fwrite($fp, $json_data);   //here it will print the array pretty
-        fclose($fp);
-    }
 }

@@ -11,7 +11,7 @@ use App\CrawlOrder;
 use App\Library\DomParser\ParseDom;
 
 use App\Library\PhantomJsUrlContentRenderer;
-use App\Library\DomCache;
+use App\Library\StorageCache;
 
 class PageParser extends Job
 {
@@ -41,7 +41,10 @@ class PageParser extends Job
 
     public function handle()
     {
+        print("------------------------START------------------------------\n");
+        print("$this->entry_url \n");
         $this->url_model = URL::findByHash($this->entry_url);
+        // var_dump($this->url_model);
         $this->parse_content = 1; // TODO use flag in the database
 
         $client = new GuzzleClient();
@@ -62,12 +65,12 @@ class PageParser extends Job
         $body = (string) $response->getBody();
 
         // TODO Check if Cache String exists Dom by sending in url as hash md5 then decided whether to cache or not
-        $hash_entry_url = Url::createHash($this->entry_url);
+        // $hash_entry_url = Url::createHash($this->entry_url);
         // TODO phantom flag should be set to true when missing required datapoints or flag is given
         // $phantom = false;
         //
-        //$cache_storage = new DomCache();
-        // if (!$cache_storage->CheckCachedData($hash_entry_url)) {
+        //$temp_storage = new StorageCache(env('TEMP_CACHE'));
+        // if (!$temp_storage->CheckCachedData($hash_entry_url)) {
         //     // DECIDE WHETHER TO USE PHANTOM JS OR GUZZLE Client
         //     /* NOTE:
         //      * PHANTOMJS will allow javascript to render
@@ -101,9 +104,9 @@ class PageParser extends Job
         //     }
         //
         //    // cache the data
-        //    $cache_storage->cacheContent($hash_entry_url, $body);
+        //    $temp_storage->cacheContent($hash_entry_url, $body);
         // } else {
-        //     $body = $cache_storage->getCacheData($hash_entry_url);
+        //     $body = $temp_storage->getCacheData($hash_entry_url);
         // }
         // print("FIND PARSER: $hash_entry_url \n");
 
@@ -113,6 +116,7 @@ class PageParser extends Job
         }
 
         // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
-        // $cache_storage->removeCachedData($hash_entry_url);
+        // $temp_storage->removeCachedData($hash_entry_url);
+        print("------------------------END------------------------------\n");
     }
 }
