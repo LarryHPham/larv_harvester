@@ -94,7 +94,7 @@ class BaseDomParser
         $publication_date = $this->getPublicationDate();
 
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
-        $raw_article_content = $this->getTextArticleContent();
+        $raw_article_content = $this->getRawArticleContent();
         $images = $this->getImages();
 
         // Use the first image as the primary image
