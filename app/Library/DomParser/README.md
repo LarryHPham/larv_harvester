@@ -96,7 +96,7 @@ In order to prevent repeating XPaths across multiple files, traits are used to m
 
 #### Creating Traits
 
-Traits are not able to overwrite the `metaTitleXPath`, `metaKeywordsXPath`, `metaDescriptionXPath`, or `publisher_xpath` properties but they can overwrite any function in `BaseDomParser`.
+Traits are not able to overwrite the `meta_title_xpath`, `meta_keywords_xpath`, `meta_description_xpath`, or `publisher_xpath` properties but they can overwrite any function in `BaseDomParser`.
 
 In general, any XPath that is repeated across multiple page types should be abstracted into a trait.
 

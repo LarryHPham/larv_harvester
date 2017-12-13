@@ -65,7 +65,6 @@ class ParseDom
 
             // Determine if the given parser is valid
             if ($parser->valid) {
-                print("FOUND PARSER Constructing: $test_parser \n");
                 $this->parser_used = $test_parser;
                 break;
             }
@@ -73,7 +72,6 @@ class ParseDom
 
         // If there was no parser fonud, exit
         if ($this->parser_used === null) {
-            print "No Parser\n";
             return;
         }
 

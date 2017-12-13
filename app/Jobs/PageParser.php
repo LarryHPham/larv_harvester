@@ -36,7 +36,6 @@ class PageParser extends Job
     public function handle()
     {
         print("-----------------------STARTED-------------------------------\n");
-        print("STARTING PARSE: $this->entry_url \n");
 
         // $this->next_crawl_order = CrawlOrder::urlModel();
         $this->url_model = URL::findByHash($this->entry_url);
@@ -61,7 +60,7 @@ class PageParser extends Job
 
         // TODO Check if Cache String exists Dom by sending in url as hash md5 then decided whether to cache or not
         $hash_entry_url = Url::createHash($this->entry_url);
-        print("ENTRY URL HASH: $hash_entry_url \n");
+        // phantom flag should be set to true when missing required datapoints
         // $phantom = false;
         //
         //$cache_storage = new DomCache();

@@ -9,11 +9,17 @@ class BaseDomParser
 {
     /**
      * All of the possible XPaths
+     * NOTE: commented X Paths are to be left as they are not to be defined because they will break the Traits
      */
+    // protected $titleXPath;
     protected $publisher_xpath = '//meta[@property="og:site_name"]';
     protected $meta_title_xpath = '//title';
     protected $meta_keywords_xpath = '//meta[@name="keywords"]';
     protected $meta_description_xpath = '//meta[@name="description"]';
+    // protected $attributionXPath;
+    // protected $publicationDateXPath;
+    // protected $rawArticleContentXPath;
+    // protected $imageXPath;
 
     /**
      * The XPaths that will be used to test this DOM
@@ -69,7 +75,6 @@ class BaseDomParser
         // Save the values
         $this->url = $url;
         $this->content = $content;
-        print("GENERATION : ARTICLE SCHEMA \n");
     }
 
     /**
@@ -80,8 +85,8 @@ class BaseDomParser
     {
         // Get the base information
         $title = $this->getTitle();
-        $category = $this->category;
-        $meta_title = $this->getMetaDescription();
+        $category = $this->category; // TODO use URL matching for this
+        $meta_title = $this->getMetaTitle();
         $meta_description = $this->getMetaDescription();
         $meta_keywords = $this->getMetaKeywords();
         $attribution = $this->getAttribution();
@@ -89,20 +94,22 @@ class BaseDomParser
         // $publication_date = $this->getPublicationDate();
 
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
-        $raw_article_content = $this->getRawArticleContent();
+        $raw_article_content = $this->getTextArticleContent();
         $images = $this->getImages();
 
         // Use the first image as the primary image
         if (sizeof($images) > 0) {
             // Pull the first element and remove from image_array
             $primary_image = array_shift($images);
+        } else {
+            $primary_image = null;
         }
 
         // SET datapoints in article schema
         $this->article_data->setArticleId($this->url->id);
         $this->article_data->setTitle($title);
         $this->article_data->setCategory($category);
-        // TODO find out the parser it used to fill this out
+        // TODO find out the parser it used to fill this out, use URL matching for this
         // $this->article_data->setArticleType($category);
 
         $this->article_data->setMetaTitle($meta_title);
@@ -110,7 +117,6 @@ class BaseDomParser
         $this->article_data->setMetaKeywords($meta_description);
         $this->article_data->setAttribution($attribution);
         $this->article_data->setPublisher($publisher);
-        // TODO find out the parser it used to fill this out
         // $this->article_data->setPublicationDate($publication_date);
         $this->article_data->setArticleUrl($this->url->article_url);
         $this->article_data->setArticleHash($this->url->article_hash);
@@ -142,11 +148,9 @@ class BaseDomParser
                 $result .= ' ' . $node->text();
 
                 if (sizeof($node) > 0) {
-                    $result = $node->text();
-                    $result = str_replace('"', "'", $result);
+                    $result .= $node->text();
                 }
             });
-
         return $this->cleanStringFormatting($result);
     }
 
@@ -166,7 +170,6 @@ class BaseDomParser
 
                 if (sizeof($node) > 0) {
                     $result = $node->html();
-                    $result = str_replace('"', "'", $result);
                 }
             });
 
@@ -202,7 +205,7 @@ class BaseDomParser
     protected function cleanStringFormatting($string)
     {
         $string = str_replace(["\n", "\r", "\t"], ' ', $string);
-        return stripslashes(trim(preg_replace('/\s+/', ' ', $string)));
+        return trim(preg_replace('/\s+|&nbsp;/', ' ', $string));
     }
 
     /**** GET VALUE FUNCTIONS ****/
@@ -247,6 +250,11 @@ class BaseDomParser
     protected function getRawArticleContent()
     {
         return $this->getHtmlUsingXPath($this->raw_article_content_xpath);
+    }
+
+    protected function getTextArticleContent()
+    {
+        return $this->getTextUsingXPath($this->raw_article_content_xpath);
     }
 
     protected function getImages()
@@ -309,6 +317,5 @@ class BaseDomParser
         $fp = fopen($file_path, 'w');
         fwrite($fp, $json_data);   //here it will print the array pretty
         fclose($fp);
-        print("FILE CREATE: $file_path \n");
     }
 }
