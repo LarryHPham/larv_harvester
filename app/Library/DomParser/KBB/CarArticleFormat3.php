@@ -15,7 +15,8 @@ class CarArticleFormat3 extends BaseDomParser
     use
         \App\Library\DomParser\Traits\ByLine;
 
-    protected $titleXPath = '//div[contains(@class,"title-one")]//h1';
-    protected $rawArticleContentXPath = '//*[contains(@class,"article-content")]//p';
-    protected $imageXPath = '//*[contains(@class,"article-content")]//p/img';
+    protected $title_xpath = '//div[contains(@class,"title-one")]//h1';
+    protected $raw_article_content_xpath = '//*[contains(@class,"article-content")]//p';
+    protected $image_xpath = '//*[contains(@class,"article-content")]//p/img';
+    protected $category = 'automotive';
 }

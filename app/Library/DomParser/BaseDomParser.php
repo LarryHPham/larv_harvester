@@ -3,18 +3,20 @@
 namespace App\Library\DomParser;
 
 use App\Url;
+use App\Library\Schema\ArticleSchema;
 
 class BaseDomParser
 {
     /**
      * All of the possible XPaths
+     * NOTE: commented X Paths are to be left as they are not to be defined because they will break the Traits
      */
     // protected $titleXPath;
-    protected $metaTitleXPath = '//title';
-    protected $metaKeywordsXPath = '//meta[@name="keywords"]';
-    protected $metaDescriptionXPath = '//meta[@name="description"]';
+    protected $publisher_xpath = '//meta[@property="og:site_name"]';
+    protected $meta_title_xpath = '//title';
+    protected $meta_keywords_xpath = '//meta[@name="keywords"]';
+    protected $meta_description_xpath = '//meta[@name="description"]';
     // protected $attributionXPath;
-    protected $publisherXPath = '//meta[@property="og:site_name"]';
     // protected $publicationDateXPath;
     // protected $rawArticleContentXPath;
     // protected $imageXPath;
@@ -23,7 +25,7 @@ class BaseDomParser
      * The XPaths that will be used to test this DOM
      * @var Array
      */
-    protected $requiredXPaths = [];
+    protected $required_xpaths = [];
 
     /**
      * Saved versions of the parameters passed into the constructor
@@ -38,6 +40,12 @@ class BaseDomParser
     public $valid = false;
 
     /**
+     * A Schema that represents all the datapoints to be filled in for Articles
+     * @var ArticleSchema
+     */
+    protected $article_data;
+
+    /**
      * The constructor function determines if the parser is valid for the given
      * DOM by checking for the title, attribution, article, and image XPaths
      * @param Url     $url     The URL model that resulted in this DOM
@@ -45,14 +53,17 @@ class BaseDomParser
      */
     public function __construct(Url $url, $content)
     {
+        // Generate new schema to set data points
+        $this->article_data = new ArticleSchema();
+
         // Add the base items to the array
-        $this->requiredXPaths[] = $this->titleXPath;
-        $this->requiredXPaths[] = $this->attributionXPath;
-        $this->requiredXPaths[] = $this->rawArticleContentXPath;
-        $this->requiredXPaths[] = $this->imageXPath;
+        $this->required_xpaths[] = $this->title_xpath;
+        $this->required_xpaths[] = $this->attribution_xpath;
+        $this->required_xpaths[] = $this->raw_article_content_xpath;
+        $this->required_xpaths[] = $this->image_xpath;
 
         // The XPaths that need to return results
-        foreach ($this->requiredXPaths as $xpath) {
+        foreach ($this->required_xpaths as $xpath) {
             if (sizeof($content->filterXPath($xpath)) === 0) {
                 return false;
             }
@@ -72,37 +83,52 @@ class BaseDomParser
      */
     public function getValues()
     {
-        // @TODO add a switch for rendering via PhantomJS
-
         // Get the base information
-        $article_data = [
-            'article_id' => $this->url->id,
-            'ready_to_publish' => false,
-            'title' => $this->getTitle(),
-            'category' => null, // @TODO fill out this field
-            'article_type' => null, // @TODO fill out this field
-            'meta_title' => $this->getMetaTitle(),
-            'meta_keywords' => $this->getMetaKeywords(),
-            'meta_description' => $this->getMetaDescription(),
-            'attribution' => $this->getAttribution(),
-            'publisher' => $this->getPublisher(),
-            'article_url' => $this->url->article_url,
-            'publication_date' => $this->getPublicationDate(),
-            'json_last_updated' => \Carbon\Carbon::now()->timestamp,
-            'raw_article_content' => $this->getRawArticleContent(),
-            'primary_image' => [],
-            'image_array' => $this->getImages(),
-        ];
+        $title = $this->getTitle();
+        $category = $this->category; // TODO use URL matching for this
+        $meta_title = $this->getMetaTitle();
+        $meta_description = $this->getMetaDescription();
+        $meta_keywords = $this->getMetaKeywords();
+        $attribution = $this->getAttribution();
+        $publisher = $this->getPublisher();
+        $publication_date = $this->getPublicationDate();
+
+        $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
+        $raw_article_content = $this->getTextArticleContent();
+        $images = $this->getImages();
 
         // Use the first image as the primary image
-        if (sizeof($article_data['image_array']) > 0) {
+        if (sizeof($images) > 0) {
             // Pull the first element and remove from image_array
-            $article_data['primary_image'] = array_shift($article_data['image_array']);
+            $primary_image = array_shift($images);
+        } else {
+            $primary_image = null;
         }
+
+        // SET datapoints in article schema
+        $this->article_data->setArticleId($this->url->id);
+        $this->article_data->setTitle($title);
+        $this->article_data->setCategory($category);
+        // TODO find out the parser it used to fill this out, use URL matching for this
+        // $this->article_data->setArticleType($category);
+
+        $this->article_data->setMetaTitle($meta_title);
+        $this->article_data->setMetaDescription($meta_description);
+        $this->article_data->setMetaKeywords($meta_description);
+        $this->article_data->setAttribution($attribution);
+        $this->article_data->setPublisher($publisher);
+        $this->article_data->setPublicationDate($publication_date);
+        $this->article_data->setArticleUrl($this->url->article_url);
+        $this->article_data->setArticleHash($this->url->article_hash);
+        $this->article_data->setJsonLastUpdated($json_last_updated);
+        $this->article_data->setContent($raw_article_content);
+        $this->article_data->setPrimaryImage($primary_image);
+        $this->article_data->setImageArray($images);
+
 
         // @TODO pass the images into the image storage service
 
-        return $article_data;
+        return $this->article_data->toJson();
     }
 
     /**** UTILITY FUNCTIONS ****/
@@ -112,7 +138,24 @@ class BaseDomParser
      * @param  String $xpath The XPath to use to get the nodes
      * @return String        The text of all of the matching nodes
      */
-    protected function getUsingXPath($xpath)
+    protected function getTextUsingXPath($xpath)
+    {
+        $result = '';
+        $nodes = $this
+            ->content
+            ->filterXPath($xpath)
+            ->each(function ($node) use (&$result) {
+                $result .= ' ' . $node->text();
+            });
+        return $this->cleanStringFormatting($result);
+    }
+
+    /**
+     * Returns the HTML of all nodes that match the XPath
+     * @param  String $xpath The XPath to use to get the nodes
+     * @return String        The HTML of all of the matching nodes
+     */
+    protected function getHtmlUsingXPath($xpath)
     {
         $result = '';
         $nodes = $this
@@ -153,7 +196,8 @@ class BaseDomParser
      */
     protected function cleanStringFormatting($string)
     {
-        return trim(preg_replace('/\s+/', ' ', $string));
+        $string = str_replace(["\n", "\r", "\t"], ' ', $string);
+        return trim(preg_replace('/\s+|&nbsp;/', ' ', $string));
     }
 
     /**** GET VALUE FUNCTIONS ****/
@@ -161,33 +205,24 @@ class BaseDomParser
     protected function getTitle()
     {
         // Get the items
-        return $this->getUsingXPath($this->titleXPath);
+        return $this->getTextUsingXPath($this->title_xpath);
     }
 
-    protected function getMetaTitle()
+    protected function getpublication_date_xpath()
     {
-        return $this->getUsingXPath($this->metaTitleXPath);
-    }
-
-    protected function getMetaKeywords()
-    {
-        return $this->getMetaUsingXPath($this->metaKeywordsXPath);
-    }
-
-    protected function getMetaDescription()
-    {
-        return $this->getMetaUsingXPath($this->metaDescriptionXPath);
+        // Get the items
+        return $this->getTextUsingXPath($this->publication_date_xpath);
     }
 
     protected function getAttribution()
     {
         // Get the items
-        return $this->getUsingXPath($this->attributionXPath);
+        return $this->getTextUsingXPath($this->attribution_xpath);
     }
 
     protected function getPublisher()
     {
-        $value = $this->getMetaUsingXPath($this->publisherXPath);
+        $value = $this->getMetaUsingXPath($this->publisher_xpath);
         return $value === '' || $value === null
             ? 'KBB'
             : $value;
@@ -195,7 +230,7 @@ class BaseDomParser
 
     protected function getPublicationDate()
     {
-        $value = $this->getUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publication_date_xpath);
 
         if ($value === '' || $value === null) {
             return null;
@@ -206,7 +241,7 @@ class BaseDomParser
 
     protected function getRawArticleContent()
     {
-        return $this->getUsingXPath($this->rawArticleContentXPath);
+        return $this->getTextUsingXPath($this->raw_article_content_xpath);
     }
 
     protected function getImages()
@@ -215,7 +250,7 @@ class BaseDomParser
 
         $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->each(function ($image) use (&$images) {
                 // Get the image
                 $image_data = [
@@ -242,5 +277,32 @@ class BaseDomParser
             });
 
         return $images;
+    }
+
+    protected function getMetaTitle()
+    {
+        return $this->getTextUsingXPath($this->meta_title_xpath);
+    }
+
+    protected function getMetaKeywords()
+    {
+        return $this->getMetaUsingXPath($this->meta_keywords_xpath);
+    }
+
+    protected function getMetaDescription()
+    {
+        return $this->getMetaUsingXPath($this->meta_description_xpath);
+    }
+
+    /**
+     * Saves the Data of jsonFile into
+     * @param  String $xpath The XPath to use to get the nodes
+     * @return String        The text of all of the matching nodes
+     */
+    public function createJsonFile($file_path, $json_data)
+    {
+        $fp = fopen($file_path, 'w');
+        fwrite($fp, $json_data);   //here it will print the array pretty
+        fclose($fp);
     }
 }

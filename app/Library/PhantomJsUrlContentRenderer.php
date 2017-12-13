@@ -17,22 +17,22 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
     /**
      * @var int Tracks number of redirects in-flight
      */
-    protected $numRedirects;
+    protected $num_redirects;
 
     /**
      * @var int Defines the maximum number of times a request can be redirected
      */
-    protected $maxNumRedirects;
+    protected $max_num_redirects;
 
     /**
      * PhantomJsUrlContentRenderer constructor.
      */
     public function __construct()
     {
-        $this->numRedirects    = 0;
+        $this->num_redirects    = 0;
 
         // max redirects by default is 5
-        $this->maxNumRedirects = config('cas.content_render.max_redirects');
+        $this->max_num_redirects = config('cas.content_render.max_redirects');
     }
 
     /**
@@ -44,13 +44,13 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
      */
     public function renderContentFromUrl($url)
     {
-        $contentResponse = $this->getPageContentFromUrl($url);
+        $content_response = $this->getPageContentFromUrl($url);
 
-        if (!empty($contentResponse['message'])) {
-            throw new \Exception($contentResponse['status'] . ': ' . $contentResponse['message']);
+        if (!empty($content_response['message'])) {
+            throw new \Exception($content_response['status'] . ': ' . $content_response['message']);
         }
 
-        return $contentResponse['content'];
+        return $content_response['content'];
     }
 
     private function getPageContentFromUrl($url)
@@ -87,10 +87,10 @@ class PhantomJsUrlContentRenderer extends BaseUrlContentRenderer
             Log::debug("PhantomJsUrlContentRender $url, try $current_try of $times_to_try with timeout $timeout, status returned was $status");
 
             if ($response->isRedirect()) {
-                if ($this->numRedirects >= $this->maxNumRedirects) {
+                if ($this->num_redirects >= $this->max_num_redirects) {
                     throw new \Exception('Exceeded maximum number of redirects');
                 }
-                $this->numRedirects++;
+                $this->num_redirects++;
 
                 $redirectUrl = $response->getRedirectUrl();
                 Log::debug("Got redirect from $url to $redirectUrl");

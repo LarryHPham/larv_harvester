@@ -22,15 +22,15 @@ class XmlUrlParser extends BaseParser
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
-     * @param String $DomString The string found when crawling the DOM
+     * @param String $dom_string The string found when crawling the DOM
      */
-    public function __construct(Url $url, $DomString)
+    public function __construct(Url $url, $dom_string)
     {
         // Save the URL and parts
         parent::__construct($url);
 
         // Parse the dom and save it
-        $this->parsed_dom = new DomCrawler($DomString);
+        $this->parsed_dom = new DomCrawler($dom_string);
     }
 
     /**

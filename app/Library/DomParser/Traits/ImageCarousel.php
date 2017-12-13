@@ -7,14 +7,14 @@ namespace App\Library\DomParser\Traits;
  */
 trait ImageCarousel
 {
-    protected $imageXPath = '//div[contains(@class,"js-aem-gallery")]';
+    protected $image_xpath = '//div[contains(@class,"js-aem-gallery")]';
 
     protected function getImages()
     {
         // Get the JSON string
         $jsonString = $this
             ->content
-            ->filterXPath($this->imageXPath)
+            ->filterXPath($this->image_xpath)
             ->first()
             ->attr('data-images');
 

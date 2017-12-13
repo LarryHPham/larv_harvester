@@ -5,214 +5,111 @@ namespace App\Library\Schema;
 class ArticleSchema
 {
     protected $article_id;
-    protected $ready_to_publish;
+    protected $ready_to_publish = false;
     protected $title;
     protected $category;
+    protected $article_type;
+    protected $meta_title;
+    protected $meta_description;
+    protected $meta_keywords;
     protected $attribution;
     protected $publisher;
+    protected $publication_date;
     protected $article_url;
-    protected $published_date;
+    protected $article_hash;
     protected $json_last_updated;
     protected $raw_article_content;
     protected $primary_image;
+    protected $image_array;
 
     public function toJson()
     {
         // TODO implement JSON schema validation
-        return json_encode(get_object_vars($this));
+        return json_encode(get_object_vars($this), JSON_UNESCAPED_SLASHES);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCategory()
+    public function setArticleId($article_id)
     {
-        return $this->category;
+        $this->article_id = $article_id;
     }
 
-    /**
-     * @param mixed $category
-     */
-    public function setCategory($category)
+    public function setReadyToPublish($ready_to_publish)
     {
-        $this->category = $category;
+        $this->ready_to_publish = $ready_to_publish;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSubCategory()
-    {
-        return $this->sub_category;
-    }
-
-    /**
-     * @param mixed $sub_category
-     */
-    public function setSubCategory($sub_category)
-    {
-        $this->sub_category = $sub_category;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param mixed $title
-     */
     public function setTitle($title)
     {
         $this->title = $title;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getArticleUrl()
+    public function setCategory($category)
     {
-        return $this->article_url;
+        $this->category = $category;
     }
 
-    /**
-     * @param mixed $article_url
-     */
-    public function setArticleUrl($article_url)
+    public function setArticleType($article_type)
     {
-        $this->article_url = $article_url;
+        $this->article_type = $article_type;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAttribution()
+    public function setMetaTitle($meta_title)
     {
-        return $this->attribution;
+        $this->meta_title = $meta_title;
     }
 
-    /**
-     * @param mixed $attribution
-     */
+    public function setMetaDescription($meta_description)
+    {
+        $this->meta_description = $meta_description;
+    }
+
+    public function setMetaKeywords($meta_keywords)
+    {
+        $this->meta_keywords = $meta_keywords;
+    }
+
     public function setAttribution($attribution)
     {
         $this->attribution = $attribution;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSource()
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param mixed $source
-     */
-    public function setSource($source)
-    {
-        $this->source = $source;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPublisher()
-    {
-        return $this->publisher;
-    }
-
-    /**
-     * @param mixed $publisher
-     */
     public function setPublisher($publisher)
     {
         $this->publisher = $publisher;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPublishedDate()
+    public function setPublishedDate($publication_date)
     {
-        return $this->published_date;
+        $this->publication_date = $publication_date;
     }
 
-    /**
-     * @param mixed $published_date
-     */
-    public function setPublishedDate($published_date)
+    public function setArticleUrl($article_url)
     {
-        $this->published_date = $published_date;
+        $this->article_url = $article_url;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContent()
+    public function setArticleHash($article_hash)
     {
-        return $this->raw_article_content;
+        $this->article_hash = $article_hash;
     }
 
-    /**
-     * @param mixed $raw_article_content
-     */
+    public function setJsonLastUpdated($json_last_updated)
+    {
+        $this->json_last_updated = $json_last_updated;
+    }
+
     public function setContent($raw_article_content)
     {
         $this->raw_article_content = $raw_article_content;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getImageUrl()
-    {
-        return $this->primary_image;
-    }
-
-    /**
-     * @param mixed $primary_image
-     */
-    public function setImageUrl($primary_image)
+    public function setPrimaryImage($primary_image)
     {
         $this->primary_image = $primary_image;
     }
 
-
-    /**
-     * Given image source url, hashes given URL to MD5 and returns the hash value
-     * @return mixed
-     */
-    protected function getImageSourceId($image_source_url)
+    public function setImageArray($image_array)
     {
-        $image_source_id = hash('md5', $image_source_url);
-        return $image_source_id;
-    }
-    /**
-     * Given image url, format image URL to the required format
-     * @return mixed
-     */
-    protected function getFormattedImageURL($primary_image)
-    {
-        $parsed_url = parse_url($primary_image);
-        if (isset($parsed_url['scheme'])) {
-            return $primary_image;
-        } else {
-            return "http://".$primary_image;
-        }
-    }
-    /**
-     * This function returns keywords for the image
-     * @return array
-     */
-    protected function getKeywords()
-    {
-        // NOTE: Keywords come from meta tags
-        $keywords = array("KBB", $this->getCategory(), $this->getSubCategory());
-        return $keywords;
+        $this->image_array = $image_array;
     }
 }

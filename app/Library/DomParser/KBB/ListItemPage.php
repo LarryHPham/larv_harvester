@@ -16,7 +16,8 @@ class ListPage extends BaseDomParser
         \App\Library\DomParser\Traits\Posted,
         \App\Library\DomParser\Traits\NoAttribution;
 
-    protected $titleXPath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
-    protected $rawArticleContentXPath = '//div[contains(@class,"article-content ")]/p';
-    protected $imageXPath = '//img[contains(@class,"editorial")]';
+    protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
+    protected $raw_article_content_xpath = '//div[contains(@class,"article-content ")]/p';
+    protected $image_xpath = '//img[contains(@class,"editorial")]';
+    protected $category = 'automotive';
 }

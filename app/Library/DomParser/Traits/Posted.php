@@ -7,11 +7,11 @@ namespace App\Library\DomParser\Traits;
  */
 trait Posted
 {
-    protected $publicationDateXPath = '//span[contains(@class,"time-stamp")]';
+    protected $publication_date_xpath = '//span[contains(@class,"time-stamp")]';
 
     protected function getPublicationDate()
     {
-        $value = $this->getUsingXPath($this->publicationDateXPath);
+        $value = $this->getTextUsingXPath($this->publication_date_xpath);
 
         if ($value === '' || $value === null) {
             return null;

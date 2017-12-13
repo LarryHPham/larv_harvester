@@ -25,8 +25,37 @@ class ParseUrl extends Command
     {
         // Make sure the model exists
         $url_string = $this->argument('url');
+        $url = Url::findByHash($url_string);
+        // If no URL exists, create one
+        if ($url === null) {
+            // Make the URL
+            $url = new Url([
+                'article_url' => $url_string,
+            ]);
+            $url->save();
 
-        // Create the job
+            // Create a priority entry
+            $url
+                ->priority()
+                ->create([]);
+        }
+
+        // If no priority exists, create one
+        if ($url->priority === null) {
+            $url
+                ->priority()
+                ->create([]);
+        }
+
+        // Make the crawl_order
+        $url
+            ->priority
+            ->save([
+                'scheduled' => true,
+                'weight' => 20,
+            ]);
+
+        //run Page Parser
         app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageParser($url_string));
     }
 }
