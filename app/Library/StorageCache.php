@@ -10,7 +10,6 @@ class StorageCache
 
     public function __construct($disk_env)
     {
-        // TODO throw error that cache Storage does not EXISTS () use Try Catch
         // NOTE: Storage Disk will default in config/filesystems.php
         try {
             $this->storage = Storage::disk($disk_env);
@@ -20,7 +19,7 @@ class StorageCache
                 print("Storage Found: ".$disk_env."\n");
             }
         } catch (\Exception $e) {
-            throw new \Exception("Cache Storage ERROR: $e");
+            throw new \Exception("$disk_env => Cache Storage ERROR: $e");
         }
     }
 

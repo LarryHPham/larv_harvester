@@ -5,6 +5,7 @@ namespace App\Library\DomParser;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 use App\Url;
+use App\Ledger;
 use App\Library\StorageCache;
 
 class ParseDom
@@ -55,9 +56,6 @@ class ParseDom
      */
     public function __construct(Url $url, $content)
     {
-        // TODO set path to an ENV file that pushes to location on database
-        $this->json_path = storage_path('app/json')."/";
-        print("JSON PATH: ".$this->json_path."\n");
         // Parse the DOM
         $parsed_dom = new DomCrawler($content);
 
@@ -85,15 +83,31 @@ class ParseDom
         // NOTE: we are using publisher as the folder directory
         $path_array = [];
         $publisher = json_decode($this->json)->publisher;
-        array_push($path_array, $publisher, $url->article_hash.'.json');
-        // $json_file_path = json_decode($this->json)->publisher.'/'.$url->article_hash.'.json';
-        $json_file_path = implode($path_array, '/');
 
-        // create JSON file
-        // NOTE: JSON_CACHE is located in .env
+        // json file path with root path plus an array of keywords to create full url
+        array_push(
+          $path_array,
+          env('AWS_ARTICLE_JSON_ROOT_PATH'),
+          $publisher,
+          $url->article_hash.'.json'
+        );
+        $json_file_path = implode($path_array, '/');
+        // $json_file_path = env('AWS_ARTICLE_JSON_ROOT_PATH'). json_decode($this->json)->publisher.'/'.$url->article_hash.'.json';
+
+
+        // create JSON file and store on aws server
         $json_storage = new StorageCache(env('JSON_CACHE'));
         $json_storage->cacheContent($json_file_path, $this->json);
         // $json_storage->removeCachedData($json_file_path);
-        // @TODO Save the values into elastic-search
+
+        // Save the values into elastic-search
+        $ledger = Ledger::updateOrCreate(
+          ['url_hash' => $url->article_hash],
+          [
+            'article_url' => $url->article_url,
+            'path_to_file' => $json_file_path
+          ]
+        )
+          ->save();
     }
 }

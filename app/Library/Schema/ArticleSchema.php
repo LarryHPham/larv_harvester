@@ -1,4 +1,6 @@
 <?php
+// TODO: add link to confluence documentations
+// AND add doc to README.md
 
 namespace App\Library\Schema;
 

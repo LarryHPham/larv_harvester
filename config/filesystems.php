@@ -9,7 +9,7 @@ return [
         ],
         'localarticle'    => [
             'driver'  =>  'local',
-            'root'    =>  storage_path('app/web-harvester'),
+            'root'    =>  storage_path('app/'),
         ],
         //AWS s3 connections below
         'temp' => [
@@ -25,7 +25,6 @@ return [
             'secret' => env('AWS_SECRET'),
             'region' => env('AWS_REGION'),
             'bucket' => env('AWS_ARTICLE_JSON_BUCKET'),
-            'root' => 'web-harvester',
         ],
     ],
 ];
