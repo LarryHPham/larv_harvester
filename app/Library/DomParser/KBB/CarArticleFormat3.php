@@ -19,5 +19,4 @@ class CarArticleFormat3 extends BaseDomParser
     protected $title_xpath = '//div[contains(@class,"title-one")]//h1';
     protected $raw_article_content_xpath = '//*[contains(@class,"article-content")]//p';
     protected $image_xpath = '//*[contains(@class,"article-content")]//p/img';
-    protected $category = 'automotive';
 }

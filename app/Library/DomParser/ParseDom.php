@@ -30,13 +30,6 @@ class ParseDom
         '\App\Library\DomParser\KBB\VideoPage',
     ];
 
-    private $registered_article_types = [
-        'expert_car_reviews',
-        'all-the-latest',
-        'top-10',
-        'car-videos'
-    ];
-
     /**
      * The path is relative path in which the json file will be saved in
      * @var Object
@@ -114,5 +107,6 @@ class ParseDom
         );
         // TODO Ledger returns id to be used to call elastic search api
         $id = $ledger->id;
+        // TODO check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES create() or update entry with put()
     }
 }

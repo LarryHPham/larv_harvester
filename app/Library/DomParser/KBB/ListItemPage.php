@@ -20,5 +20,4 @@ class ListPage extends BaseDomParser
     protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"article-content ")]/p';
     protected $image_xpath = '//img[contains(@class,"editorial")]';
-    protected $category = 'automotive';
 }

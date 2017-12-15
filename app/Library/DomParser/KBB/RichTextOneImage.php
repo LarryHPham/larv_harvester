@@ -18,5 +18,4 @@ class RichTextOneImage extends BaseDomParser
         \App\Library\DomParser\Traits\RichText;
 
     protected $image_xpath = '//img[contains(@class,"main-content-image")]';
-    protected $category = 'automotive';
 }

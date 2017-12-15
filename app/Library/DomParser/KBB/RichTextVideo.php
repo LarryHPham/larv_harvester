@@ -17,6 +17,4 @@ class RichTextVideo extends BaseDomParser
         \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\RichText,
         \App\Library\DomParser\Traits\VideoImages;
-
-    protected $category = 'automotive';
 }

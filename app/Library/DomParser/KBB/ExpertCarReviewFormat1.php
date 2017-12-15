@@ -20,5 +20,4 @@ class ExpertCarReviewFormat1 extends BaseDomParser
     protected $attribution_xpath = '//p[@id="Expert-overview-byline"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"mod-primary")]/div[contains(@class,"mod-primary")]';
     protected $image_xpath = '//a[contains(@class,"photos-modal")]/img';
-    protected $category = 'automotive';
 }

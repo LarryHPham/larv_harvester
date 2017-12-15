@@ -21,5 +21,4 @@ class CarArticleFormat1 extends BaseDomParser
     protected $attribution_xpath = '//p[@id="Expert-overview-byline"]/span';
     protected $raw_article_content_xpath = '//*[contains(@class,"mod-primary")]/*[contains(@class,"review-item")]';
     protected $image_xpath = '//a[contains(@class,"photos-modal")]/img';
-    protected $category = 'automotive';
 }
