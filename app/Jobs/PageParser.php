@@ -47,23 +47,6 @@ class PageParser extends Job
         // var_dump($this->url_model);
         $this->parse_content = 1; // TODO use flag in the database
 
-        // $client = new GuzzleClient();
-        // // Request the page
-        // $response = $client->request('GET', $this->entry_url, [
-        //   'exceptions' => false,
-        // ]);
-        // //TODO possibly combine with phantomJS status check
-        // // Check the status code
-        // switch ($response->getStatusCode()) {
-        //     case 200:
-        //     break;
-        //     default:
-        //         $this->markFailed($response->getStatusCode());
-        //     return false;
-        // }
-        // // get Guzzle Body content
-        // $body = (string) $response->getBody();
-
         // TODO Check if Cache String exists Dom by sending in url as hash md5 then decided whether to cache or not
         $hash_entry_url = Url::createHash($this->entry_url);
         // TODO phantom flag should be set to true when missing required datapoints or flag is given

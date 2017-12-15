@@ -65,7 +65,6 @@ class ParseDom
 
             // Determine if the given parser is valid
             if ($parser->valid) {
-                print("PARSER: $test_parser\n");
                 $this->parser_used = $test_parser;
                 break;
             }
@@ -86,10 +85,10 @@ class ParseDom
 
         // json file path with root path plus an array of keywords to create full url
         array_push(
-          $path_array,
-          env('AWS_ARTICLE_JSON_ROOT_PATH'),
-          $publisher,
-          $url->article_hash.'.json'
+            $path_array,
+            env('AWS_ARTICLE_JSON_ROOT_PATH'),
+            $publisher,
+            $url->article_hash.'.json'
         );
         $json_file_path = implode($path_array, '/');
         // $json_file_path = env('AWS_ARTICLE_JSON_ROOT_PATH'). json_decode($this->json)->publisher.'/'.$url->article_hash.'.json';
@@ -107,7 +106,8 @@ class ParseDom
             'article_url' => $url->article_url,
             'path_to_file' => $json_file_path
           ]
-        )
-          ->save();
+        );
+        // TODO Ledger returns id to be used to call elastic search api
+        $id = $ledger->id;
     }
 }
