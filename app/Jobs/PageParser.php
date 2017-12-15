@@ -88,6 +88,7 @@ class PageParser extends Job
                         $this->markFailed($response->getStatusCode());
                         return false;
                 }
+                $body = (string) $response->getBody();
             }
 
             // cache the data
