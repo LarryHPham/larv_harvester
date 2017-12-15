@@ -35,7 +35,7 @@ trait kbbArticleTypes
     public function getArticleType(String $url)
     {
         $article_type = [];
-        foreach ($this->$kbb_article_types as $type) {
+        foreach ($this->kbb_article_types as $type) {
             if (str_contains($url, $type)) {
                 array_push($article_type, $type);
             }

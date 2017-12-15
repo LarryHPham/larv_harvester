@@ -50,52 +50,52 @@ class PageParser extends Job
         // TODO phantom flag should be set to true when missing required datapoints or flag is given
         $phantom = false;
 
-        $temp_storage = new StorageCache(env('TEMP_CACHE'));
-        if (!$temp_storage->CheckCachedData($hash_entry_url)) {
-            // DECIDE WHETHER TO USE PHANTOM JS OR GUZZLE Client
-            /* NOTE:
-             * PHANTOMJS will allow javascript to render
-             * at the cost of javascript render time (5 sec)
-             * GUZZLE is server to server request for content
-             * thus direct and fast (200 ms);
-            **/
-            if ($phantom) {
-                $client = new PhantomJsUrlContentRenderer();
+        // $temp_storage = new StorageCache(env('TEMP_CACHE'));
+        // if (!$temp_storage->CheckCachedData($hash_entry_url)) {
+        // DECIDE WHETHER TO USE PHANTOM JS OR GUZZLE Client
+        /* NOTE:
+         * PHANTOMJS will allow javascript to render
+         * at the cost of javascript render time (5 sec)
+         * GUZZLE is server to server request for content
+         * thus direct and fast (200 ms);
+        **/
+        if ($phantom) {
+            $client = new PhantomJsUrlContentRenderer();
 
-                $response = $client->renderContentFromUrl($this->entry_url);
+            $response = $client->renderContentFromUrl($this->entry_url);
 
-                $body = $response['content'];
-            } else {
-                $client = new GuzzleClient();
-                // Request the page
-                try {
-                    $response = $client->request('GET', $this->entry_url, [
+            $body = $response['content'];
+        } else {
+            $client = new GuzzleClient();
+            // Request the page
+            try {
+                $response = $client->request('GET', $this->entry_url, [
                       'exceptions' => false,
                     ]);
-                } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
-                    $this->markFailed(1);
-                    return false;
-                } catch (\GuzzleHttp\Exception\ConnectException $e) {
-                    $this->markFailed(-2);
-                    return false;
-                }
+            } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
+                $this->markFailed(1);
+                return false;
+            } catch (\GuzzleHttp\Exception\ConnectException $e) {
+                $this->markFailed(-2);
+                return false;
+            }
 
-                // Check the status code
-                switch ($response->getStatusCode()) {
+            // Check the status code
+            switch ($response->getStatusCode()) {
                     case 200:
                         break;
                     default:
                         $this->markFailed($response->getStatusCode());
                         return false;
                 }
-                $body = (string) $response->getBody();
-            }
-
-            // cache the data
-            $temp_storage->cacheContent($hash_entry_url, $body);
-        } else {
-            $body = $temp_storage->getCacheData($hash_entry_url);
+            $body = (string) $response->getBody();
         }
+
+        // cache the data
+        // $temp_storage->cacheContent($hash_entry_url, $body);
+        // } else {
+        //     $body = $temp_storage->getCacheData($hash_entry_url);
+        // }
         // print("FIND PARSER: $hash_entry_url \n");
 
         // Call to the DomParser
@@ -104,6 +104,6 @@ class PageParser extends Job
         }
 
         // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
-        $temp_storage->removeCachedData($hash_entry_url);
+        // $temp_storage->removeCachedData($hash_entry_url);
     }
 }
