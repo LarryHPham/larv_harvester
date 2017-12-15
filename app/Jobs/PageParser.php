@@ -68,20 +68,26 @@ class PageParser extends Job
             } else {
                 $client = new GuzzleClient();
                 // Request the page
-                $response = $client->request('GET', $this->entry_url, [
-                  'exceptions' => false,
-                ]);
-                //TODO possibly combine with phantomJS status check
+                try {
+                    $response = $client->request('GET', $this->entry_url, [
+                      'exceptions' => false,
+                    ]);
+                } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
+                    $this->markFailed(1);
+                    return false;
+                } catch (\GuzzleHttp\Exception\ConnectException $e) {
+                    $this->markFailed(-2);
+                    return false;
+                }
+
                 // Check the status code
                 switch ($response->getStatusCode()) {
                     case 200:
-                    break;
+                        break;
                     default:
                         $this->markFailed($response->getStatusCode());
-                    return false;
+                        return false;
                 }
-                // get Guzzle Body content
-                $body = (string) $response->getBody();
             }
 
             // cache the data
