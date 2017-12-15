@@ -12,7 +12,9 @@ use App\Library\DomParser\BaseDomParser;
  */
 class ExpertCarReviewFormat2 extends BaseDomParser
 {
-    use \App\Library\DomParser\Traits\NoPublicationDate;
+    use
+        \App\Library\DomParser\Traits\kbbArticleTypes,
+        \App\Library\DomParser\Traits\NoPublicationDate;
 
     protected $title_xpath = '//div[@id="Main-hero-title"]/h1';
     protected $attribution_xpath = '//p[@id="Expert-overview-byline"]';

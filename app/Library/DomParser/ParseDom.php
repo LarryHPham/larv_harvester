@@ -30,6 +30,13 @@ class ParseDom
         '\App\Library\DomParser\KBB\VideoPage',
     ];
 
+    private $registered_article_types = [
+        'expert_car_reviews',
+        'all-the-latest',
+        'top-10',
+        'car-videos'
+    ];
+
     /**
      * The path is relative path in which the json file will be saved in
      * @var Object
@@ -70,20 +77,20 @@ class ParseDom
             }
         }
 
-        // If there was no parser fonud, exit
+        // If there was no parser found, exit
         if ($this->parser_used === null) {
             return;
         }
 
         // Get the JSON object
         $this->json = $parser->getValues();
-
+        $json_data = json_decode($this->json);
         // Create path of object
-        // NOTE: we are using publisher as the folder directory
-        $path_array = [];
-        $publisher = json_decode($this->json)->publisher;
+        // NOTE: we are using publisher as the folder directory from json data
+        $publisher = $json_data->publisher;
 
         // json file path with root path plus an array of keywords to create full url
+        $path_array = [];
         array_push(
             $path_array,
             env('AWS_ARTICLE_JSON_ROOT_PATH'),
@@ -91,8 +98,6 @@ class ParseDom
             $url->article_hash.'.json'
         );
         $json_file_path = implode($path_array, '/');
-        // $json_file_path = env('AWS_ARTICLE_JSON_ROOT_PATH'). json_decode($this->json)->publisher.'/'.$url->article_hash.'.json';
-
 
         // create JSON file and store on aws server
         $json_storage = new StorageCache(env('JSON_CACHE'));

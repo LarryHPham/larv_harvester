@@ -14,6 +14,7 @@ class CarArticleFormat4 extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\ByLine,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\VideoImages;
 
     protected $title_xpath = '//div[contains(@class,"title-one")]//h1';

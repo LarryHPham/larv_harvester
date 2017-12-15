@@ -14,6 +14,7 @@ class RichTextVideo extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\ByLine,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\RichText,
         \App\Library\DomParser\Traits\VideoImages;
 

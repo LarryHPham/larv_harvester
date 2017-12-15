@@ -14,6 +14,7 @@ use GuzzleHttp\Client as GuzzleClient;
 class VideoPage extends BaseDomParser
 {
     use
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoAttribution;
 
     protected $title_xpath = '//h1[@id="title"]';

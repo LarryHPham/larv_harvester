@@ -14,6 +14,7 @@ class CarArticleFormat1 extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\PhotoSizeChanger,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoPublicationDate;
 
     protected $title_xpath = '//span[@id="Expert-overview-title"]';

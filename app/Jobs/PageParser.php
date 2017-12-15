@@ -41,8 +41,6 @@ class PageParser extends Job
 
     public function handle()
     {
-        print("------------------------START------------------------------\n");
-        print("$this->entry_url \n");
         $this->url_model = URL::findByHash($this->entry_url);
         // var_dump($this->url_model);
         $this->parse_content = 1; // TODO use flag in the database
@@ -100,6 +98,5 @@ class PageParser extends Job
 
         // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
         $temp_storage->removeCachedData($hash_entry_url);
-        print("------------------------END------------------------------\n");
     }
 }

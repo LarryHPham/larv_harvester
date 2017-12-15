@@ -13,6 +13,7 @@ use App\Library\DomParser\BaseDomParser;
 class CarArticleFormat3 extends BaseDomParser
 {
     use
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\ByLine;
 
     protected $title_xpath = '//div[contains(@class,"title-one")]//h1';

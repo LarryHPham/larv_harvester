@@ -16,6 +16,7 @@ class ListPage extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\Posted,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoAttribution;
 
     protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
