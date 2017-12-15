@@ -13,11 +13,11 @@ use App\Library\DomParser\BaseDomParser;
 class ExpertCarReviewFormat1 extends BaseDomParser
 {
     use
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoPublicationDate;
 
     protected $title_xpath = '//div[@id="Main-hero-title"]/h1';
     protected $attribution_xpath = '//p[@id="Expert-overview-byline"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"mod-primary")]/div[contains(@class,"mod-primary")]';
     protected $image_xpath = '//a[contains(@class,"photos-modal")]/img';
-    protected $category = 'automotive';
 }

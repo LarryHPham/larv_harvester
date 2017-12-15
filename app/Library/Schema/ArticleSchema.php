@@ -1,26 +1,28 @@
 <?php
+// TODO: add link to confluence documentations
+// AND add doc to README.md
 
 namespace App\Library\Schema;
 
 class ArticleSchema
 {
-    protected $article_id;
-    protected $ready_to_publish = false;
-    protected $title;
-    protected $category;
-    protected $article_type;
+    protected $article_id; // *required
+    protected $ready_to_publish = false; // *required
+    protected $title; // *required
+    protected $category; // *required
+    protected $article_type = []; // *required
     protected $meta_title;
     protected $meta_description;
     protected $meta_keywords;
     protected $attribution;
-    protected $publisher;
+    protected $publisher; // *required
     protected $publication_date;
-    protected $article_url;
-    protected $article_hash;
+    protected $article_url; // *required
+    protected $article_hash; // *required
     protected $json_last_updated;
-    protected $raw_article_content;
-    protected $primary_image;
-    protected $image_array;
+    protected $raw_article_content; // *required
+    protected $primary_image = [];
+    protected $image_array = [];
 
     public function toJson()
     {

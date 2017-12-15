@@ -14,12 +14,12 @@ use GuzzleHttp\Client as GuzzleClient;
 class VideoPage extends BaseDomParser
 {
     use
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoAttribution;
 
     protected $title_xpath = '//h1[@id="title"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"videoSummary")]';
     protected $image_xpath = '//div[@id="bcplayer"]';
-    protected $category = 'automotive';
 
     /**
      * The API configuration. This is the URL to make the request to and the

@@ -14,10 +14,10 @@ class ListPage extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\Posted,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoAttribution;
 
     protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"article-content ")]/p';
     protected $image_xpath = '//img[contains(@class,"editorial")]';
-    protected $category = 'automotive';
 }

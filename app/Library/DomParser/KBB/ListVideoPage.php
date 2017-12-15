@@ -17,12 +17,12 @@ class ListVideoPage extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\Posted,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\NoAttribution;
 
     protected $title_xpath = '//h1[contains(@class,"title")]|//a[@id="Vehicle-title"]';
     protected $raw_article_content_xpath = '//div[contains(@class,"article-content ")]/p';
     protected $image_xpath = '//div[@id="bcplayer"]';
-    protected $category = 'automotive';
 
     /**
      * The API configuration. This is the URL to make the request to and the

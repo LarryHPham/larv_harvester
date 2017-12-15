@@ -2,8 +2,11 @@
 
 namespace App\Library\DomParser;
 
-use App\Url;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+
+use App\Url;
+use App\Ledger;
+use App\Library\StorageCache;
 
 class ParseDom
 {
@@ -53,9 +56,6 @@ class ParseDom
      */
     public function __construct(Url $url, $content)
     {
-        // TODO set path to an ENV file that pushes to location on database
-        $this->json_path = storage_path('app/json')."/";
-
         // Parse the DOM
         $parsed_dom = new DomCrawler($content);
 
@@ -70,20 +70,43 @@ class ParseDom
             }
         }
 
-        // If there was no parser fonud, exit
+        // If there was no parser found, exit
         if ($this->parser_used === null) {
             return;
         }
 
         // Get the JSON object
         $this->json = $parser->getValues();
+        $json_data = json_decode($this->json);
+        // Create path of object
+        // NOTE: we are using publisher as the folder directory from json data
+        $publisher = $json_data->publisher;
 
-        // create JSON file
-        $parser->createJsonFile(
-          $this->json_path.$url->article_hash.'.json',
-          $this->json
+        // json file path with root path plus an array of keywords to create full url
+        $path_array = [];
+        array_push(
+            $path_array,
+            env('AWS_ARTICLE_JSON_ROOT_PATH'),
+            $publisher,
+            $url->article_hash.'.json'
         );
+        $json_file_path = implode($path_array, '/');
 
-        // @TODO Save the values into elastic-search
+        // create JSON file and store on aws server
+        $json_storage = new StorageCache(env('JSON_CACHE'));
+        $json_storage->cacheContent($json_file_path, $this->json);
+        // $json_storage->removeCachedData($json_file_path);
+
+        // Save the values into elastic-search
+        $ledger = Ledger::updateOrCreate(
+          ['url_hash' => $url->article_hash],
+          [
+            'article_url' => $url->article_url,
+            'path_to_file' => $json_file_path
+          ]
+        );
+        // TODO Ledger returns id to be used to call elastic search api
+        $id = $ledger->id;
+        // TODO check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES create() or update entry with put()
     }
 }

@@ -18,8 +18,7 @@ class RichTextCarousel extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\ImageCarousel,
+        \App\Library\DomParser\Traits\kbbArticleTypes,
         \App\Library\DomParser\Traits\ByLine,
         \App\Library\DomParser\Traits\RichText;
-
-    protected $category = 'automotive';
 }

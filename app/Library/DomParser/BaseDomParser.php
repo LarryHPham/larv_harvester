@@ -85,7 +85,8 @@ class BaseDomParser
     {
         // Get the base information
         $title = $this->getTitle();
-        $category = $this->category; // TODO use URL matching for this
+        $category = $this->category;
+        $article_type = $this->getArticleType($this->url->article_url);
         $meta_title = $this->getMetaTitle();
         $meta_description = $this->getMetaDescription();
         $meta_keywords = $this->getMetaKeywords();
@@ -109,12 +110,10 @@ class BaseDomParser
         $this->article_data->setArticleId($this->url->id);
         $this->article_data->setTitle($title);
         $this->article_data->setCategory($category);
-        // TODO find out the parser it used to fill this out, use URL matching for this
-        // $this->article_data->setArticleType($category);
-
+        $this->article_data->setArticleType($article_type);
         $this->article_data->setMetaTitle($meta_title);
         $this->article_data->setMetaDescription($meta_description);
-        $this->article_data->setMetaKeywords($meta_description);
+        $this->article_data->setMetaKeywords($meta_keywords);
         $this->article_data->setAttribution($attribution);
         $this->article_data->setPublisher($publisher);
         $this->article_data->setPublicationDate($publication_date);
@@ -208,10 +207,10 @@ class BaseDomParser
         return $this->getTextUsingXPath($this->title_xpath);
     }
 
-    protected function getpublication_date_xpath()
+    protected function getArticleType(String $url)
     {
-        // Get the items
-        return $this->getTextUsingXPath($this->publication_date_xpath);
+        // return array of article types based on known types in url
+        return [];
     }
 
     protected function getAttribution()
@@ -292,17 +291,5 @@ class BaseDomParser
     protected function getMetaDescription()
     {
         return $this->getMetaUsingXPath($this->meta_description_xpath);
-    }
-
-    /**
-     * Saves the Data of jsonFile into
-     * @param  String $xpath The XPath to use to get the nodes
-     * @return String        The text of all of the matching nodes
-     */
-    public function createJsonFile($file_path, $json_data)
-    {
-        $fp = fopen($file_path, 'w');
-        fwrite($fp, $json_data);   //here it will print the array pretty
-        fclose($fp);
     }
 }
