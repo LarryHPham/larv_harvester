@@ -106,25 +106,20 @@ class ParseDom
           ]
         );
         // Ledger returns id to be used to call elastic search api
-        // check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES create() or update entry with put()
-        $post_json = [
-          'id' => $ledger->id
-        ];
-
+        // check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES post or update entry with put
         $client = new GuzzleClient();
+        $post_json = ['id' => $ledger->id];
+        $header_options = ['Content-Type' => 'application/json'];
         if ($ledger->elastic_index_id === null) {
-            $uri = env('ES_FQDN').'api/article';
+            $response = $client->post(env('ES_FQDN'), [
+              'headers' => $header_options,
+              'json' => $post_json,
+            ]);
         } else {
-            // PUT CODE TO UPDATE ELASTIC SEARCH INDEX INSTEAD OF CREATING
-        }
-        //create post request and send
-        if (!empty($uri)) {
-            $response = $client->post($uri, [
-            'headers' => [
-              'Content-Type' => 'application/json'
-            ],
-            'json' => $post_json,
-          ]);
+            // $response = $client->put(env('ES_FQDN'), [
+            //   'headers' => $header_options,
+            //   'json' => $post_json,
+            // ]);
         }
     }
 }
