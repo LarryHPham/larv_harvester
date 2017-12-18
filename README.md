@@ -1,14 +1,14 @@
 # Web-Harvester
 Crawler that will create workers to scrape websites and harvest information to re purpose content from white listed domains
 
-# Web-Url-Crawler
+## Web-Url-Crawler
 `crawl:url`
 `crawl:start_jobs`
 
-# Web-Url-parser
+## Web-Url-parser
 `parse:url`
 
-# PhantomJs
+## PhantomJs
 Phantom JS is used to render javascript on server side. To get more info look at the documentation http://jonnnnyw.github.io/php-phantomjs/ which is the composer package that is used in this.
 
 NOTE: composer package of phantomjs should be required first before doing below
@@ -25,5 +25,5 @@ In vagrant box: (TBD on docker)
  phantomjs --version
  ```
 
-[# Article Schema](https://sntmedia.atlassian.net/wiki/spaces/DCU/pages/208928769/JSON+schemas)
+[Article Schema](https://sntmedia.atlassian.net/wiki/spaces/DCU/pages/208928769/JSON+schemas)
 The parser will output a json file that matches the article schema of expected JSON response
