@@ -3,6 +3,7 @@
 namespace App\Library\DomParser;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+use GuzzleHttp\Client as GuzzleClient;
 
 use App\Url;
 use App\Ledger;
@@ -95,7 +96,6 @@ class ParseDom
         // create JSON file and store on aws server
         $json_storage = new StorageCache(env('JSON_CACHE'));
         $json_storage->cacheContent($json_file_path, $this->json);
-        // $json_storage->removeCachedData($json_file_path);
 
         // Save the values into elastic-search
         $ledger = Ledger::updateOrCreate(
@@ -105,8 +105,21 @@ class ParseDom
             'path_to_file' => $json_file_path
           ]
         );
-        // TODO Ledger returns id to be used to call elastic search api
-        $id = $ledger->id;
-        // TODO check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES create() or update entry with put()
+        // Ledger returns id to be used to call elastic search api
+        // check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES post or update entry with put
+        $client = new GuzzleClient();
+        $post_json = ['id' => $ledger->id];
+        $header_options = ['Content-Type' => 'application/json'];
+        if ($ledger->elastic_index_id === null) {
+            $response = $client->post(env('ES_FQDN'), [
+              'headers' => $header_options,
+              'json' => $post_json,
+            ]);
+        } else {
+            // $response = $client->put(env('ES_FQDN'), [
+            //   'headers' => $header_options,
+            //   'json' => $post_json,
+            // ]);
+        }
     }
 }

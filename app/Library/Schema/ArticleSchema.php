@@ -1,5 +1,5 @@
 <?php
-// TODO: add link to confluence documentations
+// https://sntmedia.atlassian.net/wiki/spaces/DCU/pages/208928769/JSON+schemas
 // AND add doc to README.md
 
 namespace App\Library\Schema;
