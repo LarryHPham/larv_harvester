@@ -16,3 +16,6 @@ tar -xvjf $PHANTOM_JS.tar.bz2
 sudo mv $PHANTOM_JS /usr/local/share
 sudo ln -s /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/bin/phantomjs
 phantomjs --version
+
+[#Article Schema](https://sntmedia.atlassian.net/wiki/spaces/DCU/pages/208928769/JSON+schemas)
+The parser will output a json file that matches the article schema of expected JSON response

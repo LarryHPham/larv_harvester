@@ -1,15 +1,11 @@
 <?php
 
 return [
-    'default'  =>  'localtemp',
+    'default'  =>  env('TEMP_CACHE'),
     'disks'    => [
-        'localtemp'    => [
+        'local'    => [
             'driver'  =>  'local',
             'root'    =>  storage_path('app'),
-        ],
-        'localarticle'    => [
-            'driver'  =>  'local',
-            'root'    =>  storage_path('app/'),
         ],
         //AWS s3 connections below
         'temp' => [
