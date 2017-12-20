@@ -112,6 +112,8 @@ class BaseDomParser
         }
 
         // SET datapoints in article schema
+        // TODO url_model->id may not be what we want the article_id to be
+        // possibly remove from schema
         $this->article_data->setArticleId($url_model->id);
         $this->article_data->setTitle($title);
         $this->article_data->setCategory($category);
