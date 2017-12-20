@@ -86,7 +86,12 @@ class BaseDomParser
         // Get the base information
         $title = $this->getTitle();
         $category = $this->category;
-        $article_type = $this->getArticleType($this->url->article_url);
+        $url_model = $this->url;
+
+        $article_type = $this->getArticleType($url_model->article_url);
+        if (empty($article_type)) {
+            $article_type = $this->getArticleType($title);
+        }
         $meta_title = $this->getMetaTitle();
         $meta_description = $this->getMetaDescription();
         $meta_keywords = $this->getMetaKeywords();
@@ -107,7 +112,9 @@ class BaseDomParser
         }
 
         // SET datapoints in article schema
-        $this->article_data->setArticleId($this->url->id);
+        // TODO url_model->id may not be what we want the article_id to be
+        // possibly remove from schema
+        $this->article_data->setArticleId($url_model->id);
         $this->article_data->setTitle($title);
         $this->article_data->setCategory($category);
         $this->article_data->setArticleType($article_type);
@@ -117,8 +124,8 @@ class BaseDomParser
         $this->article_data->setAttribution($attribution);
         $this->article_data->setPublisher($publisher);
         $this->article_data->setPublicationDate($publication_date);
-        $this->article_data->setArticleUrl($this->url->article_url);
-        $this->article_data->setArticleHash($this->url->article_hash);
+        $this->article_data->setArticleUrl($url_model->article_url);
+        $this->article_data->setArticleHash($url_model->article_hash);
         $this->article_data->setJsonLastUpdated($json_last_updated);
         $this->article_data->setContent($raw_article_content);
         $this->article_data->setPrimaryImage($primary_image);

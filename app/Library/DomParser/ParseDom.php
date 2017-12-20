@@ -50,6 +50,18 @@ class ParseDom
     public $parser_used = null;
 
     /**
+     * The Url model the contains all the information for the parser
+     * @var Url
+     */
+    public $url_model;
+
+    /**
+     * The parsed dom that is the contents that belongs to the url model
+     * @var Url
+     */
+    public $parsed_dom;
+
+    /**
      * This class loops over the registered parsers and determines which (if
      * any) should be used to parse the URL
      * @param Url    $url     The model of the URL to crawl
@@ -58,11 +70,15 @@ class ParseDom
     public function __construct(Url $url, $content)
     {
         // Parse the DOM
-        $parsed_dom = new DomCrawler($content);
+        $this->parsed_dom = new DomCrawler($content);
+        $this->url_model = $url;
+    }
 
+    public function handle()
+    {
         // Determine which (if any) parser to use
         foreach ($this->registered_parsers as $test_parser) {
-            $parser = new $test_parser($url, $parsed_dom);
+            $parser = new $test_parser($this->url_model, $this->parsed_dom);
 
             // Determine if the given parser is valid
             if ($parser->valid) {
@@ -86,11 +102,11 @@ class ParseDom
         // json file path with root path plus an array of keywords to create full url
         $path_array = [];
         array_push(
-            $path_array,
-            env('AWS_ARTICLE_JSON_ROOT_PATH'),
-            $publisher,
-            $url->article_hash.'.json'
-        );
+          $path_array,
+          env('AWS_ARTICLE_JSON_ROOT_PATH'),
+          $publisher,
+          $this->url_model->article_hash.'.json'
+      );
         $json_file_path = implode($path_array, '/');
 
         // create JSON file and store on aws server
@@ -99,27 +115,35 @@ class ParseDom
 
         // Save the values into elastic-search
         $ledger = Ledger::updateOrCreate(
-          ['url_hash' => $url->article_hash],
-          [
-            'article_url' => $url->article_url,
-            'path_to_file' => $json_file_path
-          ]
-        );
+        ['url_hash' => $this->url_model->article_hash],
+        [
+          'article_url' => $this->url_model->article_url,
+          'path_to_file' => $json_file_path
+        ]
+      );
         // Ledger returns id to be used to call elastic search api
         // check if the Ledger has updated or created by checking the elastic search index id and updated date to know whether to create new entry with ES post or update entry with put
         $client = new GuzzleClient();
         $post_json = ['id' => $ledger->id];
         $header_options = ['Content-Type' => 'application/json'];
-        if ($ledger->elastic_index_id === null) {
-            $response = $client->post(env('ES_FQDN'), [
-              'headers' => $header_options,
-              'json' => $post_json,
-            ]);
-        } else {
-            // $response = $client->put(env('ES_FQDN'), [
-            //   'headers' => $header_options,
-            //   'json' => $post_json,
-            // ]);
+
+        try {
+            if ($ledger->elastic_index_id === null) {
+                $response = $client->post(env('ES_FQDN'), [
+                  'headers' => $header_options,
+                  'json' => $post_json,
+                ]);
+            } else {
+                $response = $client->put(env('ES_FQDN'), [
+                  'headers' => $header_options,
+                  'json' => $post_json,
+                ]);
+            }
+        } catch (\Exception $e) {
+            throw new \Exception("POST/PUT ERROR $e");
         }
+
+        // RETURN the parser that was used to be saved into the url model
+        return $this->parser_used;
     }
 }

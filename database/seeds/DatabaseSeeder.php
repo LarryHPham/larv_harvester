@@ -41,7 +41,7 @@ class UrlTableSeeder extends Seeder
                 ->priority()
                 ->create([
                     'scheduled' => true,
-                    'claimed_at' => NULL,
+                    'claimed_at' => null,
                 ]);
 
             // Dispatch the job
