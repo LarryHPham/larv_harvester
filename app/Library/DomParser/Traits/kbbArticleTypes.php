@@ -15,9 +15,9 @@ trait kbbArticleTypes
      */
     private $kbb_article_types = [
         'review',
-        'all-the-latest',
+        'latest',
         'top-10',
-        'car-videos'
+        'video'
     ];
 
     /**
@@ -29,14 +29,14 @@ trait kbbArticleTypes
     /**
      * This class loops over the registered article types
      * pushes into array for each type the url falls into
-     * @param String $url string of the url
+     * @param String $string string of the url
      * to be parsed for article types
      */
-    public function getArticleType(String $url)
+    public function getArticleType(String $string)
     {
         $article_type = [];
         foreach ($this->kbb_article_types as $type) {
-            if (str_contains($url, $type)) {
+            if (str_contains(strtolower($string), $type)) {
                 array_push($article_type, $type);
             }
         }

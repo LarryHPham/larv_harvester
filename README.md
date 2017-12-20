@@ -15,7 +15,8 @@ NOTE: composer package of phantomjs should be required first before doing below
 Otherwise when using `composer require 'jonnyw/php-phantomjs'`the package will find the exe file in it's place rather than a directory
 
 In vagrant box: (TBD on docker)
-``` sudo apt-get install build-essential chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
+```
+ sudo apt-get install build-essential chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
  PHANTOM_JS="phantomjs-1.9.8-linux-x86_64"
  cd ~
  wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.bz2

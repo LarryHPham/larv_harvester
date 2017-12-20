@@ -44,10 +44,8 @@ class PageFetcher extends Job
     {
         // Always dispatch another job
         dispatch(new PageFetcher());
-
         // Get the next URL to crawl
         $this->next_crawl_order = CrawlOrder::getNextUrl();
-
         // Check for a next crawl
         if ($this->next_crawl_order === null) {
             return true;
@@ -56,7 +54,6 @@ class PageFetcher extends Job
         // Save the claim
         $this->next_crawl_order->claimed_at = \Carbon\Carbon::now();
         $this->next_crawl_order->save();
-
         // Get the URL model
         $this->url_model = $this->next_crawl_order->urlModel;
         $this->parse_content = $this->next_crawl_order->get_content;
@@ -121,11 +118,14 @@ class PageFetcher extends Job
 
         // Call to the DomParser
         if ($this->parse_content) {
-            $parser = new ParseDom($this->url_model, $body);
-
-            // Save the parser used
-            $this->url_model->parsed_by = $parser->parserUsed;
-            $this->url_model->save();
+            $parser = dispatch(
+              new ParseDom($this->url_model, $body)
+            );
+            if (!is_null($parser)) {
+                // Save the parser used
+                $this->url_model->parsed_by = $parser;
+                $this->url_model->save();
+            }
         }
 
         // Delete from the table
@@ -138,6 +138,10 @@ class PageFetcher extends Job
      */
     private function markFailed($code)
     {
+        // TODO Need to come back to this since when an error occurs the url_model is null in this function
+        if (is_null($this->url_model)) {
+            return;
+        }
         $this->url_model->times_scanned++;
         $this->url_model->curr_scan = false;
         $this->url_model->num_fail_scans++;

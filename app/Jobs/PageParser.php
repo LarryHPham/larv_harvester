@@ -42,16 +42,10 @@ class PageParser extends Job
     public function handle()
     {
         $this->url_model = URL::findByHash($this->entry_url);
-        // var_dump($this->url_model);
         $this->parse_content = 1; // TODO use flag in the database
-
-        // TODO Check if Cache String exists Dom by sending in url as hash md5 then decided whether to cache or not
         $hash_entry_url = Url::createHash($this->entry_url);
-        // TODO phantom flag should be set to true when missing required datapoints or flag is given
         $phantom = false;
 
-        // $temp_storage = new StorageCache(env('TEMP_CACHE'));
-        // if (!$temp_storage->CheckCachedData($hash_entry_url)) {
         // DECIDE WHETHER TO USE PHANTOM JS OR GUZZLE Client
         /* NOTE:
          * PHANTOMJS will allow javascript to render
@@ -73,10 +67,8 @@ class PageParser extends Job
                       'exceptions' => false,
                     ]);
             } catch (\GuzzleHttp\Exception\TooManyRedirectsException $e) {
-                $this->markFailed(1);
                 return false;
             } catch (\GuzzleHttp\Exception\ConnectException $e) {
-                $this->markFailed(-2);
                 return false;
             }
 
@@ -85,25 +77,26 @@ class PageParser extends Job
                     case 200:
                         break;
                     default:
-                        $this->markFailed($response->getStatusCode());
                         return false;
                 }
             $body = (string) $response->getBody();
         }
 
-        // cache the data
-        // $temp_storage->cacheContent($hash_entry_url, $body);
-        // } else {
-        //     $body = $temp_storage->getCacheData($hash_entry_url);
-        // }
-        // print("FIND PARSER: $hash_entry_url \n");
-
         // Call to the DomParser
         if ($this->parse_content) {
-            $parser = new ParseDom($this->url_model, $body);
+            $parser = dispatch(
+              new ParseDom($this->url_model, $body)
+            );
+            if (!is_null($parser)) {
+                // Save the parser used
+                $this->url_model->parsed_by = $parser;
+                $this->url_model->save();
+            }
         }
 
         // Cached Data is now stored in local variable removal of cached data is done here since it is no longer needed
         // $temp_storage->removeCachedData($hash_entry_url);
     }
+
+ 
 }
