@@ -28,3 +28,16 @@ In vagrant box: (TBD on docker)
 
 [Article Schema](https://sntmedia.atlassian.net/wiki/spaces/DCU/pages/208928769/JSON+schemas)
 The parser will output a json file that matches the article schema of expected JSON response
+
+## Jobs Queue
+1. Supervisor needs installed to configure multiple workers
+  - https://laravel.com/docs/5.5/queues#supervisor-configuration
+2. sudo apt-get install supervisor
+  - change config of supervisor in box `/etc/supervisor/conf.d/laravel-worker.conf`
+3. sudo supervisorctl reread
+4. sudo supervisorctl update
+5. sudo supervisorctl start laravel-worker:*
+
+6. Update `.env` file `QUEUE_DRIVER=` (pheanstalk OR sqs)
+
+Now get started on getting job queues lined up.
