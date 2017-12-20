@@ -40,4 +40,4 @@ The parser will output a json file that matches the article schema of expected J
 
 6. Update `.env` file `QUEUE_DRIVER=` (pheanstalk OR sqs)
 
-Now get started on getting job queues lined up.
+Once Setup get started on getting job queues lined up in code.
