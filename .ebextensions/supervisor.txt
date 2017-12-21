@@ -1,9 +1,0 @@
-[program:laravel-worker]
-process_name=%(program_name)s_%(process_num)03d
-command=php /var/app/current/artisan queue:work --sleep=3 --tries=3
-autostart=true
-autorestart=true
-user=root
-numprocs=20
-redirect_stderr=true
-stdout_logfile=/logs/collector/worker.log

@@ -1,0 +1,2 @@
+# The newline at the end of this file is extremely important. Cron won't run without it.
+* * * * * sudo php /var/app/current/artisan schedule:run >> /logs/collector/collector.log 2>&1
