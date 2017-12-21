@@ -10,7 +10,7 @@ use App\Library\DomParser\BaseDomParser;
  * Sample pages:
  * https://www.kbb.com/car-reviews-and-news/top-10/best-luxury-cars-under-35000/2100001730-10/
  */
-class ListPage extends BaseDomParser
+class ListItemPage extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\Posted,

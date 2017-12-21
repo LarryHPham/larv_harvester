@@ -26,6 +26,7 @@ class ParseDom
         '\App\Library\DomParser\KBB\RichTextCarousel',
         '\App\Library\DomParser\KBB\RichTextOneImage',
         '\App\Library\DomParser\KBB\RichTextVideo',
+        '\App\Library\DomParser\KBB\ListItemPage',
         '\App\Library\DomParser\KBB\ListPage',
         '\App\Library\DomParser\KBB\ListVideoPage',
         '\App\Library\DomParser\KBB\VideoPage',
