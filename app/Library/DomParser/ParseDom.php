@@ -73,10 +73,6 @@ class ParseDom
         // Parse the DOM
         $this->parsed_dom = new DomCrawler($content);
         $this->url_model = $url;
-    }
-
-    public function handle()
-    {
         // Determine which (if any) parser to use
         foreach ($this->registered_parsers as $test_parser) {
             $parser = new $test_parser($this->url_model, $this->parsed_dom);
@@ -127,7 +123,6 @@ class ParseDom
         $client = new GuzzleClient();
         $post_json = ['id' => $ledger->id];
         $header_options = ['Content-Type' => 'application/json'];
-
         try {
             if ($ledger->elastic_index_id === null) {
                 $response = $client->post(env('ES_FQDN'), [
@@ -145,6 +140,6 @@ class ParseDom
         }
 
         // RETURN the parser that was used to be saved into the url model
-        return $this->parser_used;
+        return $this;
     }
 }
