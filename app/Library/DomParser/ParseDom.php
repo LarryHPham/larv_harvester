@@ -142,8 +142,4 @@ class ParseDom
         // RETURN the parser that was used to be saved into the url model
         return $this;
     }
-
-    public function handle()
-    {
-    }
 }
