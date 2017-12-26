@@ -118,12 +118,10 @@ class PageFetcher extends Job
 
         // Call to the DomParser
         if ($this->parse_content) {
-            $parser = dispatch(
-              new ParseDom($this->url_model, $body)
-            );
-            if (!is_null($parser)) {
+            $parser = new ParseDom($this->url_model, $body);
+            if (!is_null($parser->parser_used)) {
                 // Save the parser used
-                $this->url_model->parsed_by = $parser;
+                $this->url_model->parsed_by = $parser->parser_used;
                 $this->url_model->save();
             }
         }
