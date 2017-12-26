@@ -9,9 +9,7 @@ use GuzzleHttp\Client as GuzzleClient;
  * List entry pages
  *
  * Sample pages:
- * https://www.kbb.com/car-reviews-and-news/top-10/best-luxury-cars-under-35000/2100001730/
- * https://www.kbb.com/car-reviews-and-news/top-10/best-back-to-school-cars-2017/2100004482
- * https://www.kbb.com/car-reviews-and-news/top-10/most-fuel-efficient-suvs/2100004366-6/
+ * https://www.kbb.com/car-reviews-and-news/top-10/best-luxury-cars-under-35000/2100001730-10/
  */
 class ListVideoPage extends BaseDomParser
 {
