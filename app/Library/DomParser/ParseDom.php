@@ -135,8 +135,10 @@ class ParseDom
                   'json' => $post_json,
                 ]);
             }
-        } catch (\Exception $e) {
-            throw new \Exception("POST/PUT ERROR $e");
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            print("POST/PUT ClientException ERROR\n");
+            print($e);
+            return false;
         }
 
         // RETURN the parser that was used to be saved into the url model
