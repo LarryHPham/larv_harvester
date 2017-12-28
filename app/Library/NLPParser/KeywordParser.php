@@ -42,7 +42,6 @@ class KeywordParser
      * @param  App\Url $UrlModel The URL that the data is from
      * @param  String  $Body     The body text (no HTML tags)
      * @param  String  $Title    The article title
-     * @return [type]           [description]
      */
     public function parse($UrlModel, $Body, $Title = null)
     {
