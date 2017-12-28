@@ -20,6 +20,12 @@ class Keyword extends Model
     protected $guarded = [];
 
     /**
+     * Don't try to fill in the timestamp fields (they don't exist)
+     * @var Boolean
+     */
+    public $timestamps = false;
+
+    /**
      * The articles that have this keyword
      * @return App\Url
      */
