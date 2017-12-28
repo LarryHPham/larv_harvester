@@ -4,6 +4,7 @@ namespace App\Library\DomParser;
 
 use App\Url;
 use App\Library\Schema\ArticleSchema;
+use App\Library\NLPParser\KeywordParser;
 
 class BaseDomParser
 {
@@ -102,6 +103,10 @@ class BaseDomParser
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
         $raw_article_content = $this->getRawArticleContent();
         $images = $this->getImages();
+
+        // Parse the keywords and save them
+        $parser = new KeywordParser();
+        $parser->parse($this->url, $raw_article_content);
 
         // Use the first image as the primary image
         if (sizeof($images) > 0) {
