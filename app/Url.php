@@ -100,4 +100,26 @@ class Url extends Model
         return $this
             ->hasOne('App\CrawlOrder', 'article_id');
     }
+
+    /**
+     * The non-modified keywords for the article
+     * @return App\Keyword
+     */
+    public function keywords()
+    {
+        return $this
+            ->morphedByMany('App\Keyword', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
+            ->withPivot('weight');
+    }
+
+    /**
+     * The modified keywords for the article
+     * @return App\KeywordModified
+     */
+    public function keywords_modified()
+    {
+        return $this
+            ->morphedByMany('App\KeywordModified', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
+            ->withPivot('weight');
+    }
 }
