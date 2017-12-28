@@ -17,6 +17,8 @@ class CreateKeywordsTable extends Migration
             $table->increments('id');
             $table->string('stem', 50);
             $table->string('raw', 50);
+
+            $table->unique('stem');
         });
     }
 
