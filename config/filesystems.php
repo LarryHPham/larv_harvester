@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default'  =>  env('TEMP_CACHE'),
+    'default'  =>  env('TEMP_CACHE', 'local'),
     'disks'    => [
         'local'    => [
             'driver'  =>  'local',
