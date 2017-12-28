@@ -13,7 +13,8 @@
     "symfony/css-selector": "^3.3",
     "pda/pheanstalk": "^3.1",
     "league/flysystem-aws-s3-v3": "~1.0",
-    "agentile/php-stanford-nlp": "^0.1.1"
+    "agentile/php-stanford-nlp": "^0.1.1",
+    "wamania/php-stemmer": "^1.2"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
