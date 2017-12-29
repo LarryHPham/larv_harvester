@@ -62,6 +62,10 @@ class BaseDomParser
         $this->required_xpaths[] = $this->raw_article_content_xpath;
         $this->required_xpaths[] = $this->image_xpath;
 
+        // Save the values
+        $this->url = $url;
+        $this->content = $content;
+
         // The XPaths that need to return results
         foreach ($this->required_xpaths as $xpath) {
             if (sizeof($content->filterXPath($xpath)) === 0) {
@@ -69,12 +73,26 @@ class BaseDomParser
             }
         }
 
+        // grab base data
+        $title = $this->getTitle();
+        $raw_article_content = $this->getRawArticleContent();
+        $images = $this->getImages();
+
+        // checks if any data points that come back from xpaths are empty
+        if (empty($raw_article_content) || empty($title) || sizeof($images) == 0) {
+            return false;
+        }
+
+        // Use the first image as the primary image
+        $primary_image = array_shift($images);
+        // set the base data to the schema
+        $this->article_data->setContent($raw_article_content);
+        $this->article_data->setTitle($title);
+        $this->article_data->setPrimaryImage($primary_image);
+        $this->article_data->setImageArray($images);
+
         // Save the validity
         $this->valid = true;
-
-        // Save the values
-        $this->url = $url;
-        $this->content = $content;
     }
 
     /**
@@ -84,13 +102,12 @@ class BaseDomParser
     public function getValues()
     {
         // Get the base information
-        $title = $this->getTitle();
         $category = $this->category;
         $url_model = $this->url;
 
         $article_type = $this->getArticleType($url_model->article_url);
         if (empty($article_type)) {
-            $article_type = $this->getArticleType($title);
+            $article_type = $this->getArticleType($this->article_data->getTitle());
         }
         $meta_title = $this->getMetaTitle();
         $meta_description = $this->getMetaDescription();
@@ -100,22 +117,12 @@ class BaseDomParser
         $publication_date = $this->getPublicationDate();
 
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
-        $raw_article_content = $this->getRawArticleContent();
-        $images = $this->getImages();
 
-        // Use the first image as the primary image
-        if (sizeof($images) > 0) {
-            // Pull the first element and remove from image_array
-            $primary_image = array_shift($images);
-        } else {
-            $primary_image = null;
-        }
+
 
         // SET datapoints in article schema
         // TODO url_model->id may not be what we want the article_id to be
         // possibly remove from schema
-        $this->article_data->setArticleId($url_model->id);
-        $this->article_data->setTitle($title);
         $this->article_data->setCategory($category);
         $this->article_data->setArticleType($article_type);
         $this->article_data->setMetaTitle($meta_title);
@@ -127,9 +134,7 @@ class BaseDomParser
         $this->article_data->setArticleUrl($url_model->article_url);
         $this->article_data->setArticleHash($url_model->article_hash);
         $this->article_data->setJsonLastUpdated($json_last_updated);
-        $this->article_data->setContent($raw_article_content);
-        $this->article_data->setPrimaryImage($primary_image);
-        $this->article_data->setImageArray($images);
+
 
 
         // @TODO pass the images into the image storage service

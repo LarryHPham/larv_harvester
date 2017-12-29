@@ -44,6 +44,10 @@ class ArticleSchema
     {
         $this->title = $title;
     }
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
     public function setCategory($category)
     {
