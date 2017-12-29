@@ -10,11 +10,13 @@ use App\KeywordModified;
 
 class KeywordApi extends Controller
 {
-    public function article($url_id)
+    /**
+     * Retrieves and displays the keywords for a given article model
+     * @param  Url  $UrlModel The URL to fetch keywords for
+     * @return View           A display of the associated keywords
+     */
+    private function getArticleKeywords($UrlModel)
     {
-        // Get the article
-        $UrlModel = Url::find($url_id);
-
         // Get the keywords
         $Keywords = [];
         foreach ($UrlModel->keywords as $Keyword) {
@@ -50,6 +52,40 @@ class KeywordApi extends Controller
         ]);
     }
 
+    /**
+     * Retrieves and displays article keywords by article ID
+     * @param  Integer $url_id The ID of the article
+     * @return View            The view
+     */
+    public function article($url_id)
+    {
+        // Get the article
+        $UrlModel = Url::find($url_id);
+
+        return $this->getArticleKeywords($UrlModel);
+    }
+
+    /**
+     * Retrieves and displays article keywords by article URL
+     * @param  Request $request The request with associated input
+     * @return View             The article keywords
+     */
+    public function article_url(Request $request)
+    {
+        // Get the URL to check
+        $url = Url::sanitizeUrl($request->input('url'));
+
+        // Get the model
+        $UrlModel = Url::findByHash($url);
+
+        return $this->getArticleKeywords($UrlModel);
+    }
+
+    /**
+     * Retrieves articles associated with the given keyword
+     * @param  Integer $keyword_id The ID of the keyword to query
+     * @return View                The associated articles
+     */
     public function keyword($keyword_id)
     {
         // Get the keyword
@@ -77,6 +113,11 @@ class KeywordApi extends Controller
         ]);
     }
 
+    /**
+     * Retrieves articles associated with the given modified keyword
+     * @param  Integer $keyword_id The modified keyword ID
+     * @return View                The associated articles
+     */
     public function keyword_modified($keyword_id)
     {
         // Get the keyword
