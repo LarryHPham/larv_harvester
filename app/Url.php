@@ -109,7 +109,8 @@ class Url extends Model
     {
         return $this
             ->morphedByMany('App\Keyword', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
-            ->withPivot('weight');
+            ->withPivot('weight')
+            ->orderBy('weight', 'DESC');
     }
 
     /**
@@ -120,6 +121,7 @@ class Url extends Model
     {
         return $this
             ->morphedByMany('App\KeywordModified', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
-            ->withPivot('weight');
+            ->withPivot('weight')
+            ->orderBy('weight', 'DESC');
     }
 }

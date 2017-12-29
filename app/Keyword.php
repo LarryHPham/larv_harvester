@@ -33,6 +33,7 @@ class Keyword extends Model
     {
         return $this
             ->morphToMany('App\Url', 'keyword', 'article_keywords', 'keyword_id', 'article_id')
-            ->withPivot('weight');
+            ->withPivot('weight')
+            ->orderBy('weight', 'DESC');
     }
 }
