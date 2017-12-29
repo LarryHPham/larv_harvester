@@ -118,11 +118,7 @@ class BaseDomParser
 
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
 
-
-
         // SET datapoints in article schema
-        // TODO url_model->id may not be what we want the article_id to be
-        // possibly remove from schema
         $this->article_data->setCategory($category);
         $this->article_data->setArticleType($article_type);
         $this->article_data->setMetaTitle($meta_title);
@@ -134,8 +130,6 @@ class BaseDomParser
         $this->article_data->setArticleUrl($url_model->article_url);
         $this->article_data->setArticleHash($url_model->article_hash);
         $this->article_data->setJsonLastUpdated($json_last_updated);
-
-
 
         // @TODO pass the images into the image storage service
 
