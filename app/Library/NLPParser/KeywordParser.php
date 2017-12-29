@@ -53,6 +53,10 @@ class KeywordParser
         // Build out the keyword array
         $Keywords = [];
 
+        // Save frequencies
+        $TotalKeywords = 0;
+        $TotalModifiedKeywords = 0;
+
         // Loop over the Sentances
         foreach ($Sentences as $Sentence) {
             $SentenceKeywords = [];
@@ -110,6 +114,7 @@ class KeywordParser
 
                 // Increment the frequency
                 $Keywords[$KeywordStem]['freq']++;
+                $TotalKeywords++;
 
                 // Loop over the modifiers
                 foreach ($Keyword[1] as $Modifier) {
@@ -127,20 +132,25 @@ class KeywordParser
 
                     // Increment the frequency
                     $Keywords[$KeywordStem]['modifiers'][$ModifierStem]['freq']++;
+                    $TotalModifiedKeywords++;
                 }
             }
         }
 
         // Save the keywords
-        $this->saveKeywords($UrlModel, $Keywords);
+        $this->saveKeywords($UrlModel, $Keywords, $TotalKeywords, $TotalModifiedKeywords);
     }
 
     /**
      * Save the keywords into the database
-     * @param App\Url $UrlModel The article to connect the keywords to
-     * @param Array   $Keywords The keywords from the article
+     * @param App\Url $UrlModel              The article to connect the
+     *                                       keywords to
+     * @param Array   $Keywords              The keywords from the article
+     * @param Integer $TotalKeywords         The total number of keywords found
+     * @param Integer $TotalModifiedKeywords The total number of modified
+     *                                       keywors found (sum freq)
      */
-    private function saveKeywords($UrlModel, $Keywords)
+    private function saveKeywords($UrlModel, $Keywords, $TotalKeywords, $TotalModifiedKeywords)
     {
         /**
          * Keywords - array of these objects
@@ -166,6 +176,9 @@ class KeywordParser
             ], [
                 'raw' => $Keyword['raw'],
             ]);
+
+            // Adjust the weight
+            $Keyword['freq'] = round($Keyword['freq'] * 100 / $TotalKeywords);
 
             // Query for an existing relationship
             $Relationship = $KeywordModel
@@ -197,6 +210,9 @@ class KeywordParser
                 ], [
                     'raw' => $Modifier['raw'],
                 ]);
+
+                // Adjust the weight
+                $Modifier['freq'] = round($Modifier['freq'] * 100 / $TotalModifiedKeywords);
 
                 // Query for the model
                 $ModifiedKeywordModel = KeywordModified::firstOrCreate([
