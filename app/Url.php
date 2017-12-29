@@ -70,6 +70,42 @@ class Url extends Model
     }
 
     /**
+     * This function cleans up the URL so it can be passed to findByHash. It
+     * will alphabetize the query paramters and clean up formatting
+     * @param  String $url The URL to sanitize
+     * @return String      The sanitized URL
+     */
+    public static function sanitizeUrl(String $url)
+    {
+        // Get the parts of the url
+        $url_parts = parse_url($url);
+
+        // Build the base
+        $url = $url_parts['scheme'] . '://' . $url_parts['host'];
+
+        // Add the components
+        if (isset($url_parts['path'])) {
+            // Remove the trailing slash and add it
+            $url .= preg_replace('/\/+$/', '', $url_parts['path']);
+        }
+        if (isset($url_parts['query'])) {
+            // Parse the components
+            parse_str($url_parts['query'], $parameters);
+
+            // Determine if there are enough parameters
+            if (sizeof($parameters) > 0) {
+                // Sort the parameters
+                ksort($parameters);
+
+                // Add to the URL
+                $url .= '?' . http_build_query($parameters);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
      * This function returns all of the URLs that link to this page
      * @return UrlArray An array of the models that this URL is linked to in
      */
