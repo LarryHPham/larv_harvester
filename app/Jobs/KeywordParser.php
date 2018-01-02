@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Url;
-use App\Library\NLPParser\KeywordsParser;
+use App\Library\NLPParser\KeywordParser as NlpKeywordParser;
 
 class KeywordParser extends Job
 {
@@ -36,7 +36,7 @@ class KeywordParser extends Job
     public function handle()
     {
         // Parse the keywords
-        $parser = new KeywordParser();
+        $parser = new NlpKeywordParser();
         $parser->parse($this->url_model, $this->url_text);
     }
 }
