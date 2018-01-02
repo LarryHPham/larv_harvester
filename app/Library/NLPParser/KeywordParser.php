@@ -29,10 +29,7 @@ class KeywordParser
         // Load the parser
         $this->parser = new Parser(
             base_path('app/Library/NLPParser/stanford-parser.jar'),
-            base_path('app/Library/NLPParser/stanford-english-corenlp-2017-06-09-models.jar'),
-            [
-                '-mx100m',
-            ]
+            base_path('app/Library/NLPParser/stanford-english-corenlp-2017-06-09-models.jar')
         );
 
         // Load the stemmer
