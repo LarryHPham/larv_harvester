@@ -55,15 +55,16 @@ class KeywordParser
                 ->parser
                 ->parseSentences([$Body]);
         } catch (\Exception $e) {
-            print 'ERROR: ' . $e->getMessage() . "\n";
+            // print 'ERROR: ' . $e->getMessage() . "\n";
         }
 
         // Check for errors
         if ($this->parser->getErrors() !== null) {
-            print $this->parser->getErrors();
+            // print $this->parser->getErrors();
         }
 
         if ($Sentences === null) {
+            print 'FATAL ERROR' . "\n";
             return;
         }
 
