@@ -105,7 +105,7 @@ class BaseDomParser
         $images = $this->getImages();
 
         // Dispatch the job to parse the article text
-        dispatch((new KeywordParser($this->url, $raw_article_content))->onQueue(env('PARSE_QUEUE', 'parse')));
+        dispatch((new KeywordParser($this->url, $this->getArticleKeywordContent()))->onQueue(env('PARSE_QUEUE', 'parse')));
 
         // Use the first image as the primary image
         if (sizeof($images) > 0) {
@@ -148,16 +148,17 @@ class BaseDomParser
      * @param  String $xpath The XPath to use to get the nodes
      * @return String        The text of all of the matching nodes
      */
-    protected function getTextUsingXPath($xpath)
+    protected function getTextUsingXPath($xpath, $joiner = ' ')
     {
         $result = '';
         $nodes = $this
             ->content
             ->filterXPath($xpath)
-            ->each(function ($node) use (&$result) {
-                $result .= ' ' . $node->text();
+            ->each(function ($node) use (&$result, $joiner) {
+                $result .= $joiner . $this->cleanStringFormatting($node->text());
             });
-        return $this->cleanStringFormatting($result);
+
+        return trim(preg_replace('/[^\S\n]+/', ' ', $result));
     }
 
     /**
@@ -302,5 +303,18 @@ class BaseDomParser
     protected function getMetaDescription()
     {
         return $this->getMetaUsingXPath($this->meta_description_xpath);
+    }
+
+    protected function getArticleKeywordContent()
+    {
+        // Get the XPath to use
+        if (isset($this->keyword_article_content_xpath)) {
+            $xpath = $this->keyword_article_content_xpath;
+        } else {
+            $xpath = $this->raw_article_content_xpath;
+        }
+
+        // Return with double enter seperation
+        return preg_replace('/\s\s+/', "\n", $this->getTextUsingXPath($xpath, "\n"));
     }
 }
