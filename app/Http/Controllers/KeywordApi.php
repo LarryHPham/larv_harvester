@@ -41,11 +41,11 @@ class KeywordApi extends Controller
             'title' => 'Article Keywords - ' . $UrlModel->article_url,
             'data' => [
                 [
-                    'title' => 'Keywords',
+                    'title' => 'Keywords (' . sizeof($Keywords) . ')',
                     'data' => $Keywords,
                 ],
                 [
-                    'title' => 'Compound Keywords',
+                    'title' => 'Compound Keywords (' . sizeof($ModifiedKeywords) . ')',
                     'data' => $ModifiedKeywords,
                 ],
             ],
@@ -106,7 +106,7 @@ class KeywordApi extends Controller
             'title' => $KeywordModel->raw . ' Articles',
             'data' => [
                 [
-                    'title' => 'Articles',
+                    'title' => 'Articles (' . sizeof($Articles) . ')',
                     'data' => $Articles,
                 ],
             ],
@@ -138,7 +138,7 @@ class KeywordApi extends Controller
             'title' => $KeywordModel->modifier->raw . ' ' . $KeywordModel->keyword->raw . ' Articles',
             'data' => [
                 [
-                    'title' => 'Articles',
+                    'title' => 'Articles (' . sizeof($Articles) . ')',
                     'data' => $Articles,
                 ],
             ],
