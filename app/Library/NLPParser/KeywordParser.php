@@ -49,9 +49,13 @@ class KeywordParser
     public function parse($UrlModel, $Body, $Title = null)
     {
         // Parse the text
-        $Sentences = $this
-            ->parser
-            ->parseSentences([$Body]);
+        try {
+            $Sentences = $this
+                ->parser
+                ->parseSentences([$Body]);
+        } catch (\Exception $e) {
+            print 'ERROR: ' . $e->getMessage() . "\n";
+        }
 
         // Check for errors
         if ($this->parser->getErrors() !== null) {
