@@ -61,7 +61,6 @@ class KeywordParser
         // Check for errors
         if ($this->parser->getErrors() !== null) {
             print $this->parser->getErrors();
-            return;
         }
 
         if ($Sentences === null) {
