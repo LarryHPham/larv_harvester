@@ -5,6 +5,7 @@ namespace App\Library\DomParser;
 use App\Url;
 use App\Library\Schema\ArticleSchema;
 use App\Library\NLPParser\KeywordParser;
+use App\Jobs\KeywordParser;
 
 class BaseDomParser
 {
@@ -104,9 +105,8 @@ class BaseDomParser
         $raw_article_content = $this->getRawArticleContent();
         $images = $this->getImages();
 
-        // Parse the keywords and save them
-        $parser = new KeywordParser();
-        $parser->parse($this->url, $raw_article_content);
+        // Dispatch the job to parse the article text
+        dispatch((new KeywordParser($this->url, $raw_article_content))->onQueue(env('PARSE_QUEUE', 'parse')));
 
         // Use the first image as the primary image
         if (sizeof($images) > 0) {
