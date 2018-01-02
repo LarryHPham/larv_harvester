@@ -49,6 +49,7 @@ class KeywordParser
     public function parse($UrlModel, $Body, $Title = null)
     {
         // Parse the text
+        $Sentences = null;
         try {
             $Sentences = $this
                 ->parser
@@ -60,6 +61,10 @@ class KeywordParser
         // Check for errors
         if ($this->parser->getErrors() !== null) {
             print $this->parser->getErrors();
+            return;
+        }
+
+        if ($Sentences === null) {
             return;
         }
 
