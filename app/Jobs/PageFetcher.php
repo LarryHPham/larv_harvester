@@ -43,7 +43,7 @@ class PageFetcher extends Job
     public function handle()
     {
         // Always dispatch another job
-        dispatch(new PageFetcher());
+        dispatch((new PageFetcher())->onQueue(env('CRAWL_QUEUE', 'crawl')));
         // Get the next URL to crawl
         $this->next_crawl_order = CrawlOrder::getNextUrl();
         // Check for a next crawl

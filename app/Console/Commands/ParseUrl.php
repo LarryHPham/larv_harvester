@@ -56,6 +56,6 @@ class ParseUrl extends Command
             ]);
 
         //run Page Parser
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch(new PageParser($url_string));
+        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch((new PageParser($url_string))->onQueue(env('CRAWL_QUEUE', 'crawl')));
     }
 }
