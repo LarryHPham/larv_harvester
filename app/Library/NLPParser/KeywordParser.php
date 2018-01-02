@@ -53,6 +53,12 @@ class KeywordParser
             ->parser
             ->parseSentences([$Body]);
 
+        // Check for errors
+        if ($this->parser->getErrors() !== null) {
+            print $this->parser->getErrors();
+            return;
+        }
+
         // Build out the keyword array
         $Keywords = [];
 
