@@ -7,7 +7,6 @@ use DB;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use App\Url;
-use App\Jobs\PageParser;
 use Illuminate\Contracts\Bus\Dispatcher;
 
 class ParseUrl extends Command
@@ -54,8 +53,5 @@ class ParseUrl extends Command
                 'scheduled' => true,
                 'weight' => 20,
             ]);
-
-        //run Page Parser
-        app('Illuminate\Contracts\Bus\Dispatcher')->dispatch((new PageParser($url_string))->onQueue(env('CRAWL_QUEUE', 'crawl')));
     }
 }
