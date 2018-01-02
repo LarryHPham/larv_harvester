@@ -4,7 +4,6 @@ namespace App\Library\DomParser;
 
 use App\Url;
 use App\Library\Schema\ArticleSchema;
-use App\Library\NLPParser\KeywordParser;
 use App\Jobs\KeywordParser;
 
 class BaseDomParser
