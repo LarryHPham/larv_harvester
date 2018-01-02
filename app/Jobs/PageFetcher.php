@@ -44,16 +44,32 @@ class PageFetcher extends Job
     {
         // Always dispatch another job
         dispatch((new PageFetcher())->onQueue(env('CRAWL_QUEUE', 'crawl')));
+
         // Get the next URL to crawl
         $this->next_crawl_order = CrawlOrder::getNextUrl();
+
         // Check for a next crawl
         if ($this->next_crawl_order === null) {
             return true;
         }
 
+        // Fetch the page
+        $this->fetchPage($this->next_crawl_order);
+    }
+
+    /**
+     * Fetch a page based on the crawl order model
+     * @param App\CrawlOrder $next_crawl_order The crawl order model
+     */
+    public function fetchPage($next_crawl_order)
+    {
+        // Save the order model
+        $this->next_crawl_order = $next_crawl_order;
+
         // Save the claim
         $this->next_crawl_order->claimed_at = \Carbon\Carbon::now();
         $this->next_crawl_order->save();
+
         // Get the URL model
         $this->url_model = $this->next_crawl_order->urlModel;
         $this->parse_content = $this->next_crawl_order->get_content;
