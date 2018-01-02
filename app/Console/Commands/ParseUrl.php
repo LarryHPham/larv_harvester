@@ -7,7 +7,7 @@ use DB;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use App\Url;
-use Illuminate\Contracts\Bus\Dispatcher;
+use App\Jobs\PageFetcher;
 
 class ParseUrl extends Command
 {
@@ -53,5 +53,9 @@ class ParseUrl extends Command
                 'scheduled' => true,
                 'weight' => 20,
             ]);
+
+        // Run the job
+        $PageFetcher = new PageFetcher();
+        $PageFetcher->fetchPage($url->priority);
     }
 }
