@@ -6,7 +6,6 @@ namespace App\Library\Schema;
 
 class ArticleSchema
 {
-    protected $article_id; // *required
     protected $ready_to_publish = false; // *required
     protected $title; // *required
     protected $category; // *required
@@ -30,11 +29,6 @@ class ArticleSchema
         return json_encode(get_object_vars($this), JSON_UNESCAPED_SLASHES);
     }
 
-    public function setArticleId($article_id)
-    {
-        $this->article_id = $article_id;
-    }
-
     public function setReadyToPublish($ready_to_publish)
     {
         $this->ready_to_publish = $ready_to_publish;
@@ -43,6 +37,10 @@ class ArticleSchema
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     public function setCategory($category)
