@@ -2,38 +2,30 @@
 
 namespace App\Library\NLPParser;
 
-use StanfordNLP\Parser;
-use Wamania\Snowball\English;
 use App\Keyword;
 use App\KeywordModified;
+use GuzzleHttp\Client as GuzzleClient;
 
 class KeywordParser
 {
     /**
-     * This variable is an instance of the SanfordNLP Parser
-     * @var StanfordNLP\Parser
+     * This GuzzleHttp Client
+     * @var GuzzleHttp\Client
      */
-    private $parser;
+    private $client;
 
     /**
-     * This variable is an instance of the Snowball Enlgish stemmer
-     * @var Wamania\Snowball\English
+     * The URL to curl for the results
+     * @var String
      */
-    private $stemmer;
+    private $parser_url = 'http://192.168.10.1:9900/?properties={"annotators":"tokenize,ssplit,pos,lemma,depparse"}&pipelineLanguage=en';
 
     /**
-     * This function loads the stanford parser and the stemmer
+     * This function loads the guzzle client
      */
     public function __construct()
     {
-        // Load the parser
-        $this->parser = new Parser(
-            base_path('app/Library/NLPParser/stanford-parser.jar'),
-            base_path('app/Library/NLPParser/stanford-english-corenlp-2017-06-09-models.jar')
-        );
-
-        // Load the stemmer
-        $this->stemmer = new English();
+        $this->client = new GuzzleClient();
     }
 
     /**
@@ -45,20 +37,11 @@ class KeywordParser
      */
     public function parse($UrlModel, $Body, $Title = null)
     {
-        // Parse the text
-        $Sentences = null;
-        try {
-            $Sentences = $this
-                ->parser
-                ->parseSentences([$Body]);
-        } catch (\Exception $e) {
-            // print 'ERROR: ' . $e->getMessage() . "\n";
-        }
+        $response = $this->client->request('POST', $this->parser_url, [
+            'body' => $Body,
+        ]);
 
-        // Check for errors
-        if ($this->parser->getErrors() !== null) {
-            // print $this->parser->getErrors();
-        }
+        $Sentences = json_decode($response->getBody(), true);
 
         if ($Sentences === null) {
             print 'FATAL ERROR' . "\n";
@@ -73,19 +56,19 @@ class KeywordParser
         $TotalModifiedKeywords = 0;
 
         // Loop over the Sentances
-        foreach ($Sentences as $Sentence) {
+        foreach ($Sentences['sentences'] as $Sentence) {
             $SentenceKeywords = [];
             $SentenceKeywordIndexes = [];
 
             // Get the proper nouns
-            foreach ($Sentence['wordsAndTags'] as $WordIndex => $Word) {
+            foreach ($Sentence['tokens'] as $WordIndex => $Word) {
                 // Filter for only proper nouns
-                if (strpos($Word[1], 'NNP') === 0) {
+                if (strpos($Word['pos'], 'NNP') === 0) {
                     // Add to the indexes
-                    $SentenceKeywordIndexes[] = $WordIndex;
+                    $SentenceKeywordIndexes[] = $Word['index'];
 
                     // Make an array for the dependencies
-                    $Word[1] = [];
+                    $Word['deps'] = [];
 
                     // Add the word to the array
                     $SentenceKeywords[] = $Word;
@@ -93,60 +76,59 @@ class KeywordParser
             }
 
             // Get the supporting words
-            foreach ($Sentence['typedDependencies'] as $Dependency) {
+            foreach ($Sentence['enhancedPlusPlusDependencies'] as $Dependency) {
                 // Skip non-modifying and non-compound relationships
                 if (
-                    strpos($Dependency['type'], 'mod') === false &&
-                    strpos($Dependency['type'], 'compound') === false
+                    strpos($Dependency['dep'], 'mod') === false &&
+                    strpos($Dependency['dep'], 'compound') === false
                 ) {
                     continue;
                 }
 
                 // Find the word being used (if it is a proper noun)
                 // Use index - 1 because the index starts at 1
-                $ParentIndex = array_search($Dependency[0]['index'] - 1, $SentenceKeywordIndexes);
+                $ParentIndex = array_search($Dependency['governor'], $SentenceKeywordIndexes);
 
                 // Save the modifier if needed
                 if ($ParentIndex !== false) {
-                    $SentenceKeywords[$ParentIndex][1][] = $Dependency[1]['feature'];
+                    $SentenceKeywords[$ParentIndex]['deps'][] = $Dependency['dependent'];
                 }
             }
 
             // Clean up and save the keywords
             foreach ($SentenceKeywords as $Keyword) {
-                // Lowercase and get the stem
-                $KeywordStem = $this->stemmer->stem(strtolower($Keyword[0]));
-
                 // Make the array if needed
-                if (!isset($Keywords[$KeywordStem])) {
-                    $Keywords[$KeywordStem] = [
-                        'stem' => $KeywordStem,
-                        'raw' => $Keyword[0],
+                if (!isset($Keywords[$Keyword['lemma']])) {
+                    $Keywords[$Keyword['lemma']] = [
+                        'lemma' => $Keyword['lemma'],
+                        'raw' => $Keyword['word'],
                         'freq' => 0,
                         'modifiers' => [],
                     ];
                 }
 
                 // Increment the frequency
-                $Keywords[$KeywordStem]['freq']++;
+                $Keywords[$Keyword['lemma']]['freq']++;
                 $TotalKeywords++;
 
                 // Loop over the modifiers
-                foreach ($Keyword[1] as $Modifier) {
-                    // Get the stem
-                    $ModifierStem = $this->stemmer->stem(strtolower($Modifier));
+                foreach ($Keyword['deps'] as $Modifier) {
+                    // Get the token object
+                    $ModifierToken = array_values(array_filter($Sentence['tokens'], function ($Word) use ($Modifier) {
+                        return $Word['index'] === $Modifier;
+                    }))[0];
 
                     // Create the array if needed
-                    if (!isset($Keywords[$KeywordStem]['modifiers'][$ModifierStem])) {
-                        $Keywords[$KeywordStem]['modifiers'][$ModifierStem] = [
-                            'stem' => $ModifierStem,
-                            'raw' => $Modifier,
+                    if (!isset($Keywords[$Keyword['lemma']]['modifiers'][$ModifierToken['lemma']])) {
+                        $Keywords[$Keyword['lemma']]['modifiers'][$ModifierToken['lemma']] = [
+                            'lemma' => $ModifierToken['lemma'],
+                            'raw' => $ModifierToken['word'],
                             'freq' => 0,
                         ];
                     }
 
                     // Increment the frequency
-                    $Keywords[$KeywordStem]['modifiers'][$ModifierStem]['freq']++;
+                    $Keywords[$Keyword['lemma']]['modifiers'][$ModifierToken['lemma']]['freq']++;
                     $TotalModifiedKeywords++;
                 }
             }
@@ -170,12 +152,12 @@ class KeywordParser
         /**
          * Keywords - array of these objects
          * {
-         *   stem: String,
+         *   lemma: String,
          *   raw: String,
          *   freq: Integer,
          *   modifiers: [
          *     {
-         *       stem: String,
+         *       lemma: String,
          *       raw: String,
          *       freq: Integer
          *     }, ...
@@ -187,7 +169,7 @@ class KeywordParser
         foreach ($Keywords as $Keyword) {
             // Check to see if the keyword exists
             $KeywordModel = Keyword::firstOrCreate([
-                'stem' => $Keyword['stem'],
+                'lemma' => $Keyword['lemma'],
             ], [
                 'raw' => $Keyword['raw'],
             ]);
@@ -221,7 +203,7 @@ class KeywordParser
             foreach ($Keyword['modifiers'] as $Modifier) {
                 // Get or create the modifier keyword
                 $KeywordModifierModel = Keyword::firstOrCreate([
-                    'stem' => $Modifier['stem'],
+                    'lemma' => $Modifier['lemma'],
                 ], [
                     'raw' => $Modifier['raw'],
                 ]);
