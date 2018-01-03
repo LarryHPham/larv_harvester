@@ -15,10 +15,10 @@ class CreateKeywordsTable extends Migration
     {
         Schema::create('keywords', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('stem', 50);
+            $table->string('lemma', 50);
             $table->string('raw', 50);
 
-            $table->unique('stem');
+            $table->unique('lemma');
         });
     }
 
