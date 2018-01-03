@@ -18,7 +18,7 @@ class KeywordParser
      * The URL to curl for the results
      * @var String
      */
-    private $parser_url = 'http://localhost:9900/?properties={"annotators":"tokenize,ssplit,pos,lemma,depparse"}&pipelineLanguage=en';
+    private $parser_url = env('STANFORD_URL', 'http://localhost:9000/') . '?properties={"annotators":"tokenize,ssplit,pos,lemma,depparse"}&pipelineLanguage=en';
 
     /**
      * This function loads the guzzle client
