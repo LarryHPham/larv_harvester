@@ -63,7 +63,7 @@ class KeywordParser
             // Get the proper nouns
             foreach ($Sentence['tokens'] as $WordIndex => $Word) {
                 // Filter for only proper nouns
-                if (strpos($Word['pos'], 'NNP') === 0) {
+                if (strpos($Word['pos'], 'NNP') === 0 && strlen($Word['originalText']) > 1) {
                     // Add to the indexes
                     $SentenceKeywordIndexes[] = $Word['index'];
 
@@ -117,6 +117,11 @@ class KeywordParser
                     $ModifierToken = array_values(array_filter($Sentence['tokens'], function ($Word) use ($Modifier) {
                         return $Word['index'] === $Modifier;
                     }))[0];
+
+                    // Skip if a single character
+                    if (strlen($ModifierToken['originalText']) < 2) {
+                        continue;
+                    }
 
                     // Create the array if needed
                     if (!isset($Keywords[$Keyword['lemma']]['modifiers'][$ModifierToken['lemma']])) {
