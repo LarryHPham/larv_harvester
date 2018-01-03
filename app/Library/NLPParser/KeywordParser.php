@@ -35,9 +35,8 @@ class KeywordParser
      * in the database.
      * @param  App\Url $UrlModel The URL that the data is from
      * @param  String  $Body     The body text (no HTML tags)
-     * @param  String  $Title    The article title
      */
-    public function parse($UrlModel, $Body, $Title = null)
+    public function parse($UrlModel, $Body)
     {
         $response = $this->client->request('POST', $this->parser_url, [
             'body' => $Body,
