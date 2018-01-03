@@ -19,7 +19,12 @@ class KeywordApi extends Controller
     {
         // Get the keywords
         $Keywords = [];
+        $UsedKeywords = [];
         foreach ($UrlModel->keywords as $Keyword) {
+            if (sizeof($UsedKeywords) < 3 || $Keyword->pivot->weight >= 10) {
+                $UsedKeywords[] = $Keyword;
+            }
+
             $Keywords[] = [
                 $Keyword->raw,
                 $Keyword->pivot->weight,
@@ -37,18 +42,52 @@ class KeywordApi extends Controller
             ];
         }
 
+        // Get the related articles based on top keywords
+        $RelatedArticles = [];
+        foreach ($UsedKeywords as $Keyword) {
+            // Take top 3 or 10+ weight
+            $KeywordArticles = 0;
+            foreach ($Keyword->articles as $Article) {
+                // Check for current article
+                if ($Article->id === $UrlModel->id) {
+                    continue;
+                }
+
+                // Skip if we have enough articles
+                if ($Article->pivot->weight < 10 && $KeywordArticles >= 3) {
+                    continue;
+                }
+
+                // Build the array item if needed
+                if (!isset($RelatedArticles[$Article->id])) {
+                    $RelatedArticles[$Article->id] = [
+                        'model' => $Article,
+                        'weight' => 0,
+                    ];
+                }
+
+                // Add the weight to the array
+                $RelatedArticles[$Article->id]['weight'] += ($Article->pivot->weight * $Keyword->pivot->weight);
+            }
+        }
+
+        // Sort the related articles
+        $RelatedArticles = collect($RelatedArticles)
+            ->sortByDesc('weight')
+            ->take(10)
+            ->map(function ($ArticleItem) {
+                return [
+                    $ArticleItem['model']->article_url,
+                    $ArticleItem['weight'],
+                    route('api.v1.article', ['url_id' => $ArticleItem['model']->id]),
+                ];
+            });
+
         return view('keywords', [
             'title' => 'Article Keywords - ' . $UrlModel->article_url,
-            'data' => [
-                [
-                    'title' => 'Keywords (' . sizeof($Keywords) . ')',
-                    'data' => $Keywords,
-                ],
-                [
-                    'title' => 'Compound Keywords (' . sizeof($ModifiedKeywords) . ')',
-                    'data' => $ModifiedKeywords,
-                ],
-            ],
+            'keywords' => $Keywords,
+            'modified_keywords' => $ModifiedKeywords,
+            'articles' => $RelatedArticles,
         ]);
     }
 
@@ -98,18 +137,14 @@ class KeywordApi extends Controller
                 $Article->article_url,
                 $Article->pivot->weight,
                 route('api.v1.article', ['url_id' => $Article->id]),
-                $Article->article_url,
             ];
         }
 
         return view('keywords', [
             'title' => $KeywordModel->raw . ' Articles',
-            'data' => [
-                [
-                    'title' => 'Articles (' . sizeof($Articles) . ')',
-                    'data' => $Articles,
-                ],
-            ],
+            'articles' => $Articles,
+            'keywords' => [],
+            'modified_keywords' => [],
         ]);
     }
 
@@ -136,12 +171,9 @@ class KeywordApi extends Controller
 
         return view('keywords', [
             'title' => $KeywordModel->modifier->raw . ' ' . $KeywordModel->keyword->raw . ' Articles',
-            'data' => [
-                [
-                    'title' => 'Articles (' . sizeof($Articles) . ')',
-                    'data' => $Articles,
-                ],
-            ],
+            'articles' => $Articles,
+            'keywords' => [],
+            'modified_keywords' => [],
         ]);
     }
 }

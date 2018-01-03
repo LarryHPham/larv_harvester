@@ -2,38 +2,89 @@
 
 @section('content')
     <div class="row">
-        @foreach($data as $table)
-            @if(sizeof($data) > 1)
-                <div class="col-md-6">
-            @endif
-            <h4 class="text-center">{{ $table['title'] }}</h4>
-            <table class="table table-striped{{ sizeof($data) > 1 ? " col-md-6" : " " . sizeof($data) }}">
+        @if(sizeof($articles) > 0)
+        <!-- Articles -->
+        <div class="col-xs-12">
+            <h4 class="text-center">Articles ({{ sizeof($articles) }})</h4>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Weight</th>
-                        <th>Item</th>
-                        <th>Link</th>
+                        <th>Article</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($table['data'] as $row)
+                    @foreach($articles as $article)
                     <tr>
-                        <td>{{ $row[1] }}</td>
+                        <td>{{ $article[1] }}</td>
+                        <td>{{ $article[0] }}</td>
                         <td>
-                            @if(isset($row[3]))
-                                <a href="{{ $row[0] }}">{{ $row[0] }}</a>
-                            @else
-                                {{ $row[0] }}
-                            @endif
+                            <a class="btn btn-primary" href="{{ $article[2] }}">Keywords</a>
                         </td>
-                        <td><a href="{{ $row[2] }}" class="btn btn-primary">View</a></td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ $article[0] }}">KBB Link</a>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            @if(sizeof($data) > 1)
-                </div>
-            @endif
-        @endforeach
+        </div>
+        @endif
+
+        @if(sizeof($keywords) > 0)
+        <!-- Keywords -->
+        <div class="col-md-6">
+            <h4 class="text-center">Keywords ({{ sizeof($keywords) }})</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Weight</th>
+                        <th>Keyword</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($keywords as $keyword)
+                    <tr>
+                        <td>{{ $keyword[1] }}</td>
+                        <td>{{ $keyword[0] }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ $keyword[2] }}">Articles</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+
+        @if(sizeof($modified_keywords) > 0)
+        <!-- Compound Keywords -->
+        <div class="col-md-6">
+            <h4 class="text-center">Compound Keywords ({{ sizeof($modified_keywords) }})</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Weight</th>
+                        <th>Keyword</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($modified_keywords as $keyword)
+                    <tr>
+                        <td>{{ $keyword[1] }}</td>
+                        <td>{{ $keyword[0] }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ $keyword[2] }}">Articles</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
     </div>
 @endsection
