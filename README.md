@@ -9,7 +9,7 @@ Crawler that will create workers to scrape websites and harvest information to r
 
 ## Stanford NLP Processor
 
-1. Obtain the English models using `wget -O app/Library/NLPParser/stanford-english-corenlp-2017-06-09-models.jar https://nlp.stanford.edu/software/stanford-english-corenlp-2017-06-09-models.jar`
+1. Obtain the English models using `wget -O app/Library/NLPParser/stanford-corenlp-3.8.0-models.jar https://nlp.stanford.edu/software/stanford-english-corenlp-2017-06-09-models.jar`
 2. Install a Java Runtime Environment (e.g. `sudo apt-get install default-jre`)
 
 ## PhantomJs
