@@ -76,20 +76,18 @@ class BaseDomParser
         // grab base data
         $title = $this->getTitle();
         $raw_article_content = $this->getRawArticleContent();
-        $images = $this->getImages();
+
 
         // checks if any data points that come back from xpaths are empty
-        if (empty($raw_article_content) || empty($title) || sizeof($images) == 0) {
+        if (empty($raw_article_content) || empty($title)) {
             return false;
         }
 
         // Use the first image as the primary image
-        $primary_image = array_shift($images);
         // set the base data to the schema
         $this->article_data->setContent($raw_article_content);
         $this->article_data->setTitle($title);
-        $this->article_data->setPrimaryImage($primary_image);
-        $this->article_data->setImageArray($images);
+
 
         // Save the validity
         $this->valid = true;
@@ -115,8 +113,18 @@ class BaseDomParser
         $attribution = $this->getAttribution();
         $publisher = $this->getPublisher();
         $publication_date = $this->getPublicationDate();
-
         $json_last_updated = \Carbon\Carbon::now()->timestamp; //UNIX timestamp
+        $images = $this->getImages();
+
+        // TODO: need to know what happens if primary image is null
+        if (sizeof($images) == 0) {
+            $primary_image = null;
+        } else {
+            $primary_image = array_shift($images);
+        }
+        $this->article_data->setPrimaryImage($primary_image);
+        $this->article_data->setImageArray($images);
+
 
         // SET datapoints in article schema
         $this->article_data->setCategory($category);
