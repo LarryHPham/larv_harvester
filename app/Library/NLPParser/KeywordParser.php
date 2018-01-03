@@ -87,7 +87,6 @@ class KeywordParser
                 }
 
                 // Find the word being used (if it is a proper noun)
-                // Use index - 1 because the index starts at 1
                 $ParentIndex = array_search($Dependency['governor'], $SentenceKeywordIndexes);
 
                 // Save the modifier if needed
