@@ -14,3 +14,28 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+/**** API ROUTES ****/
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->group(['prefix' => 'v1'], function () use ($router) {
+        $router->get('article/{url_id}', [
+            'as' => 'api.v1.article',
+            'uses' => 'KeywordApi@article',
+        ]);
+
+        $router->get('article', [
+            'as' => 'api.v1.article_url',
+            'uses' => 'KeywordApi@article_url',
+        ]);
+
+        $router->get('keyword/{keyword_id}', [
+            'as' => 'api.v1.keyword',
+            'uses' => 'KeywordApi@keyword',
+        ]);
+
+        $router->get('keyword_modified/{keyword_id}', [
+            'as' => 'api.v1.keyword_modified',
+            'uses' => 'KeywordApi@keyword_modified',
+        ]);
+    });
+});

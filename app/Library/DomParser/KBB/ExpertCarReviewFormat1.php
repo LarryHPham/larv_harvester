@@ -14,7 +14,8 @@ class ExpertCarReviewFormat1 extends BaseDomParser
 {
     use
         \App\Library\DomParser\Traits\kbbArticleTypes,
-        \App\Library\DomParser\Traits\NoPublicationDate;
+        \App\Library\DomParser\Traits\NoPublicationDate,
+        \App\Library\DomParser\Traits\CmsRteKeywordText;
 
     protected $title_xpath = '//div[@id="Main-hero-title"]/h1';
     protected $attribution_xpath = '//p[@id="Expert-overview-byline"]';

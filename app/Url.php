@@ -29,7 +29,7 @@ class Url extends Model
         // Call the parent function
         parent::boot();
 
-        static::creating(function($model) {
+        static::creating(function ($model) {
             // Check that the URL has a scheme
             if (!isset(parse_url($model->article_url)['scheme'])) {
                 throw new \Exception('Protocol is Required for URL');
@@ -70,14 +70,49 @@ class Url extends Model
     }
 
     /**
+     * This function cleans up the URL so it can be passed to findByHash. It
+     * will alphabetize the query paramters and clean up formatting
+     * @param  String $url The URL to sanitize
+     * @return String      The sanitized URL
+     */
+    public static function sanitizeUrl(String $url)
+    {
+        // Get the parts of the url
+        $url_parts = parse_url($url);
+
+        // Build the base
+        $url = $url_parts['scheme'] . '://' . $url_parts['host'];
+
+        // Add the components
+        if (isset($url_parts['path'])) {
+            // Remove the trailing slash and add it
+            $url .= preg_replace('/\/+$/', '', $url_parts['path']);
+        }
+        if (isset($url_parts['query'])) {
+            // Parse the components
+            parse_str($url_parts['query'], $parameters);
+
+            // Determine if there are enough parameters
+            if (sizeof($parameters) > 0) {
+                // Sort the parameters
+                ksort($parameters);
+
+                // Add to the URL
+                $url .= '?' . http_build_query($parameters);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
      * This function returns all of the URLs that link to this page
      * @return UrlArray An array of the models that this URL is linked to in
      */
     public function articleLinkedIn()
     {
         return $this
-            ->belongsToMany('App\User', 'articles_linked', 'linked_article_id', 'article_id')
-            ->withPivot('link_text');
+            ->belongsToMany('App\Url', 'articles_linked', 'linked_article_id', 'article_id');
     }
 
     /**
@@ -87,8 +122,7 @@ class Url extends Model
     public function articleLinksTo()
     {
         return $this
-            ->belongsToMany('App\User', 'articles_linked', 'article_id', 'linked_article_id')
-            ->withPivot('link_text');
+            ->belongsToMany('App\Url', 'articles_linked', 'article_id', 'linked_article_id');
     }
 
     /**
@@ -99,5 +133,29 @@ class Url extends Model
     {
         return $this
             ->hasOne('App\CrawlOrder', 'article_id');
+    }
+
+    /**
+     * The non-modified keywords for the article
+     * @return App\Keyword
+     */
+    public function keywords()
+    {
+        return $this
+            ->morphedByMany('App\Keyword', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
+            ->withPivot('weight')
+            ->orderBy('weight', 'DESC');
+    }
+
+    /**
+     * The modified keywords for the article
+     * @return App\KeywordModified
+     */
+    public function keywords_modified()
+    {
+        return $this
+            ->morphedByMany('App\KeywordModified', 'keyword', 'article_keywords', 'article_id', 'keyword_id')
+            ->withPivot('weight')
+            ->orderBy('weight', 'DESC');
     }
 }

@@ -7,6 +7,13 @@ Crawler that will create workers to scrape websites and harvest information to r
 2. cd /path/to/repo
 3. `composer install`
 
+## Stanford NLP Processor
+
+The natural language processing is done using the [Stanford NLP server](https://stanfordnlp.github.io/CoreNLP/corenlp-server.html). All files in `app/Library/NLPParser` EXCEPT `KeywordParser.php` are from the server files found [here](https://stanfordnlp.github.io/CoreNLP/index.html#download).
+
+1. Obtain the English models using `wget -O app/Library/NLPParser/stanford-corenlp-3.8.0-models.jar https://nlp.stanford.edu/software/stanford-english-corenlp-2017-06-09-models.jar`
+2. Install a Java Runtime Environment (e.g. `sudo apt-get install default-jre`)
+
 ## PhantomJs
 Phantom JS is used to render javascript on server side. To get more info look at the documentation http://jonnnnyw.github.io/php-phantomjs/ which is the composer package that is used in this.
 

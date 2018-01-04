@@ -31,17 +31,17 @@ class Kernel extends ConsoleKernel
     {
         // Reset the old crawls that have been abandoned due to deadlock
         $schedule
-            ->call(function() {
+            ->call(function () {
                 CrawlOrder::resetAbandonedCrawls();
             })
             ->everyTenMinutes();
 
         // Add pages that have scheduled re-crawls to the order
         $schedule
-            ->call(function() {
+            ->call(function () {
                 Url::whereNotNull('recrawl_interval')
                     ->where(\DB::raw('FROM_UNIXTIME(UNIX_TIMESTAMP(last_crawled) + recrawl_interval)'), '<=', \Carbon\Carbon::now())
-                    ->each(function($url) {
+                    ->each(function ($url) {
                         // Check to see if the URL has a priority already
                         if ($url->priority !== null) {
                             return;
