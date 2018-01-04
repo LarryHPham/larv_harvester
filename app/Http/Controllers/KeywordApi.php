@@ -83,11 +83,33 @@ class KeywordApi extends Controller
                 ];
             });
 
+        // Get linked articles
+        $ArticlesLinkedTo = $UrlModel
+            ->articleLinksTo
+            ->map(function ($Article) {
+                return [
+                    $Article->article_url,
+                    route('api.v1.article', ['url_id' => $Article->id]),
+                ];
+            });
+
+        // Get linked articles
+        $ArticlesLinkedFrom = $UrlModel
+            ->articleLinkedIn
+            ->map(function ($Article) {
+                return [
+                    $Article->article_url,
+                    route('api.v1.article', ['url_id' => $Article->id]),
+                ];
+            });
+
         return view('keywords', [
             'title' => 'Article Keywords - ' . $UrlModel->article_url,
             'keywords' => $Keywords,
             'modified_keywords' => $ModifiedKeywords,
             'articles' => $RelatedArticles,
+            'articles_to' => $ArticlesLinkedTo,
+            'articles_from' => $ArticlesLinkedFrom,
         ]);
     }
 
@@ -143,8 +165,6 @@ class KeywordApi extends Controller
         return view('keywords', [
             'title' => $KeywordModel->raw . ' Articles',
             'articles' => $Articles,
-            'keywords' => [],
-            'modified_keywords' => [],
         ]);
     }
 
@@ -172,8 +192,6 @@ class KeywordApi extends Controller
         return view('keywords', [
             'title' => $KeywordModel->modifier->raw . ' ' . $KeywordModel->keyword->raw . ' Articles',
             'articles' => $Articles,
-            'keywords' => [],
-            'modified_keywords' => [],
         ]);
     }
 }
