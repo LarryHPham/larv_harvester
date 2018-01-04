@@ -20,7 +20,7 @@ class StartJobs extends Command
     {
         // Dispatch jobs
         for ($i = 0; $i < $this->argument('count'); $i++) {
-            app('Illuminate\Contracts\Bus\Dispatcher')->dispatch((new PageFetcher())->onQueue(env('CRAWL_QUEUE', 'crawl')));
+            app('Illuminate\Contracts\Bus\Dispatcher')->dispatch((new PageFetcher())->onQueue(env('CRAWL_QUEUE')));
         }
     }
 }

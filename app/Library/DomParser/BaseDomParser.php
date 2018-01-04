@@ -118,7 +118,7 @@ class BaseDomParser
         $images = $this->getImages();
 
         // Dispatch the job to parse the article text
-        dispatch((new KeywordParser($this->url, $this->getArticleKeywordContent()))->onQueue(env('PARSE_QUEUE', 'parse')));
+        dispatch((new KeywordParser($this->url, $this->getArticleKeywordContent()))->onQueue(env('PARSE_QUEUE')));
 
         // TODO: need to know what happens if primary image is null
         if (sizeof($images) == 0) {

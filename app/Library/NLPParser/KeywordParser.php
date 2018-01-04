@@ -27,7 +27,7 @@ class KeywordParser
     {
         $this->client = new GuzzleClient();
 
-        $this->parser_url = env('STANFORD_URL', 'http://localhost:9000/') . '?properties={"annotators":"tokenize,ssplit,pos,lemma,depparse"}&pipelineLanguage=en';
+        $this->parser_url = env('STANFORD_URL') . '?properties={"annotators":"tokenize,ssplit,pos,lemma,depparse"}&pipelineLanguage=en';
     }
 
     /**
