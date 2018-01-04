@@ -24,7 +24,7 @@
                             <a class="btn btn-primary" href="{{ $article[2] }}">Keywords</a>
                         </td>
                         <td>
-                            <a class="btn btn-primary" href="{{ $article[0] }}">KBB Link</a>
+                            <a class="btn btn-primary" target="_blank" href="{{ $article[0] }}">KBB Link</a>
                         </td>
                     </tr>
                     @endforeach
