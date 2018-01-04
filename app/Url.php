@@ -112,8 +112,7 @@ class Url extends Model
     public function articleLinkedIn()
     {
         return $this
-            ->belongsToMany('App\Url', 'articles_linked', 'linked_article_id', 'article_id')
-            ->withPivot('link_text');
+            ->belongsToMany('App\Url', 'articles_linked', 'linked_article_id', 'article_id');
     }
 
     /**
@@ -123,8 +122,7 @@ class Url extends Model
     public function articleLinksTo()
     {
         return $this
-            ->belongsToMany('App\Url', 'articles_linked', 'article_id', 'linked_article_id')
-            ->withPivot('link_text');
+            ->belongsToMany('App\Url', 'articles_linked', 'article_id', 'linked_article_id');
     }
 
     /**
