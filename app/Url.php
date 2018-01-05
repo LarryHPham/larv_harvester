@@ -20,6 +20,17 @@ class Url extends Model
     protected $guarded = [];
 
     /**
+     * The parameters to remove from the URL
+     * @var Array
+     */
+    public static $parameter_blacklist = [
+        'vehicleclass',
+        'intent',
+        'LNX', // Used for instant cash offer
+        'Lp', // Used for instant cash offer
+    ];
+
+    /**
      * This function sets up the model so that when it is created the article
      * hash is created automatically to avoid forgetting/having to manually
      * create it
@@ -75,10 +86,15 @@ class Url extends Model
      * @param  String $url The URL to sanitize
      * @return String      The sanitized URL
      */
-    public static function sanitizeUrl(String $url)
+    public static function sanitizeUrl(String $url, $ParentUrl = null, $CheckDomain = false)
     {
         // Get the parts of the url
         $url_parts = parse_url($url);
+
+        // Check the domain (if required)
+        if ($CheckDomain && $url_parts['host'] !== parse_url($ParentUrl, PHP_URL_HOST)) {
+            return false;
+        }
 
         // Build the base
         $url = $url_parts['scheme'] . '://' . $url_parts['host'];
@@ -92,6 +108,11 @@ class Url extends Model
             // Parse the components
             parse_str($url_parts['query'], $parameters);
 
+            // Remove the unwanted components
+            foreach (self::$parameter_blacklist as $parameter) {
+                unset($parameters[$parameter]);
+            }
+
             // Determine if there are enough parameters
             if (sizeof($parameters) > 0) {
                 // Sort the parameters
@@ -100,6 +121,11 @@ class Url extends Model
                 // Add to the URL
                 $url .= '?' . http_build_query($parameters);
             }
+        }
+
+        // Check for it being the parent URL
+        if ($ParentUrl !== null && $url === $ParentUrl) {
+            return false;
         }
 
         return $url;
