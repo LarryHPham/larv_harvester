@@ -28,13 +28,13 @@ class BaseParser
     /**
      * This array dictates how often URLs should be re-crawled. If a URL is not
      * mentioned, it is assumed to be not recrawled
-     * @var Array
+     * @var array
      */
     protected $link_recrawl = [];
 
     /**
      * The query parameters that can be safely removed from the URL
-     * @var Array
+     * @var array
      */
     protected $ignorable_parameters = [
         'vehicleclass',
@@ -46,7 +46,7 @@ class BaseParser
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
-     * @param String $dom_string The string found when crawling the DOM
+     * @param string $dom_string The string found when crawling the DOM
      */
     public function __construct(Url $url)
     {
@@ -59,10 +59,10 @@ class BaseParser
      * This function parses a URL and makes sure it is valid. It will also add
      * domains to URLs that begin with '/' and protocol to URLs that begin with
      * '//'.
-     * @param  String  $href        The URL to parse
-     * @param  Boolean $CheckDomain Whether to check against the crawled URLs
+     * @param  string  $href        The URL to parse
+     * @param  boolean $CheckDomain Whether to check against the crawled URLs
      *                              domain
-     * @return Boolean              false if the URL should not be stored, the
+     * @return boolean              false if the URL should not be stored, the
      *                              url otherwise
      */
     protected function parseFoundUrl(String $href, $CheckDomain)
@@ -130,11 +130,11 @@ class BaseParser
      * This function determines whether the URL should be crawled. The URL is
      * labelled as "should crawl" if it matches one of the WhiteListPatterns or
      * it is next to the root level of the domain.
-     * @param  String $url               The URL to decide on
-     * @param  Array  $WhitelistPatterns An array of strings that, if the url
+     * @param  string $url               The URL to decide on
+     * @param  array  $WhitelistPatterns An array of strings that, if the url
      *                                   contains any of them, should mark the
      *                                   url as "should crawl"
-     * @return Boolean                   true if the URL should be crawled, else
+     * @return boolean                   true if the URL should be crawled, else
      *                                   false
      */
     protected function shouldCrawlUrl(String $url, $WhitelistPatterns = [])
@@ -153,7 +153,7 @@ class BaseParser
     /**
      * This function inserts and crawls new links and adds connections between
      * pages for old links
-     * @param  Array $page_links The links found on the page
+     * @param  array $page_links The links found on the page
      */
     protected function insertOrUpdateLinks($page_links, $WhitelistPatterns)
     {

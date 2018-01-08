@@ -9,20 +9,20 @@ class CrawlOrder extends Model
 {
     /**
      * The table that the model is stored in
-     * @var String
+     * @var string
      */
     protected $table = 'crawl_order';
 
     /**
      * The fields that cannot be mass assigned. An empty array is required to
      * allow the model to be mass assigned.
-     * @var Array
+     * @var array
      */
     protected $guarded = [];
 
     /**
      * The date columns in the table
-     * @var Array
+     * @var array
      */
     protected $dates = ['claimed_at'];
 

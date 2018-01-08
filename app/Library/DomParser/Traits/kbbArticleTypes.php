@@ -11,7 +11,7 @@ trait kbbArticleTypes
     /**
      * Known Kbb Article types that will be parsed
      * and added into article type as an array of each item
-     * @var Array
+     * @var array
      */
     private $kbb_article_types = [
         'review',
@@ -22,14 +22,14 @@ trait kbbArticleTypes
 
     /**
      * Known Kbb Category that will be returned
-     * @var String
+     * @var string
      */
     protected $category = 'automotive';
 
     /**
      * This class loops over the registered article types
      * pushes into array for each type the url falls into
-     * @param String $string string of the url
+     * @param string $string string of the url
      * to be parsed for article types
      */
     public function getArticleType(String $string)

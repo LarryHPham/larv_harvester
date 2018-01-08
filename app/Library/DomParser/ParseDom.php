@@ -14,7 +14,7 @@ class ParseDom
     /**
      * The parsers that will be tested in the order they should be tested to
      * parse the content given
-     * @var Array
+     * @var array
      */
     private $registered_parsers = [
         '\App\Library\DomParser\KBB\CarArticleFormat1',
@@ -46,7 +46,7 @@ class ParseDom
 
     /**
      * The parser that was used to get the object
-     * @var String
+     * @var string
      */
     public $parser_used = null;
 
@@ -66,7 +66,7 @@ class ParseDom
      * This class loops over the registered parsers and determines which (if
      * any) should be used to parse the URL
      * @param Url    $url     The model of the URL to crawl
-     * @param String $content The results of the crawler
+     * @param string $content The results of the crawler
      */
     public function __construct(Url $url, $content)
     {

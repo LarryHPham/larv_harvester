@@ -19,13 +19,13 @@ class PageFetcher extends Job
 
     /**
      * The flag for parsing content as passed into the job
-     * @var Boolean
+     * @var boolean
      */
     private $parse_content;
 
     /**
      * The flag for parsing for urls as passed into the job
-     * @var Boolean
+     * @var boolean
      */
     private $parse_urls;
 
@@ -148,7 +148,7 @@ class PageFetcher extends Job
 
     /**
      * Mark the URL crawl as failed
-     * @param  Integer $code The failure code
+     * @param  integer $code The failure code
      */
     private function markFailed($code)
     {

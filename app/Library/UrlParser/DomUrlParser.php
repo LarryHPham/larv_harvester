@@ -10,7 +10,7 @@ class DomUrlParser extends BaseParser
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
-     * @param String $dom_string The string found when crawling the DOM
+     * @param string $dom_string The string found when crawling the DOM
      */
     public function __construct(Url $url, $dom_string)
     {
@@ -24,10 +24,10 @@ class DomUrlParser extends BaseParser
     /**
      * This function parses the DOM for linked URLs and inserts them into the
      * database
-     * @param  Boolean $RestrictToSameDomain Whether to only crawl URLs that are
+     * @param  boolean $RestrictToSameDomain Whether to only crawl URLs that are
      *                                       on the same domain as the original
      *                                       url
-     * @return Boolean                       Success indicator
+     * @return boolean                       Success indicator
      */
     public function getLinkedUrls($RestrictToSameDomain = true, $WhitelistPatterns = [])
     {
