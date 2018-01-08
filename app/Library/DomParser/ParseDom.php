@@ -125,12 +125,12 @@ class ParseDom
         $header_options = ['Content-Type' => 'application/json'];
         try {
             if ($ledger->elastic_index_id === null) {
-                $response = $client->post(env('ES_FQDN'), [
+                $response = $client->post(env('ES_FQDN') . '/api/article', [
                   'headers' => $header_options,
                   'json' => $post_json,
                 ]);
             } else {
-                $response = $client->put(env('ES_FQDN'), [
+                $response = $client->put(env('ES_FQDN') . '/api/article', [
                   'headers' => $header_options,
                   'json' => $post_json,
                 ]);
