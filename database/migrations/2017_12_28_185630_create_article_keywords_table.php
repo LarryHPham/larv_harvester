@@ -17,7 +17,7 @@ class CreateArticleKeywordsTable extends Migration
             $table->increments('id');
             $table->integer('article_id');
             $table->integer('keyword_id');
-            $table->string('keyword_type', 20);
+            $table->enum('keyword_type', ['App\Keyword', 'App\KeywordModified']);
             $table->smallInteger('weight')->default(0);
         });
     }

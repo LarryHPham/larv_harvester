@@ -23,7 +23,7 @@ class CreateUrlsTable extends Migration
             $table->boolean('curr_scan')->default(false);
             $table->boolean('extracted_keywords')->default(false);
             $table->smallInteger('num_fail_scans')->default(0);
-            $table->string('article_hash', 50);
+            $table->string('article_hash', 32);
             $table->string('parsed_by', 50)->nullable();
             $table->integer('recrawl_interval')->nullable();
             $table->boolean('active_crawl')->nullable();
