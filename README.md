@@ -57,3 +57,32 @@ The parser will output a json file that matches the article schema of expected J
 `parse:url` This command will take in a given url and parse the content for information, store that information as json, and index it in the ledger table located on another server with table `article_libary`.
 
 Once Setup get started on getting job queues lined up in code.
+
+# APIs
+
+## Debugging APIs
+
+### Article Keyword API
+
+There are two APIs that display the keywords for a given article. They take the forms:  
+`/api/v1/article/{url_id}`  
+`/api/v1/article`
+
+The first takes as a required parameter the ID in the `urls` table of the article to be viewed.
+
+The second takes as a required parameters `url` which should match the `article_url` in the `urls` table.
+
+### Keyword and Modified Keyword APIs
+
+These APIs display the articles that contain them and take the forms:  
+`/api/v1/keyword/{keyword_id}`  
+`/api/v1/keyword_modified/{keyword_id}`
+
+The first expects an ID from the `keywords` table, the second an ID from the `keyword_modified` table.
+
+### Related Articles
+
+This API returns articles related to the provided article. It takes the form:  
+`/api/v1/related`
+
+This API requires a `url` parameter which should be the URL of the current page. It uses the search API described in the [Article Search library](https://github.com/passit/Article-Search#search-api) to fulfill the request. All parameters are passed through to this API, so any parameters described there will work as described.
