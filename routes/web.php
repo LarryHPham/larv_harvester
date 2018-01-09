@@ -18,6 +18,16 @@ $router->get('/', function () use ($router) {
 /**** API ROUTES ****/
 $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
+        $router->get('related/{url_id}', [
+            'as' => 'api.v1.related_articles',
+            'uses' => 'ArticleApi@relatedArticle',
+        ]);
+
+        $router->get('related', [
+            'as' => 'api.v1.related_articles',
+            'uses' => 'ArticleApi@relatedArticle',
+        ]);
+
         $router->get('article/{url_id}', [
             'as' => 'api.v1.article',
             'uses' => 'KeywordApi@article',
