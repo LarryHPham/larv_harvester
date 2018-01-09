@@ -77,7 +77,7 @@ class ArticleApi extends Controller
 
     /**
      * This function calls the API for related articles and returns the results
-     * @param  $Keywords   A CSV of keywords to send to the API
+     * @param  string $Keywords   A CSV of keywords to send to the API
      * @param  array  $Parameters The parameters to pass into the API
      * @return array              The response from the API
      */
@@ -121,10 +121,40 @@ class ArticleApi extends Controller
     public function relatedArticle(Request $Request, $url_id = null)
     {
         // Get the model
-        $UrlModel = Url::find($url_id);
+        if ($url_id !== null) {
+            $UrlModel = Url::find($url_id);
+        } else {
+            // Get the URL
+            $Url = $Request->input('url');
+
+            // Sanitize the Url
+            $Url = Url::sanitizeUrl($Url);
+
+            // Find the URL model
+            $UrlModel = Url::findByHash($Url);
+        }
 
         // Get the keywords
-        $Keywords = $this->getArticleKeywords($UrlModel);
+        $Keywords = null;
+        if ($UrlModel !== null) {
+            $Keywords = $this->getArticleKeywords($UrlModel);
+        } else {
+            // Don't use keywords
+            $Keywords = null;
+
+            // Add the URL to be crawled
+            $UrlModel = new Url([
+                'article_url' => $Url,
+            ]);
+            $UrlModel->save();
+
+            // Add to the crawl order
+            $UrlModel
+                ->priority()
+                ->create([
+                    'weight' => 100
+                ]);
+        }
 
         // Get the API response
         $Response = $this->getRelatedArticles($Keywords, $UrlModel, $Request->all());
