@@ -106,7 +106,6 @@ class ArticleApi extends Controller
         // Add the keywords and article id
         $ApiResponse['keywords'] = $Keywords;
         $ApiResponse['article'] = $UrlModel->id;
-        $ApiResponse['url'] = $RequestUrl;
 
         // Return the $ApiResponse
         return $ApiResponse;
