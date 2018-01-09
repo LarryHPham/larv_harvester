@@ -83,10 +83,13 @@ class Url extends Model
     /**
      * This function cleans up the URL so it can be passed to findByHash. It
      * will alphabetize the query paramters and clean up formatting
-     * @param  string $url The URL to sanitize
-     * @return string      The sanitized URL
+     * @param  string  $url         The URL to sanitize
+     * @param  string  $ParentUrl   The URL of the page the URL was found on
+     *                              (optional)
+     * @param  boolean $CheckDomain Restrict to the ParentUrl domain (optional)
+     * @return string               The sanitized URL
      */
-    public static function sanitizeUrl($url, Url $ParentUrl = null, $CheckDomain = false)
+    public static function sanitizeUrl($url, $ParentUrl = null, $CheckDomain = false)
     {
         // Get the parts of the url
         $url_parts = parse_url($url);
