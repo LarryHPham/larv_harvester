@@ -19,34 +19,45 @@ class ArticleApi extends Controller
         // Get the list of the keywords
         $Keywords = $UrlModel->keywords;
 
-        // Get the average weight
-        $KeywordsAverage =
-            ceil($Keywords
-                ->sum(function ($word) {
-                    return $word->pivot->weight;
-                }) / $Keywords->count());
+        // Check for actual keywords
+        if ($Keywords->count() > 0) {
+            // Get the average weight
+            $KeywordsAverage =
+                ceil($Keywords
+                    ->sum(function ($word) {
+                        return $word->pivot->weight;
+                    }) / $Keywords->count());
 
-        // Get the keywords that are above average
-        $Keywords = $Keywords
-            ->filter(function ($Keyword) use ($KeywordsAverage) {
-                return $Keyword->pivot->weight > $KeywordsAverage;
-            });
+            // Get the keywords that are above average
+            $Keywords = $Keywords
+                ->filter(function ($Keyword) use ($KeywordsAverage) {
+                    return $Keyword->pivot->weight > $KeywordsAverage;
+                });
+        }
 
         // Get the modified keywords
         $ModifiedKeywords = $UrlModel->keywords_modified;
 
-        // Get the average weight
-        $ModifiedKeywordsAverage =
+        // Check for actual keywords
+        if ($ModifiedKeywords->count() > 0) {
+            // Get the average weight
+            $ModifiedKeywordsAverage =
             ceil($ModifiedKeywords
                 ->sum(function ($word) {
                     return $word->pivot->weight;
                 }) / $ModifiedKeywords->count());
 
-        // Get the keywords that are above average
-        $ModifiedKeywords = $ModifiedKeywords
+            // Get the keywords that are above average
+            $ModifiedKeywords = $ModifiedKeywords
             ->filter(function ($Keyword) use ($ModifiedKeywordsAverage) {
                 return $Keyword->pivot->weight > $ModifiedKeywordsAverage;
             });
+        }
+
+        // Check for no keywords
+        if ($ModifiedKeywords->count() === 0 && $Keywords->count() === 0) {
+            return null;
+        }
 
         // Return a CSV of the keywords
         return $ModifiedKeywords
