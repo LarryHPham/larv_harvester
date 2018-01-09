@@ -8,16 +8,27 @@ class Url extends Model
 {
     /**
      * The table that the model is stored in
-     * @var String
+     * @var string
      */
     protected $table = 'urls';
 
     /**
      * The fields that cannot be mass assigned. An empty array is required to
      * allow the model to be mass assigned.
-     * @var Array
+     * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The parameters to remove from the URL
+     * @var array
+     */
+    public static $parameter_blacklist = [
+        'vehicleclass',
+        'intent',
+        'LNX', // Used for instant cash offer
+        'Lp', // Used for instant cash offer
+    ];
 
     /**
      * This function sets up the model so that when it is created the article
@@ -43,11 +54,11 @@ class Url extends Model
     /**
      * This function finds models by the hash of the URL while being passed a
      * URL to make this functionality easier
-     * @param  String $url The URL to search for
+     * @param  string $url The URL to search for
      * @return Url         The URL model of the matching URL (or null if none is
      *                     found)
      */
-    public static function findByHash(String $url)
+    public static function findByHash($url)
     {
         return Url::where([
             'article_hash' => Url::createHash($url)
@@ -57,10 +68,10 @@ class Url extends Model
 
     /**
      * This function creates the hash of the URL
-     * @param  String $url The URL to hash
-     * @return String      The hashed URL
+     * @param  string $url The URL to hash
+     * @return string      The hashed URL
      */
-    public static function createHash(String $url)
+    public static function createHash($url)
     {
         // Remove the URLs protocol
         $url = preg_replace('/^https?:\/\//', '', $url);
@@ -72,13 +83,21 @@ class Url extends Model
     /**
      * This function cleans up the URL so it can be passed to findByHash. It
      * will alphabetize the query paramters and clean up formatting
-     * @param  String $url The URL to sanitize
-     * @return String      The sanitized URL
+     * @param  string  $url         The URL to sanitize
+     * @param  string  $ParentUrl   The URL of the page the URL was found on
+     *                              (optional)
+     * @param  boolean $CheckDomain Restrict to the ParentUrl domain (optional)
+     * @return string               The sanitized URL
      */
-    public static function sanitizeUrl(String $url)
+    public static function sanitizeUrl($url, $ParentUrl = null, $CheckDomain = false)
     {
         // Get the parts of the url
         $url_parts = parse_url($url);
+
+        // Check the domain (if required)
+        if ($CheckDomain && $url_parts['host'] !== parse_url($ParentUrl, PHP_URL_HOST)) {
+            return false;
+        }
 
         // Build the base
         $url = $url_parts['scheme'] . '://' . $url_parts['host'];
@@ -92,6 +111,11 @@ class Url extends Model
             // Parse the components
             parse_str($url_parts['query'], $parameters);
 
+            // Remove the unwanted components
+            foreach (self::$parameter_blacklist as $parameter) {
+                unset($parameters[$parameter]);
+            }
+
             // Determine if there are enough parameters
             if (sizeof($parameters) > 0) {
                 // Sort the parameters
@@ -102,12 +126,17 @@ class Url extends Model
             }
         }
 
+        // Check for it being the parent URL
+        if ($ParentUrl !== null && $url === $ParentUrl) {
+            return false;
+        }
+
         return $url;
     }
 
     /**
      * This function returns all of the URLs that link to this page
-     * @return UrlArray An array of the models that this URL is linked to in
+     * @return array An array of the models that this URL is linked to in
      */
     public function articleLinkedIn()
     {
@@ -117,7 +146,7 @@ class Url extends Model
 
     /**
      * This function returns all of the URLs that this URL links to
-     * @return UrlArray An array of the models that this URL links to
+     * @return array An array of the models that this URL links to
      */
     public function articleLinksTo()
     {
@@ -127,7 +156,7 @@ class Url extends Model
 
     /**
      * The link to the crawl_order table that dictates priority
-     * @return CrawlOrder
+     * @return App\CrawlOrder
      */
     public function priority()
     {

@@ -24,7 +24,7 @@ class BaseDomParser
 
     /**
      * The XPaths that will be used to test this DOM
-     * @var Array
+     * @var array
      */
     protected $required_xpaths = [];
 
@@ -36,7 +36,7 @@ class BaseDomParser
 
     /**
      * This boolean dictates whether the parser matches the given DOM
-     * @var Boolean
+     * @var boolean
      */
     public $valid = false;
 
@@ -96,7 +96,7 @@ class BaseDomParser
 
     /**
      * This function returns the JSON file to be saved for the article
-     * @return Array The JSON to be used
+     * @return array The JSON to be used
      */
     public function getValues()
     {
@@ -152,8 +152,8 @@ class BaseDomParser
 
     /**
      * Returns the text of all nodes that match the XPath
-     * @param  String $xpath The XPath to use to get the nodes
-     * @return String        The text of all of the matching nodes
+     * @param  string $xpath The XPath to use to get the nodes
+     * @return string        The text of all of the matching nodes
      */
     protected function getTextUsingXPath($xpath, $joiner = ' ')
     {
@@ -170,8 +170,8 @@ class BaseDomParser
 
     /**
      * Returns the HTML of all nodes that match the XPath
-     * @param  String $xpath The XPath to use to get the nodes
-     * @return String        The HTML of all of the matching nodes
+     * @param  string $xpath The XPath to use to get the nodes
+     * @return string        The HTML of all of the matching nodes
      */
     protected function getHtmlUsingXPath($xpath)
     {
@@ -188,8 +188,8 @@ class BaseDomParser
 
     /**
      * Returns the content attribute of the meta tag
-     * @param  String $xpath The XPath that matches the desired meta tag
-     * @return String        The content attribute of the meta tag
+     * @param  string $xpath The XPath that matches the desired meta tag
+     * @return string        The content attribute of the meta tag
      */
     protected function getMetaUsingXPath($xpath)
     {
@@ -209,8 +209,8 @@ class BaseDomParser
 
     /**
      * This function cleans up formatting of a string
-     * @param  String  $string        The string to format
-     * @return String                 The clean string
+     * @param  string  $string        The string to format
+     * @return string                 The clean string
      */
     protected function cleanStringFormatting($string)
     {

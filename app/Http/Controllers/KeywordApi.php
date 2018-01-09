@@ -115,7 +115,7 @@ class KeywordApi extends Controller
 
     /**
      * Retrieves and displays article keywords by article ID
-     * @param  Integer $url_id The ID of the article
+     * @param  integer $url_id The ID of the article
      * @return View            The view
      */
     public function article($url_id)
@@ -144,7 +144,7 @@ class KeywordApi extends Controller
 
     /**
      * Retrieves articles associated with the given keyword
-     * @param  Integer $keyword_id The ID of the keyword to query
+     * @param  integer $keyword_id The ID of the keyword to query
      * @return View                The associated articles
      */
     public function keyword($keyword_id)
@@ -170,7 +170,7 @@ class KeywordApi extends Controller
 
     /**
      * Retrieves articles associated with the given modified keyword
-     * @param  Integer $keyword_id The modified keyword ID
+     * @param  integer $keyword_id The modified keyword ID
      * @return View                The associated articles
      */
     public function keyword_modified($keyword_id)

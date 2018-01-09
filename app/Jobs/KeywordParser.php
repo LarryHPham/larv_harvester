@@ -15,14 +15,14 @@ class KeywordParser extends Job
 
     /**
      * The text of the article
-     * @var String
+     * @var string
      */
     private $url_text;
 
     /**
      * Save the parts that control the job
      * @param Url    $Url  The URL model
-     * @param String $Body The URL text
+     * @param string $Body The URL text
      */
     public function __construct(Url $Url, $Body)
     {

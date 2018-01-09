@@ -9,20 +9,20 @@ class XmlUrlParser extends BaseParser
 {
     /**
      * An array of the links on a page
-     * @var Array
+     * @var array
      */
     private $page_links = [];
 
     /**
      * The weight to add to each link
-     * @var Array
+     * @var array
      */
     protected $link_weights = 1;
 
     /**
      * The constructor function saves the URL model and parses the DOM string
      * @param Url    $url       The model of the URL that the dom belongs to
-     * @param String $dom_string The string found when crawling the DOM
+     * @param string $dom_string The string found when crawling the DOM
      */
     public function __construct(Url $url, $dom_string)
     {
@@ -36,10 +36,10 @@ class XmlUrlParser extends BaseParser
     /**
      * This function parses the DOM for linked URLs and inserts them into the
      * database
-     * @param  Boolean $RestrictToSameDomain Whether to only crawl URLs that are
+     * @param  boolean $RestrictToSameDomain Whether to only crawl URLs that are
      *                                       on the same domain as the original
      *                                       url
-     * @return Boolean                       Success indicator
+     * @return boolean                       Success indicator
      */
     public function getLinkedUrls($RestrictToSameDomain = true, $WhitelistPatterns = [])
     {
@@ -55,8 +55,8 @@ class XmlUrlParser extends BaseParser
 
     /**
      * Parse the DOM for tags using the feedburner class name (RSS feeds)
-     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
-     * @return Boolean                       Were tags found?
+     * @param  boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return boolean                       Were tags found?
      */
     private function parseFeedburnerTags($RestrictToSameDomain)
     {
@@ -77,8 +77,8 @@ class XmlUrlParser extends BaseParser
 
     /**
      * Parse the DOM for tags using the sitemap class name (List of sitemaps)
-     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
-     * @return Boolean                       Were tags found?
+     * @param  boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return boolean                       Were tags found?
      */
     private function parseSitemapTags($RestrictToSameDomain)
     {
@@ -102,8 +102,8 @@ class XmlUrlParser extends BaseParser
 
     /**
      * Parse the DOM for tags using the url class name (List of sitemaps)
-     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
-     * @return Boolean                       Were tags found?
+     * @param  boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @return boolean                       Were tags found?
      */
     private function parseUrlTags($RestrictToSameDomain)
     {
@@ -184,8 +184,8 @@ class XmlUrlParser extends BaseParser
 
     /**
      * Process nodes to get the URLs to crawl
-     * @param  Array   $nodeList             The nodes to parse
-     * @param  Boolean $RestrictToSameDomain Keep on www.kbb.com or not
+     * @param  array   $nodeList             The nodes to parse
+     * @param  boolean $RestrictToSameDomain Keep on www.kbb.com or not
      */
     private function parseNodes($nodeList, $RestrictToSameDomain, $RecrawlInterval = null)
     {

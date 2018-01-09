@@ -8,20 +8,20 @@ class Ledger extends Model
 {
     /**
      * The table that the model is stored in
-     * @var String
+     * @var string
      */
     protected $connection = 'article_library';
 
     /**
      * The table that the model is stored in
-     * @var String
+     * @var string
      */
     protected $table = 'ledger';
 
     /**
      * The fields that cannot be mass assigned. An empty array is required to
      * allow the model to be mass assigned.
-     * @var Array
+     * @var array
      */
     protected $guarded = [];
 }

@@ -16,7 +16,7 @@ class KeywordParser
 
     /**
      * The URL to curl for the results
-     * @var String
+     * @var string
      */
     private $parser_url;
 
@@ -34,7 +34,7 @@ class KeywordParser
      * This function parses the keywords from the body and title and saves them
      * in the database.
      * @param  App\Url $UrlModel The URL that the data is from
-     * @param  String  $Body     The body text (no HTML tags)
+     * @param  string  $Body     The body text (no HTML tags)
      */
     public function parse($UrlModel, $Body)
     {
@@ -147,9 +147,9 @@ class KeywordParser
      * Save the keywords into the database
      * @param App\Url $UrlModel              The article to connect the
      *                                       keywords to
-     * @param Array   $Keywords              The keywords from the article
-     * @param Integer $TotalKeywords         The total number of keywords found
-     * @param Integer $TotalModifiedKeywords The total number of modified
+     * @param array   $Keywords              The keywords from the article
+     * @param integer $TotalKeywords         The total number of keywords found
+     * @param integer $TotalModifiedKeywords The total number of modified
      *                                       keywors found (sum freq)
      */
     private function saveKeywords($UrlModel, $Keywords, $TotalKeywords, $TotalModifiedKeywords)

@@ -8,20 +8,20 @@ class KeywordModified extends Model
 {
     /**
      * The table that the model is stored in
-     * @var String
+     * @var string
      */
     protected $table = 'keywords_modified';
 
     /**
      * The fields that cannot be mass assigned. An empty array is required to
      * allow the model to be mass assigned.
-     * @var Array
+     * @var array
      */
     protected $guarded = [];
 
     /**
      * Don't try to fill in the timestamp fields (they don't exist)
-     * @var Boolean
+     * @var boolean
      */
     public $timestamps = false;
 
