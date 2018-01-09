@@ -158,6 +158,8 @@ class ArticleApi extends Controller
         // Get the API response
         $Response = $this->getRelatedArticles($Keywords, $UrlModel, $Request->all());
 
-        return response()->json($Response);
+        return response()
+            ->json($Response)
+            ->header('Access-Control-Allow-Origin', '*');
     }
 }
