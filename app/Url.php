@@ -58,7 +58,7 @@ class Url extends Model
      * @return Url         The URL model of the matching URL (or null if none is
      *                     found)
      */
-    public static function findByHash(string $url)
+    public static function findByHash($url)
     {
         return Url::where([
             'article_hash' => Url::createHash($url)
@@ -71,7 +71,7 @@ class Url extends Model
      * @param  string $url The URL to hash
      * @return string      The hashed URL
      */
-    public static function createHash(string $url)
+    public static function createHash($url)
     {
         // Remove the URLs protocol
         $url = preg_replace('/^https?:\/\//', '', $url);
@@ -86,7 +86,7 @@ class Url extends Model
      * @param  string $url The URL to sanitize
      * @return string      The sanitized URL
      */
-    public static function sanitizeUrl(string $url, Url $ParentUrl = null, boolean $CheckDomain = false)
+    public static function sanitizeUrl($url, Url $ParentUrl = null, $CheckDomain = false)
     {
         // Get the parts of the url
         $url_parts = parse_url($url);
